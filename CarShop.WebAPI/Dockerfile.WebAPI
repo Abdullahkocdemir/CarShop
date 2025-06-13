@@ -1,0 +1,32 @@
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# Copy project files in dependency order
+COPY ["EntityLayer/EntityLayer.csproj", "EntityLayer/"]
+COPY ["DTOsLayer/DTOsLayer.csproj", "DTOsLayer/"]
+COPY ["DataAccessLayer/DataAccessLayer.csproj", "DataAccessLayer/"]
+COPY ["BusinessLayer/BusinessLayer.csproj", "BusinessLayer/"]
+COPY ["CarShop.WebAPI/CarShop.WebAPI.csproj", "CarShop.WebAPI/"]
+
+# Restore dependencies
+RUN dotnet restore "CarShop.WebAPI/CarShop.WebAPI.csproj"
+
+# Copy all source code
+COPY . .
+
+# Build the application
+WORKDIR "/src/CarShop.WebAPI"
+RUN dotnet build "CarShop.WebAPI.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "CarShop.WebAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "CarShop.WebAPI.dll"]

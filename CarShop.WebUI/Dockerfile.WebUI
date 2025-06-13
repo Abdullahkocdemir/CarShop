@@ -1,0 +1,30 @@
+﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# Copy project files in dependency order
+COPY ["EntityLayer/EntityLayer.csproj", "EntityLayer/"]
+COPY ["DTOsLayer/DTOsLayer.csproj", "DTOsLayer/"]
+COPY ["CarShop.WebUI/CarShop.WebUI.csproj", "CarShop.WebUI/"]
+
+# Restore dependencies
+RUN dotnet restore "CarShop.WebUI/CarShop.WebUI.csproj"
+
+# Copy all source code
+COPY . .
+
+# Build the application
+WORKDIR "/src/CarShop.WebUI"
+RUN dotnet build "CarShop.WebUI.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "CarShop.WebUI.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "CarShop.WebUI.dll"]

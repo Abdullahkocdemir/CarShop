@@ -1,0 +1,6 @@
+@CarShop.WebAPI_HostAddress = http://localhost:5159
+
+GET {{CarShop.WebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
