@@ -1,0 +1,52 @@
+﻿@* Views/Admin/Dashboard.cshtml *@
+@{
+    ViewData["Title"] = "Yönetici Panosu";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml"; // Admin layout'unuzu belirtin
+}
+
+<div class="container-fluid">
+    <h1><i class="fas fa-tachometer-alt"></i> Yönetici Panosu</h1>
+    <hr>
+
+    <div class="row">
+        <div class="col-md-6 col-lg-4">
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-comments"></i> RabbitMQ Mesajları
+                </div>
+                <div class="card-body">
+                    <p>Sistemdeki olayların (oluşturma, güncelleme, silme) RabbitMQ üzerinden nasıl akışta olduğunu izleyin.</p>
+                    <a href="@Url.Action("RabbitMQMessages", "Admin")" class="btn btn-primary">Mesajları Görüntüle <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-chart-line"></i> Genel İstatistikler
+                </div>
+                <div class="card-body">
+                    <p>Uygulamanızdaki temel istatistikleri ve performans verilerini görün.</p>
+                    <a href="#" class="btn btn-secondary disabled">Çok Yakında <i class="fas fa-hourglass-half"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-users"></i> Kullanıcı Yönetimi
+                </div>
+                <div class="card-body">
+                    <p>Kullanıcı hesaplarını ve yetkilerini yönetin.</p>
+                    <a href="#" class="btn btn-info disabled">Çok Yakında <i class="fas fa-user-cog"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+}

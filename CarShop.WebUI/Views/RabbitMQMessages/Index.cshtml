@@ -1,0 +1,89 @@
+﻿@{
+    ViewData["Title"] = "RabbitMQ Mesajları";
+    var createdMessages = ViewBag.BrandCreatedMessages as List<DTOsLayer.WebApiDTO.BrandDTO.Messages.BrandCreatedMessage>;
+    var updatedMessages = ViewBag.BrandUpdatedMessages as List<DTOsLayer.WebApiDTO.BrandDTO.Messages.BrandUpdatedMessage>;
+    var deletedMessages = ViewBag.BrandDeletedMessages as List<DTOsLayer.WebApiDTO.BrandDTO.Messages.BrandDeletedMessage>;
+}
+
+<h1>RabbitMQ Mesajları</h1>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Oluşturulan Markalar</h2>
+        @if (createdMessages != null && createdMessages.Any())
+        {
+            <ul class="list-group">
+                @foreach (var msg in createdMessages)
+                {
+                    <li class="list-group-item">
+                        <strong>ID:</strong> @msg.BrandId, <strong>Ad:</strong> @msg.BrandName
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>Hiç oluşturulan marka mesajı yok.</p>
+        }
+    </div>
+
+    <div class="col-md-4">
+        <h2>Güncellenen Markalar</h2>
+        @if (updatedMessages != null && updatedMessages.Any())
+        {
+            <ul class="list-group">
+                @foreach (var msg in updatedMessages)
+                {
+                    <li class="list-group-item">
+                        <strong>ID:</strong> @msg.BrandId, <strong>Yeni Ad:</strong> @msg.BrandName
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>Hiç güncellenen marka mesajı yok.</p>
+        }
+    </div>
+
+    <div class="col-md-4">
+        <h2>Silinen Markalar</h2>
+        @if (deletedMessages != null && deletedMessages.Any())
+        {
+            <ul class="list-group">
+                @foreach (var msg in deletedMessages)
+                {
+                    <li class="list-group-item">
+                        <strong>ID:</strong> @msg.BrandId
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>Hiç silinen marka mesajı yok.</p>
+        }
+    </div>
+</div>
+
+<hr />
+
+<form asp-action="ClearMessages" method="post">
+    <button type="submit" class="btn btn-warning">Mesajları Temizle</button>
+</form>
+
+<style>
+    /* Basit stil ekleme */
+    .list-group-item {
+        margin-bottom: 5px;
+        border-radius: 5px;
+        background-color: #f8f9fa;
+    }
+</style>

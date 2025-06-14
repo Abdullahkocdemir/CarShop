@@ -1,0 +1,258 @@
+﻿@* Views/Admin/RabbitMQMessages.cshtml *@
+@using BusinessLayer.RabbitMQ
+@model Dictionary<string, EntityMessageCounts>
+
+@{
+    ViewData["Title"] = "RabbitMQ Mesaj Takibi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml"; // Admin layout'unuzu belirtin
+}
+
+<div class="container-fluid">
+    <h1><i class="fas fa-comments"></i> RabbitMQ Mesaj Akışı</h1>
+    <hr>
+
+    <div class="alert alert-info" role="alert">
+        Bu sayfa, RabbitMQ üzerinden gelen varlık değişiklik mesajlarını (oluşturma, güncelleme, silme) canlı olarak takip eder. Veriler her 5 saniyede bir otomatik güncellenir.
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-chart-pie"></i> Genel Mesaj Sayıları
+                    <div class="spinner-border text-primary ms-3 d-none" role="status" id="generalCountSpinner">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="metric-grid" id="globalMessageCounts">
+                        <div class="metric-card total">
+                            <h5>Toplam Mesaj</h5>
+                            <div class="metric-value" id="overallTotalCount">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-chart-bar"></i> Varlığa Göre Mesaj İstatistikleri
+                    <div class="spinner-border text-primary ms-3 d-none" role="status" id="entityCountSpinner">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Varlık Tipi</th>
+                                    <th>Oluşturulan</th>
+                                    <th>Güncellenen</th>
+                                    <th>Silinen</th>
+                                    <th>Toplam</th>
+                                    <th>Son İşlem</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="entityMessageCountsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-stream"></i> Son Gelen Tüm Mesajlar
+                    <div class="spinner-border text-primary ms-3 d-none" role="status" id="allMessagesSpinner">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Zaman Damgası</th>
+                                    <th>Varlık Tipi</th>
+                                    <th>Operasyon</th>
+                                    <th>Mesaj Detayı</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentAllMessagesTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // İlk yüklemede ve sonra her 5 saniyede bir verileri güncelle
+            updateMessageData();
+            setInterval(updateMessageData, 5000); // Her 5 saniyede bir güncelle
+
+            function updateMessageData() {
+                updateGlobalCounts();
+                updateEntityCounts();
+                updateRecentAllMessages();
+            }
+
+            function updateGlobalCounts() {
+                $('#generalCountSpinner').removeClass('d-none');
+                $.ajax({
+                    url: '/Admin/GetMessageCounts',
+                    type: 'GET',
+                    success: function (data) {
+                        let overallTotal = 0;
+                        for (const entityType in data) {
+                            if (data.hasOwnProperty(entityType)) {
+                                overallTotal += data[entityType].totalCount;
+                            }
+                        }
+                        $('#overallTotalCount').text(overallTotal);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Genel mesaj sayıları alınamadı:', error);
+                    },
+                    complete: function() {
+                        $('#generalCountSpinner').addClass('d-none');
+                    }
+                });
+            }
+
+            function updateEntityCounts() {
+                $('#entityCountSpinner').removeClass('d-none');
+                $.ajax({
+                    url: '/Admin/GetMessageCounts',
+                    type: 'GET',
+                    success: function (data) {
+                        const tbody = $('#entityMessageCountsTableBody');
+                        tbody.empty(); // Mevcut içeriği temizle
+
+                        if (Object.keys(data).length === 0) {
+                            tbody.append('<tr><td colspan="7" class="text-center">Henüz işlenmiş bir mesaj bulunmuyor.</td></tr>');
+                            return;
+                        }
+
+                        for (const entityType in data) {
+                            if (data.hasOwnProperty(entityType)) {
+                                const counts = data[entityType];
+                                let latestTimestamp = "N/A"; // Son işlem zamanını gösterecek bir mantık eklenebilir.
+                                // Şu anda sadece sayıları alıyoruz, son işlem zamanı için ayrı bir endpoint/veri gerekir.
+                                // Ya da GetEntityMessages endpointini çağırıp ilk mesajın zaman damgasını alabiliriz.
+
+                                const row = `
+                                    <tr>
+                                        <td>${counts.entityType}</td>
+                                        <td><span class="badge badge-success">${counts.createdCount}</span></td>
+                                        <td><span class="badge badge-warning">${counts.updatedCount}</span></td>
+                                        <td><span class="badge badge-danger">${counts.deletedCount}</span></td>
+                                        <td><span class="badge badge-info">${counts.totalCount}</span></td>
+                                        <td>${latestTimestamp}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary view-entity-messages-btn" data-entity-type="${counts.entityType}">
+                                                Detay <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `;
+                                tbody.append(row);
+                            }
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Varlığa göre mesaj sayıları alınamadı:', error);
+                    },
+                    complete: function() {
+                        $('#entityCountSpinner').addClass('d-none');
+                    }
+                });
+            }
+
+            function updateRecentAllMessages() {
+                $('#allMessagesSpinner').removeClass('d-none');
+                $.ajax({
+                    url: '/Admin/GetAllMessages',
+                    type: 'GET',
+                    success: function (data) {
+                        const tbody = $('#recentAllMessagesTableBody');
+                        tbody.empty(); // Mevcut içeriği temizle
+
+                        if (data.length === 0) {
+                            tbody.append('<tr><td colspan="4" class="text-center">Henüz son mesaj bulunmuyor.</td></tr>');
+                            return;
+                        }
+
+                        data.forEach(function (message) {
+                            let badgeClass = '';
+                            if (message.operation === 'Created') {
+                                badgeClass = 'badge-success';
+                            } else if (message.operation === 'Updated') {
+                                badgeClass = 'badge-warning';
+                            } else if (message.operation === 'Deleted') {
+                                badgeClass = 'badge-danger';
+                            } else {
+                                badgeClass = 'badge-info';
+                            }
+
+                            const row = `
+                                <tr>
+                                    <td>${message.timestamp}</td>
+                                    <td>${message.entityType}</td>
+                                    <td><span class="badge ${badgeClass}">${message.operation}</span></td>
+                                    <td>${message.message}</td>
+                                </tr>
+                            `;
+                            tbody.append(row);
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Tüm son mesajlar alınamadı:', error);
+                    },
+                    complete: function() {
+                        $('#allMessagesSpinner').addClass('d-none');
+                    }
+                });
+            }
+
+            // 'Detay' butonlarına tıklama olayı
+            // NOT: Şu an için bu butonlar sadece bir örnek.
+            // Bu kısma tıklanınca belirli bir varlığın detay mesajlarını gösterecek
+            // bir modal veya ayrı bir sayfa eklenebilir.
+            $(document).on('click', '.view-entity-messages-btn', function() {
+                const entityType = $(this).data('entity-type');
+                alert(`"${entityType}" için detay mesajlarını gösterme özelliği geliştirilecek!`);
+                // Buradan Admin/GetEntityMessages?entityType=X endpointini çağırıp
+                // bir modal içinde gösterebilirsin.
+                // Örnek:
+                /*
+                $.ajax({
+                    url: `/Admin/GetEntityMessages?entityType=${entityType}`,
+                    type: 'GET',
+                    success: function(messages) {
+                        // Bir modal açıp mesajları içine basabilirsin
+                        console.log(`Detay mesajlar for ${entityType}:`, messages);
+                        // showModalWithMessages(messages);
+                    }
+                });
+                */
+            });
+
+        });
+    </script>
+}

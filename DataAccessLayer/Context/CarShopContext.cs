@@ -1,6 +1,6 @@
-﻿using EntityLayer.Entities; 
+﻿using EntityLayer.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore; 
+using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer.Context
 {
@@ -11,13 +11,20 @@ namespace DataAccessLayer.Context
             : base(options)
         {
         }
-
-        public DbSet<Product> Products { get; set; }
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
         }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Banner> Banners { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
+        public DbSet<Feature> Features { get; set; }
+        public DbSet<NewLatest> NewLatests { get; set; }
+        public DbSet<Service> Services { get; set; }
+        public DbSet<Showroom> Showrooms { get; set; }
+        public DbSet<WhyUse> WhyUses { get; set; }
+
+
     }
 }
