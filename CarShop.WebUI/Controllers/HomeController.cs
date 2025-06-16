@@ -21,6 +21,10 @@ namespace CarShop.WebUI.Controllers
         {
             return View();
         }
+        public IActionResult AdminBar()
+        {
+            return View();
+        }
         public IActionResult Deneme()
         {
             return View();

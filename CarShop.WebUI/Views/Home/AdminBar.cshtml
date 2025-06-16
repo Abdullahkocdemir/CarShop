@@ -1,0 +1,475 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Admin Dashboard - Ürünler</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            pointer-events: none;
+        }
+
+        .logo {
+            padding: 0 2rem 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo h1 {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-menu {
+            list-style: none;
+            position: relative;
+            z-index: 2;
+        }
+
+        .nav-item {
+            margin: 0.5rem 1rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(8px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-link i {
+            margin-right: 1rem;
+            font-size: 1.1rem;
+            width: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h2 {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            color: white;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-weight: bold;
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none; /* Mobil görünümde sidebar'ı gizle */
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem;
+            }
+
+            .header h2 {
+                margin-bottom: 1rem;
+            }
+
+            .user-info {
+                margin-top: 1rem;
+            }
+        }
+
+        /* Table Specific Styles (Adapted for the dashboard theme) */
+        .product-table-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            overflow-x: auto; /* Küçük ekranlarda tablo taşması için */
+            margin-top: 2rem; /* Üst kısımla arayı açmak için */
+        }
+
+        .product-table-card .table {
+            margin-bottom: 0; /* Bootstrap tablonun varsayılan margin-bottom'unu sıfırla */
+        }
+
+        .product-table-card .table thead th {
+            background-color: rgba(0, 0, 0, 0.2); /* Koyu başlık arka planı */
+            color: white;
+            border-color: rgba(255, 255, 255, 0.3);
+            text-align: center;
+            vertical-align: middle;
+            font-weight: 600;
+        }
+
+        .product-table-card .table tbody tr {
+            background-color: rgba(255, 255, 255, 0.05); /* Satır arka planı */
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .product-table-card .table tbody tr:nth-of-type(odd) {
+            background-color: rgba(255, 255, 255, 0.02); /* Tek satırlar için hafif fark */
+        }
+
+        .product-table-card .table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.1); /* Hover etkisi */
+        }
+
+        .product-table-card .table td,
+        .product-table-card .table th {
+            border-color: rgba(255, 255, 255, 0.1);
+            vertical-align: middle;
+        }
+
+        .product-table-card .table td {
+            text-align: center; /* İçerik ortalama */
+        }
+
+        .btn-new-product {
+            background: linear-gradient(45deg, #28a745, #218838); /* Yeşil gradient */
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-new-product:hover {
+            background: linear-gradient(45deg, #218838, #1e7e34);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Action button styles */
+        .btn-info {
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+            color: white;
+        }
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+            color: #212529;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: white;
+        }
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            border-radius: 0.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <nav class="sidebar">
+            <div class="logo">
+                <h1><i class="fas fa-chart-line"></i> AdminPro</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        <span>Kullanıcılar</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Siparişler</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-box"></i>
+                        <span>Ürünler</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Raporlar</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Ayarlar</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-envelope"></i>
+                        <span>Mesajlar</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Çıkış Yap</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="header">
+                <div>
+                    <h2>Ürün Listesi</h2>
+                    <p style="color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">Sisteminizdeki tüm ürünleri buradan yönetebilirsiniz.</p>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">AK</div>
+                    <div>
+                        <div>Admin Kullanıcı</div>
+                        <div style="font-size: 0.8rem; opacity: 0.7;">admin@example.com</div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="product-table-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="text-white">Mevcut Ürünler</h3>
+                    <a href="/urun/ekle" class="btn btn-new-product">
+                        <i class="fas fa-plus"></i> Yeni Ürün Ekle
+                    </a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered shadow">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Ürün Adı</th>
+                                <th>Marka</th>
+                                <th>Fiyat</th>
+                                <th>Stok</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Telefon X Pro</td>
+                                <td>Samsung</td>
+                                <td>15.000 ₺</td>
+                                <td>20</td>
+                                <td class="text-center">
+                                    <a href="/urun/detay/1" class="btn btn-sm btn-info me-1">
+                                        <i class="fas fa-circle-info"></i> Detay
+                                    </a>
+                                    <a href="/urun/guncelle/1" class="btn btn-sm btn-warning me-1">
+                                        <i class="fas fa-pen-to-square"></i> Güncelle
+                                    </a>
+                                    <a href="/urun/sil/1" class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Silmek istediğinize emin misiniz?')">
+                                        <i class="fas fa-trash"></i> Sil
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Dizüstü Bilgisayar Z</td>
+                                <td>HP</td>
+                                <td>22.500 ₺</td>
+                                <td>12</td>
+                                <td class="text-center">
+                                    <a href="/urun/detay/2" class="btn btn-sm btn-info me-1">
+                                        <i class="fas fa-circle-info"></i> Detay
+                                    </a>
+                                    <a href="/urun/guncelle/2" class="btn btn-sm btn-warning me-1">
+                                        <i class="fas fa-pen-to-square"></i> Güncelle
+                                    </a>
+                                    <a href="/urun/sil/2" class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Silmek istediğinize emin misiniz?')">
+                                        <i class="fas fa-trash"></i> Sil
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Akıllı Saat Y</td>
+                                <td>Apple</td>
+                                <td>4.200 ₺</td>
+                                <td>35</td>
+                                <td class="text-center">
+                                    <a href="/urun/detay/3" class="btn btn-sm btn-info me-1">
+                                        <i class="fas fa-circle-info"></i> Detay
+                                    </a>
+                                    <a href="/urun/guncelle/3" class="btn btn-sm btn-warning me-1">
+                                        <i class="fas fa-pen-to-square"></i> Güncelle
+                                    </a>
+                                    <a href="/urun/sil/3" class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Silmek istediğinize emin misiniz?')">
+                                        <i class="fas fa-trash"></i> Sil
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Kablosuz Kulaklık</td>
+                                <td>Sony</td>
+                                <td>1.800 ₺</td>
+                                <td>50</td>
+                                <td class="text-center">
+                                    <a href="/urun/detay/4" class="btn btn-sm btn-info me-1">
+                                        <i class="fas fa-circle-info"></i> Detay
+                                    </a>
+                                    <a href="/urun/guncelle/4" class="btn btn-sm btn-warning me-1">
+                                        <i class="fas fa-pen-to-square"></i> Güncelle
+                                    </a>
+                                    <a href="/urun/sil/4" class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Silmek istediğinize emin misiniz?')">
+                                        <i class="fas fa-trash"></i> Sil
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>Monitör Ultra HD</td>
+                                <td>Dell</td>
+                                <td>7.900 ₺</td>
+                                <td>8</td>
+                                <td class="text-center">
+                                    <a href="/urun/detay/5" class="btn btn-sm btn-info me-1">
+                                        <i class="fas fa-circle-info"></i> Detay
+                                    </a>
+                                    <a href="/urun/guncelle/5" class="btn btn-sm btn-warning me-1">
+                                        <i class="fas fa-pen-to-square"></i> Güncelle
+                                    </a>
+                                    <a href="/urun/sil/5" class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Silmek istediğinize emin misiniz?')">
+                                        <i class="fas fa-trash"></i> Sil
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Etkileşimli navigasyon (sidebar)
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                // Sadece demo amaçlı, gerçek uygulamada sayfa yüklemesini engellemeyin
+                // e.preventDefault();
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
