@@ -18,6 +18,8 @@ namespace DataAccessLayer.Context
         }
         public DbSet<Product> Products { get; set; }
         public DbSet<Banner> Banners { get; set; }
+        public DbSet<Brand> Brands { get; set; }
+        public DbSet<Broadcast> Broadcasts { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<Feature> Features { get; set; }
         public DbSet<NewLatest> NewLatests { get; set; }

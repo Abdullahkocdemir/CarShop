@@ -1,11 +1,23 @@
 using BusinessLayer.RabbitMQ;
+using CarShop.WebUI.Models;
+using Microsoft.Extensions.Options;
+using NuGet.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpClient("CarShopApiClient", (sp, client) =>
+{
+    var apiSettings = sp.GetRequiredService<IOptions<ApiSettings>>().Value;
+    if (string.IsNullOrEmpty(apiSettings.BaseUrl))
+    {
+        throw new InvalidOperationException("API BaseUrl is not configured in appsettings.json or is empty.");
+    }
+    client.BaseAddress = new Uri(apiSettings.BaseUrl); 
+});
 
-// ?? YENÝ ENHANCED RABBITMQ CONSUMER SERVÝSÝ
+
 builder.Services.AddSingleton<EnhancedRabbitMQConsumerService>(sp =>
 {
     var configuration = sp.GetRequiredService<IConfiguration>();
@@ -14,7 +26,7 @@ builder.Services.AddSingleton<EnhancedRabbitMQConsumerService>(sp =>
     var password = configuration.GetValue<string>("RabbitMQ:Password") ?? "Abdullah159";
 
     var consumerService = new EnhancedRabbitMQConsumerService(hostName, userName, password);
-    consumerService.StartConsumingAllEntities(); // ?? TÜM ENTÝTY'LERÝ DÝNLE
+    consumerService.StartConsumingAllEntities(); 
     return consumerService;
 });
 var app = builder.Build();

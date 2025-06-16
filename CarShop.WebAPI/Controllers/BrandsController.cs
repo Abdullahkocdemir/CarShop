@@ -1,7 +1,6 @@
 ﻿using BusinessLayer.Abstract;
 using BusinessLayer.RabbitMQ;
-using DTOsLayer.WebApiDTO.BrandDTO.DTO;
-using DTOsLayer.WebApiDTO.BrandDTO.Messages;
+using DTOsLayer.WebApiDTO.BrandDTO;
 using EntityLayer.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +31,7 @@ namespace CarShop.WebAPI.Controllers
                 };
 
                 _brandService.BAdd(brand);
-                PublishEntityCreated(brand); 
+                PublishEntityCreated(brand);
 
                 return Ok(new { Message = "Brand added and message published.", BrandId = brand.BrandId });
             }

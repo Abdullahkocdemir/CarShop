@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace EntityLayer.Entities
-{
+{   
     public class Brand
     {
         public int BrandId { get; set; }
@@ -15,7 +15,18 @@ namespace EntityLayer.Entities
         [StringLength(15)]
         public string BrandName { get; set; } = string.Empty;
 
+        [Required]
+        [Display(Name = "Ülke")]
+        [StringLength(15)]
+        public string Country { get; set; } = string.Empty;
+
+        [Required]
+        [Display(Name = "Yıl")]
+        [StringLength(4)]
+        public string EstablishmentYear { get; set; } = string.Empty;
+
+        public bool IsActive { get; set; }
         // Marka ürünleri
-        public virtual ICollection<Product>? Products { get; set; }
+        public virtual ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }

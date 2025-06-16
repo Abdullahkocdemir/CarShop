@@ -1,8 +1,60 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Tablo Örneği</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+</head>
+<body class="bg-light">
+
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="text-primary">Ürün Listesi</h3>
+            <a href="/urun/ekle" class="btn btn-success">
+                <i class="fas fa-plus"></i> Yeni Ekle
+            </a>
+        </div>
+
+        <table class="table table-hover table-bordered shadow bg-white">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>#</th>
+                    <th>Ürün Adı</th>
+                    <th>Marka</th>
+                    <th>Fiyat</th>
+                    <th>Stok</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Telefon</td>
+                    <td>Samsung</td>
+                    <td>15.000 ₺</td>
+                    <td>20</td>
+                    <td class="text-center">
+                        <a href="/urun/detay/1" class="btn btn-sm btn-info me-1">
+                            <i class="fas fa-circle-info"></i> Detay
+                        </a>
+                        <a href="/urun/guncelle/1" class="btn btn-sm btn-warning me-1">
+                            <i class="fas fa-pen-to-square"></i> Güncelle
+                        </a>
+                        <a href="/urun/sil/1" class="btn btn-sm btn-danger"
+                           onclick="return confirm('Silmek istediğinize emin misiniz?')">
+                            <i class="fas fa-trash"></i> Sil
+                        </a>
+                    </td>
+                </tr>
+                <!-- Daha fazla veri buraya -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
