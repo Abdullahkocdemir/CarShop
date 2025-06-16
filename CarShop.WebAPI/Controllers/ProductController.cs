@@ -1,6 +1,7 @@
 ﻿using AutoMapper; // AutoMapper namespace'ini ekleyin
 using BusinessLayer.Abstract;
 using BusinessLayer.RabbitMQ;
+using DTOsLayer.WebApiDTO.BannerDTO;
 using DTOsLayer.WebApiDTO.ProductDTOs;
 using EntityLayer.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -12,79 +13,48 @@ namespace CarShop.WebAPI.Controllers
     public class ProductController : BaseEntityController
     {
         private readonly IProductService _productService;
-        private readonly IMapper _mapper; // IMapper'ı tanımlayın
+        private readonly IMapper _mapper;
         protected override string EntityTypeName => "Product";
 
         public ProductController(IProductService productService, EnhancedRabbitMQService rabbitMqService, IMapper mapper)
             : base(rabbitMqService)
         {
             _productService = productService;
-            _mapper = mapper; // IMapper'ı enjekte edin
+            _mapper = mapper;
         }
-
+        [HttpGet]
+        public IActionResult GetListAllProduct()
+        {
+            var values = _mapper.Map<List<ResultProductDTO>>(_productService.BGetListAll());
+            return Ok(values);
+        }
         [HttpPost]
         public IActionResult AddProduct(CreateProductDTO dto)
         {
-            try
-            {
-                // AutoMapper kullanarak DTO'dan Varlığa eşleme yapın
-                var product = _mapper.Map<Product>(dto);
-                // Oluşturma tarihini, eğer mapping profile'da özel bir mantıkla ele alınmadıysa, açıkça ayarlayabilirsiniz
-                // product.CreatedDate = DateTime.UtcNow;
-
-                _productService.BAdd(product);
-                PublishEntityCreated(product);
-
-                return Ok(new { Message = "Ürün başarıyla eklendi ve mesaj yayınlandı.", ProductId = product.ProductId });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"AddProduct'ta hata: {ex.Message}");
-                return StatusCode(500, "Ürün eklenirken bir hata oluştu.");
-            }
+            var product = _mapper.Map<Product>(dto);
+            _productService.BAdd(product);
+            PublishEntityCreated(product);
+            return Ok(new { Message = "Ürün başarıyla eklendi ve mesaj yayınlandı.", ProductId = product.ProductId });
         }
 
         [HttpPut]
         public IActionResult UpdateProduct(UpdateProductDTO dto)
         {
-            try
-            {
-                var existingProduct = _productService.BGetById(dto.ProductId);
-                if (existingProduct == null)
-                    return NotFound("Ürün bulunamadı.");
+            var existingProduct = _productService.BGetById(dto.ProductId);
+            _mapper.Map(dto, existingProduct);
+            _productService.BUpdate(existingProduct);
+            PublishEntityUpdated(existingProduct);
 
-                _mapper.Map(dto, existingProduct);
-                _productService.BUpdate(existingProduct);
-                PublishEntityUpdated(existingProduct);
-
-                return Ok(new { Message = "Ürün başarıyla güncellendi ve mesaj yayınlandı.", ProductId = existingProduct.ProductId });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"UpdateProduct'ta hata: {ex.Message}");
-                return StatusCode(500, "Ürün güncellenirken bir hata oluştu.");
-            }
+            return Ok(new { Message = "Ürün başarıyla güncellendi ve mesaj yayınlandı.", ProductId = existingProduct.ProductId });
         }
 
         [HttpDelete("{id}")]
         public IActionResult DeleteProduct(int id)
         {
-            try
-            {
-                var product = _productService.BGetById(id);
-                if (product == null)
-                    return NotFound("Ürün bulunamadı.");
-
-                _productService.BDelete(product);
-                PublishEntityDeleted(product);
-
-                return Ok(new { Message = "Ürün başarıyla silindi ve mesaj yayınlandı.", ProductId = id });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"DeleteProduct'ta hata: {ex.Message}");
-                return StatusCode(500, "Ürün silinirken bir hata oluştu.");
-            }
+            var product = _productService.BGetById(id);
+            _productService.BDelete(product);
+            PublishEntityDeleted(product);
+            return Ok(new { Message = "Ürün başarıyla silindi ve mesaj yayınlandı.", ProductId = id });
         }
     }
 }
