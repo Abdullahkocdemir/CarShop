@@ -1,4 +1,4 @@
-﻿using DTOsLayer.WebApiDTO.ProductDTOs.DTO;
+﻿using DTOsLayer.WebApiDTO.ProductDTOs;
 using FluentValidation;
 using System;
 using System.Collections.Generic;

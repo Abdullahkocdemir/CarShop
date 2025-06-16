@@ -1,4 +1,4 @@
-﻿using DTOsLayer.WebApiDTO;
+﻿using DTOsLayer.WebApiDTO.RabbitMQ;
 using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
@@ -12,8 +12,8 @@ namespace BusinessLayer.RabbitMQ
     public class EnhancedRabbitMQService : IDisposable
     {
         private readonly ConnectionFactory _factory;
-        private IConnection _connection;
-        private IModel _channel;
+        private IConnection? _connection;
+        private IModel? _channel;
 
         public EnhancedRabbitMQService()
         {
@@ -31,6 +31,11 @@ namespace BusinessLayer.RabbitMQ
             try
             {
                 EnsureConnectionAndChannel();
+                if (_channel == null)
+                {
+                    Console.WriteLine(" RabbitMQ kanalı kullanıma hazır değil.");
+                    return;
+                }
 
                 var exchangeName = $"{entityType.ToLower()}_exchange";
                 var routingKey = $"{entityType.ToLower()}.{operation.ToLower()}";
@@ -72,11 +77,11 @@ namespace BusinessLayer.RabbitMQ
                     body: body
                 );
 
-                Console.WriteLine($"✅ {entityType} {operation} mesajı gönderildi: {routingKey}");
+                Console.WriteLine($" {entityType} {operation} mesajı gönderildi: {routingKey}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ RabbitMQ mesaj gönderme hatası: {ex.Message}");
+                Console.WriteLine($" RabbitMQ mesaj gönderme hatası: {ex.Message}");
                 throw;
             }
         }
@@ -86,6 +91,12 @@ namespace BusinessLayer.RabbitMQ
             try
             {
                 EnsureConnectionAndChannel();
+
+                if (_channel == null)
+                {
+                    Console.WriteLine(" RabbitMQ kanalı kullanıma hazır değil. Kuyruklar oluşturulamıyor.");
+                    return;
+                }
 
                 var exchangeName = $"{entityType.ToLower()}_exchange";
 
@@ -117,11 +128,11 @@ namespace BusinessLayer.RabbitMQ
                     );
                 }
 
-                Console.WriteLine($"✅ {entityType} için kuyruklar oluşturuldu.");
+                Console.WriteLine($" {entityType} için kuyruklar oluşturuldu.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ {entityType} kuyruk oluşturma hatası: {ex.Message}");
+                Console.WriteLine($" {entityType} kuyruk oluşturma hatası: {ex.Message}");
                 throw;
             }
         }
@@ -155,10 +166,15 @@ namespace BusinessLayer.RabbitMQ
 
         private int GetEntityId<T>(T entity)
         {
-            var property = entity.GetType().GetProperty($"{entity.GetType().Name}Id");
+            var property = entity?.GetType().GetProperty($"{entity?.GetType().Name}Id");
+
             if (property != null)
             {
-                return (int)property.GetValue(entity);
+                object? value = property.GetValue(entity);
+                if (value is int id)
+                {
+                    return id;
+                }
             }
             return 0;
         }
@@ -169,11 +185,11 @@ namespace BusinessLayer.RabbitMQ
             {
                 _channel?.Close();
                 _connection?.Close();
-                Console.WriteLine("🔌 RabbitMQ bağlantısı kapatıldı.");
+                Console.WriteLine(" RabbitMQ bağlantısı kapatıldı.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ RabbitMQ kapatma hatası: {ex.Message}");
+                Console.WriteLine($" RabbitMQ kapatma hatası: {ex.Message}");
             }
         }
     }

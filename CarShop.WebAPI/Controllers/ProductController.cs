@@ -2,8 +2,6 @@
 using BusinessLayer.Abstract;
 using BusinessLayer.RabbitMQ;
 using DTOsLayer.WebApiDTO.ProductDTOs;
-using DTOsLayer.WebApiDTO.ProductDTOs.DTO;
-using DTOsLayer.WebApiDTO.ProductDTOs.Messages;
 using EntityLayer.Entities;
 using Microsoft.AspNetCore.Mvc;
 

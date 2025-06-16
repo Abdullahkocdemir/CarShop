@@ -32,7 +32,7 @@ namespace CarShop.WebAPI.Controllers
                 };
 
                 _brandService.BAdd(brand);
-                PublishEntityCreated(brand); // 🎯 Otomatik mesaj gönderimi
+                PublishEntityCreated(brand); 
 
                 return Ok(new { Message = "Brand added and message published.", BrandId = brand.BrandId });
             }

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DTOsLayer.WebApiDTO.ProductDTOs.DTO
+namespace DTOsLayer.WebApiDTO.ProductDTOs
 {
-    public class UpdateProductDTO
+    public class ResultProductDTO
     {
         public int ProductId { get; set; }
         public string Name { get; set; } = string.Empty;
@@ -17,5 +17,4 @@ namespace DTOsLayer.WebApiDTO.ProductDTOs.DTO
         public int BrandId { get; set; }
         public DateTime CreatedDate { get; set; }
     }
-
 }

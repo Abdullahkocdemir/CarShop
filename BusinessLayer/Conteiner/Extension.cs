@@ -15,12 +15,37 @@ namespace BusinessLayer.Conteiner
     {
         public static void ConteinerDependencies(this IServiceCollection Services)
         {
-            Services.AddScoped<IProductDal, EfProductDal>();
-            Services.AddScoped<IProductService, ProductManager>();
-
+            Services.AddScoped<IBannerDal, EfBannerDal>();
+            Services.AddScoped<IBannerService, BannerManager>();
 
             Services.AddScoped<IBrandDal, EfBrandDal>();
             Services.AddScoped<IBrandService, BrandManager>();
+
+            Services.AddScoped<IBroadcastDal, EfBroadcastDal>();
+            Services.AddScoped<IBroadcastService, BroadcastManager>();
+
+            Services.AddScoped<IContactDal, EfContactDal>();
+            Services.AddScoped<IContactService, ContactManager>();
+
+            Services.AddScoped<IFeatureDal, EfFeatureDal>();
+            Services.AddScoped<IFeatureService, FeatureManager>();
+
+            Services.AddScoped<INewLatestDal, EfNewLatestDal>();
+            Services.AddScoped<INewLatestService, NewLatestManager>();
+
+            Services.AddScoped<IProductDal, EfProductDal>();
+            Services.AddScoped<IProductService, ProductManager>();
+
+            Services.AddScoped<IServiceDal, EfServiceDal>();
+            Services.AddScoped<IServiceService, ServiceManager>();
+
+
+            Services.AddScoped<IShowroomDal, EfShowroomDal>();
+            Services.AddScoped<IShowroomService, ShowroomManager>();
+
+
+            Services.AddScoped<IWhyUseDal, EfWhyUseDal>();
+            Services.AddScoped<IWhyUseService, WhyUseManager>();
         }
     }
 }

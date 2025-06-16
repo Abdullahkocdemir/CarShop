@@ -1,7 +1,7 @@
 ﻿using BusinessLayer.Abstract;
 using DataAccessLayer.Abstract;
 using EntityLayer.Entities;
-using FluentValidation; 
+using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,33 +13,19 @@ namespace BusinessLayer.Concrete
     public class ProductManager : IProductService
     {
         private readonly IProductDal _productDal;
-        private readonly IValidator<Product> _productValidator;
 
-        public ProductManager(IProductDal productDal, IValidator<Product> productValidator)
+        public ProductManager(IProductDal productDal)
         {
             _productDal = productDal;
-            _productValidator = productValidator; 
         }
 
         public void BAdd(Product entity)
         {
-            var validationResult = _productValidator.Validate(entity);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-            }
-
             _productDal.Add(entity);
         }
 
         public void BUpdate(Product entity)
         {
-            var validationResult = _productValidator.Validate(entity);
-            if (!validationResult.IsValid)
-            {
-                throw new ValidationException(validationResult.Errors);
-            }
-
             _productDal.Update(entity);
         }
 
@@ -58,7 +44,7 @@ namespace BusinessLayer.Concrete
             return _productDal.GetListAll();
         }
 
-        public List<Product> BGetProductWithCategory() 
+        public List<Product> BGetProductWithCategory()
         {
             return _productDal.GetProductWithBrand();
         }

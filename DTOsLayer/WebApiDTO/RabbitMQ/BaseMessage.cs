@@ -4,17 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DTOsLayer.WebApiDTO
+namespace DTOsLayer.WebApiDTO.RabbitMQ
 {
     public abstract class BaseMessage
     {
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
         public string EntityType { get; set; } = string.Empty;
-        public string Operation { get; set; } = string.Empty; // Created, Updated, Deleted
+        public string Operation { get; set; } = string.Empty;
     }
+
     public class EntityCreatedMessage<T> : BaseMessage
     {
-        public T Entity { get; set; }
+
+        public required T Entity { get; set; }
+
         public EntityCreatedMessage()
         {
             Operation = "Created";
@@ -23,7 +26,8 @@ namespace DTOsLayer.WebApiDTO
 
     public class EntityUpdatedMessage<T> : BaseMessage
     {
-        public T Entity { get; set; }
+        public required T Entity { get; set; }
+
         public EntityUpdatedMessage()
         {
             Operation = "Updated";

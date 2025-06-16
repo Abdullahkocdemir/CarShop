@@ -1,5 +1,4 @@
-﻿using DTOsLayer.WebApiDTO;
-using RabbitMQ.Client.Events;
+﻿using RabbitMQ.Client.Events;
 using RabbitMQ.Client;
 using System;
 using System.Collections.Concurrent;
@@ -8,19 +7,18 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using DTOsLayer.WebApiDTO.RabbitMQ;
 
 namespace BusinessLayer.RabbitMQ
 {
     public class EnhancedRabbitMQConsumerService : IDisposable
     {
         private readonly ConnectionFactory _factory;
-        private IConnection _connection;
-        private IModel _channel;
+        private IConnection? _connection;
+        private IModel? _channel;
 
-        // Tüm mesajları saklayan thread-safe collection
         public static readonly ConcurrentBag<BaseMessage> AllMessages = new ConcurrentBag<BaseMessage>();
 
-        // Entity tipine göre mesajları saklayan dictionary
         public static readonly ConcurrentDictionary<string, ConcurrentBag<BaseMessage>> MessagesByEntity
             = new ConcurrentDictionary<string, ConcurrentBag<BaseMessage>>();
 
@@ -53,17 +51,23 @@ namespace BusinessLayer.RabbitMQ
                     SetupConsumerForEntity(entityType);
                 }
 
-                Console.WriteLine("🎧 Tüm entity'ler için RabbitMQ Consumer başlatıldı!");
+                Console.WriteLine(" Tüm entity'ler için RabbitMQ Consumer başlatıldı!");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ RabbitMQ Consumer başlatma hatası: {ex.Message}");
+                Console.WriteLine($" RabbitMQ Consumer başlatma hatası: {ex.Message}");
                 throw;
             }
         }
 
         private void SetupConsumerForEntity(string entityType)
         {
+            if (_channel == null)
+            {
+                Console.WriteLine(" Kanal başlatılmamış! Consumer kurulamıyor.");
+                return;
+            }
+
             var exchangeName = $"{entityType}_exchange";
 
             // Exchange'i declare et
@@ -99,26 +103,26 @@ namespace BusinessLayer.RabbitMQ
                 consumer: consumer
             );
 
-            Console.WriteLine($"👂 {entityType.ToUpper()} mesajları dinleniyor...");
+            Console.WriteLine($" {entityType.ToUpper()} mesajları dinleniyor...");
         }
 
-        private void OnMessageReceived(object model, BasicDeliverEventArgs ea, string entityType)
+        private void OnMessageReceived(object? model, BasicDeliverEventArgs ea, string entityType) // model? olarak değiştirildi
         {
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
 
-            Console.WriteLine($"📨 {entityType.ToUpper()} mesajı alındı - Routing Key: {ea.RoutingKey}");
+            Console.WriteLine($" {entityType.ToUpper()} mesajı alındı - Routing Key: {ea.RoutingKey}");
 
             try
             {
-                BaseMessage deserializedMessage = null;
-                var operation = ea.RoutingKey.Split('.')[1]; // brand.created -> created
+                BaseMessage? deserializedMessage = null;
+                var operation = ea.RoutingKey.Split('.')[1];
 
                 switch (operation)
                 {
                     case "created":
                         deserializedMessage = JsonSerializer.Deserialize<EntityCreatedMessage<object>>(message);
-                        Console.WriteLine($"➕ {entityType.ToUpper()} Created");
+                        Console.WriteLine($" {entityType.ToUpper()} Created");
                         break;
 
                     case "updated":
@@ -128,11 +132,11 @@ namespace BusinessLayer.RabbitMQ
 
                     case "deleted":
                         deserializedMessage = JsonSerializer.Deserialize<EntityDeletedMessage>(message);
-                        Console.WriteLine($"🗑️ {entityType.ToUpper()} Deleted");
+                        Console.WriteLine($" {entityType.ToUpper()} Deleted");
                         break;
 
                     default:
-                        Console.WriteLine($"❓ Bilinmeyen operasyon: {operation}");
+                        Console.WriteLine($" Bilinmeyen operasyon: {operation}");
                         break;
                 }
 
@@ -142,26 +146,26 @@ namespace BusinessLayer.RabbitMQ
                     AllMessages.Add(deserializedMessage);
 
                     // Entity tipine özel listeye ekle
-                    if (!MessagesByEntity.ContainsKey(entityType))
-                    {
-                        MessagesByEntity[entityType] = new ConcurrentBag<BaseMessage>();
-                    }
+                    // TryAdd kullanmak daha güvenli ve ConcurrentDictionary'nin yapısına daha uygun
+                    MessagesByEntity.TryAdd(entityType, new ConcurrentBag<BaseMessage>());
                     MessagesByEntity[entityType].Add(deserializedMessage);
 
-                    Console.WriteLine($"✅ Mesaj kaydedildi. Toplam: {AllMessages.Count}");
+                    Console.WriteLine($" Mesaj kaydedildi. Toplam: {AllMessages.Count}");
                 }
 
-                _channel.BasicAck(ea.DeliveryTag, false);
+                // _channel null olabileceği için kontrol ekliyoruz, ancak bu metod sadece kanal aktifken çağrılmalı
+                _channel?.BasicAck(ea.DeliveryTag, false);
             }
             catch (JsonException ex)
             {
-                Console.WriteLine($"❌ JSON Parse Hatası: {ex.Message}");
-                _channel.BasicAck(ea.DeliveryTag, false);
+                Console.WriteLine($" JSON Parse Hatası: {ex.Message}");
+                _channel?.BasicAck(ea.DeliveryTag, false); // Hata durumunda da acknowledge etmeli
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Mesaj işleme hatası: {ex.Message}");
-                _channel.BasicNack(ea.DeliveryTag, false, true);
+                Console.WriteLine($" Mesaj işleme hatası: {ex.Message}");
+                // _channel null olabileceği için kontrol ekliyoruz
+                _channel?.BasicNack(ea.DeliveryTag, false, true);
             }
         }
 
@@ -215,7 +219,6 @@ namespace BusinessLayer.RabbitMQ
             }
         }
     }
-
     public class EntityMessageCounts
     {
         public string EntityType { get; set; } = string.Empty;
@@ -224,4 +227,6 @@ namespace BusinessLayer.RabbitMQ
         public int DeletedCount { get; set; }
         public int TotalCount => CreatedCount + UpdatedCount + DeletedCount;
     }
+
+
 }
