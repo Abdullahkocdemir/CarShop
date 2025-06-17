@@ -1,8 +1,128 @@
-﻿
-@{
-    ViewData["Title"] = "Index";
+﻿@{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<h1>Index</h1>
 
+
+
+
+<div class="product-table-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="text-white">Mevcut Ürünler</h3>
+                    <a href="/urun/ekle" class="btn btn-new-product">
+                        <i class="fas fa-plus"></i> Yeni Ürün Ekle
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered shadow">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Ürün Adı</th>
+                                <th>Marka</th>
+                                <th>Fiyat</th>
+                                <th>Stok</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Telefon X Pro</td>
+                                <td>Samsung</td>
+                                <td>15.000 ₺</td>
+                                <td>20</td>
+                                <td class="text-center">
+                                    <a href="/urun/detay/1" class="btn btn-sm btn-info me-1">
+                                        <i class="fas fa-circle-info"></i> Detay
+                                    </a>
+                                    <a href="/urun/guncelle/1" class="btn btn-sm btn-warning me-1">
+                                        <i class="fas fa-pen-to-square"></i> Güncelle
+                                    </a>
+                                    <a href="/urun/sil/1" class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Silmek istediğinize emin misiniz?')">
+                                        <i class="fas fa-trash"></i> Sil
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Dizüstü Bilgisayar Z</td>
+                                <td>HP</td>
+                                <td>22.500 ₺</td>
+                                <td>12</td>
+                                <td class="text-center">
+                                    <a href="/urun/detay/2" class="btn btn-sm btn-info me-1">
+                                        <i class="fas fa-circle-info"></i> Detay
+                                    </a>
+                                    <a href="/urun/guncelle/2" class="btn btn-sm btn-warning me-1">
+                                        <i class="fas fa-pen-to-square"></i> Güncelle
+                                    </a>
+                                    <a href="/urun/sil/2" class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Silmek istediğinize emin misiniz?')">
+                                        <i class="fas fa-trash"></i> Sil
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Akıllı Saat Y</td>
+                                <td>Apple</td>
+                                <td>4.200 ₺</td>
+                                <td>35</td>
+                                <td class="text-center">
+                                    <a href="/urun/detay/3" class="btn btn-sm btn-info me-1">
+                                        <i class="fas fa-circle-info"></i> Detay
+                                    </a>
+                                    <a href="/urun/guncelle/3" class="btn btn-sm btn-warning me-1">
+                                        <i class="fas fa-pen-to-square"></i> Güncelle
+                                    </a>
+                                    <a href="/urun/sil/3" class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Silmek istediğinize emin misiniz?')">
+                                        <i class="fas fa-trash"></i> Sil
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Kablosuz Kulaklık</td>
+                                <td>Sony</td>
+                                <td>1.800 ₺</td>
+                                <td>50</td>
+                                <td class="text-center">
+                                    <a href="/urun/detay/4" class="btn btn-sm btn-info me-1">
+                                        <i class="fas fa-circle-info"></i> Detay
+                                    </a>
+                                    <a href="/urun/guncelle/4" class="btn btn-sm btn-warning me-1">
+                                        <i class="fas fa-pen-to-square"></i> Güncelle
+                                    </a>
+                                    <a href="/urun/sil/4" class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Silmek istediğinize emin misiniz?')">
+                                        <i class="fas fa-trash"></i> Sil
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>Monitör Ultra HD</td>
+                                <td>Dell</td>
+                                <td>7.900 ₺</td>
+                                <td>8</td>
+                                <td class="text-center">
+                                    <a href="/urun/detay/5" class="btn btn-sm btn-info me-1">
+                                        <i class="fas fa-circle-info"></i> Detay
+                                    </a>
+                                    <a href="/urun/guncelle/5" class="btn btn-sm btn-warning me-1">
+                                        <i class="fas fa-pen-to-square"></i> Güncelle
+                                    </a>
+                                    <a href="/urun/sil/5" class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Silmek istediğinize emin misiniz?')">
+                                        <i class="fas fa-trash"></i> Sil
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>

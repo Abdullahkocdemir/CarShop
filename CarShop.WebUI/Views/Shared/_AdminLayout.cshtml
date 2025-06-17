@@ -1,22 +1,36 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="tr">
 <head>
-    @await Component.InvokeAsync("_AdminLayoutHeadPartials")
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Admin Dashboard - Ürünler</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/Table.css" rel="stylesheet" />
+    <link href="~/css/admin-dashboard.css" rel="stylesheet" />
 </head>
-
 <body>
-    <div id="main-wrapper">
-        @await Component.InvokeAsync("_AdminLayoutHeaderPartials")
-        @await Component.InvokeAsync("_AdminLayoutNavBarPartials")
-        <div class="content-body">
-            <div class="container-fluid">
-                @RenderBody()
-            </div>
-        </div>
-        @await Component.InvokeAsync("_AdminLayoutFooterPartials")
+    <div class="dashboard">
+        @await Component.InvokeAsync("_AdminLayoutSideBarPartials")
+        <main class="main-content">
+            @RenderBody()
+        </main>
     </div>
-    @await Component.InvokeAsync("_AdminLayoutScriptPartials")
-</body>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Etkileşimli navigasyon (sidebar)
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function (e) {
+                // Sadece demo amaçlı, gerçek uygulamada sayfa yüklemesini engellemeyin
+                // e.preventDefault();
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
 </html>

@@ -38,7 +38,7 @@ namespace CarShop.WebAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateBroadcast(CreateBroadcastDTO dto)
+        public IActionResult Create(CreateBroadcastDTO dto)
         {
             var broadcast = _mapper.Map<Broadcast>(dto);
             _broadcastService.BAdd(broadcast);

@@ -1,0 +1,68 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<header class="header">
+    <div>
+        <h2>Ürün Detayı</h2>
+        <p style="color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">Ürüne ait detaylı bilgilere buradan ulaşabilirsiniz.</p>
+    </div>
+    <div class="user-info">
+        <div class="user-avatar">AK</div>
+        <div>
+            <div>Admin Kullanıcı</div>
+            <div style="font-size: 0.8rem; opacity: 0.7;">admin@example.com</div>
+        </div>
+    </div>
+</header>
+
+<div class="detail-card shadow">
+    <h4 class="mb-4">Telefon X Pro Detayları</h4>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="detail-item">
+                <i class="fas fa-tag"></i> <strong>Ürün Adı:</strong> <span>Telefon X Pro</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-building"></i> <strong>Marka:</strong> <span>Samsung</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-lira-sign"></i> <strong>Fiyat:</strong> <span>15.000 ₺</span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="detail-item">
+                <i class="fas fa-warehouse"></i> <strong>Stok:</strong> <span>20 Adet</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-calendar-alt"></i> <strong>Eklenme Tarihi:</strong> <span>10 Ocak 2024</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-barcode"></i> <strong>SKU:</strong> <span>PROD-001-X</span>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4">
+        <div class="detail-item align-items-start">
+            <i class="fas fa-align-left"></i> <strong>Açıklama:</strong> <span>Yüksek performanslı, yeni nesil akıllı telefon. Gelişmiş kamera özellikleri ve uzun pil ömrü ile dikkat çekiyor.</span>
+        </div>
+    </div>
+
+    <h5 class="text-white mt-5 mb-3" style="border-bottom: 1px solid rgba(255, 255, 255, 0.3); padding-bottom: 0.5rem;">Ürün Resimleri</h5>
+    <div class="product-images-preview">
+        <img src="https://via.placeholder.com/100x100?text=Resim+1" alt="Ürün Resmi 1">
+        <img src="https://via.placeholder.com/100x100?text=Resim+2" alt="Ürün Resmi 2">
+        <img src="https://via.placeholder.com/100x100?text=Resim+3" alt="Ürün Resmi 3">
+    </div>
+    <div class="d-flex justify-content-end mt-4">
+        <a href="urunler.html" class="btn btn-secondary me-2">
+            <i class="fas fa-arrow-left"></i> Ürünlere Geri Dön
+        </a>
+        <a href="urun-fotograflari.html" class="btn btn-info me-2">
+            <i class="fas fa-images"></i> Fotoğrafları Görüntüle
+        </a>
+        <a href="urun-guncelle.html" class="btn btn-warning">
+            <i class="fas fa-pen-to-square"></i> Ürünü Güncelle
+        </a>
+    </div>
+</div>

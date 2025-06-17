@@ -2,7 +2,7 @@
 
 namespace CarShop.WebUI.ViewComponents.AdminLayout
 {
-    public class _AdminLayoutFooterPartials : ViewComponent
+    public class _AdminLayoutSideBarPartials : ViewComponent
     {
         public IViewComponentResult Invoke()
         {

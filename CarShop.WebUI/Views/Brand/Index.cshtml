@@ -1,255 +1,105 @@
-﻿@{
+﻿@model List<ResultBrandDTO>
+@{
     ViewData["Title"] = "Marka Yönetimi";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marka Yönetimi Tablosu</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-        /* CSS styles remain mostly the same for consistency */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-        }
 
-        .container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            max-width: 1200px;
-            margin: 20px auto;
-        }
-
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.2em;
-        }
-
-            h1 .fas {
-                color: #3498db;
-                margin-right: 10px;
-            }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            text-decoration: none;
-        }
-
-            .btn:hover {
-                transform: translateY(-2px);
-            }
-
-        .btn-success {
-            background-color: #28a745;
-            color: white;
-        }
-
-            .btn-success:hover {
-                background-color: #218838;
-            }
-
-        .btn-warning {
-            background-color: #ffc107;
-            color: white;
-        }
-
-            .btn-warning:hover {
-                background-color: #e0a800;
-            }
-
-        .btn-danger {
-            background-color: #dc3545;
-            color: white;
-        }
-
-            .btn-danger:hover {
-                background-color: #c82333;
-            }
-
-        .table-container {
-            overflow-x: auto;
-            margin-top: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #dee2e6;
-        }
-
-        thead th {
-            background-color: #3498db;
-            color: white;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.9em;
-        }
-
-        tbody tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-        tbody tr:hover {
-            background-color: #e9ecef;
-        }
-
-        .id-box {
-            background-color: #e9e9e9;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 0.85em;
-        }
-
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.8em;
-            font-weight: bold;
-            color: white;
-            text-transform: capitalize;
-        }
-
-        .status-active {
-            background-color: #28a745;
-        }
-
-        .status-inactive {
-            background-color: #dc3545;
-        }
-
-        .actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .fade-in {
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        @@keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        /* Notification messages */
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid transparent;
-            border-radius: 4px;
-        }
-
-        .alert-success {
-            color: #155724;
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-        }
-
-        .alert-danger {
-            color: #721c24;
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-        }
-    </style>
-</head>
-<body>
-    <div class="container fade-in">
-        <h1><i class="fas fa-tags"></i> Marka Yönetimi Sistemi</h1>
-
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <div class="alert alert-success">
-                @TempData["SuccessMessage"]
-            </div>
-        }
-        @if (TempData["ErrorMessage"] != null)
-        {
-            <div class="alert alert-danger">
-                @TempData["ErrorMessage"]
-            </div>
-        }
-
-        <div style="text-align: right; margin-bottom: 20px;">
-            <a href="@Url.Action("AddBrand", "Brand")" class="btn btn-success"><i class="fas fa-plus-circle"></i> Yeni Marka Ekle</a>
-        </div>
-
-        <div class="table-container">
-            <table id="brandsTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Marka Adı</th>
-                        <th>Ülke</th>
-                        <th>Kuruluş Yılı</th>
-                        <th>Durum</th>
-                        <th>İşlemler</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model != null && Model.Any())
-                    {
-                        @foreach (var brand in Model)
-                        {
-                            <tr id="brandRow_@brand.BrandId">
-                                <td><span class="id-box">@brand.BrandId</span></td>
-                                <td><strong>@brand.BrandName</strong></td>
-                                <td>@(brand.Country ?? "N/A")</td>
-                                <td>@brand.EstablishmentYear</td>
-                                <td><span class="status-badge @(brand.IsActive ? "status-active" : "status-inactive")">@(brand.IsActive ? "Aktif" : "Pasif")</span></td>
-                                <td>
-                                    <div class="actions">
-                                        <a href="@Url.Action("EditBrand", "Brand", new { id = brand.BrandId })" class="btn btn-warning"><i class="fas fa-edit"></i> Düzenle</a>
-                                        <a href="@Url.Action("DeleteBrand", "Brand", new { id = brand.BrandId })" class="btn btn-danger" onclick="return confirm('Bu markayı silmek istediğinizden emin misiniz?');"><i class="fas fa-trash-alt"></i> Sil</a>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="6" style="text-align: center;">Hiç marka bulunamadı.</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+<header class="header">
+    <div>
+        <h2>Marka Listesi</h2>
     </div>
-</body>
-</html>
+</header>
+
+<div class="product-table-card">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-white">Mevcut Markalar</h3>
+        <a href="/Brand/Create" class="btn btn-new-product">
+            <i class="fas fa-plus"></i> Yeni Marka Ekle
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered shadow">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Marka Adı</th>
+                    <th>Ülke</th>
+                    <th>Yıl</th>
+                    <th>Durum</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int count = 1;
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@count</td>
+                        <td>@item.BrandName</td>
+                        <td>@item.Country</td>
+                        <td>@item.EstablishmentYear</td>
+                        <td>
+                            @if (item.IsActive)
+                            {
+                                <span class="badge bg-success">Aktif</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Pasif</span>
+                            }
+                        </td>
+                        <td class="text-center">
+                            <a href="/Brand/Details/@item.BrandId" class="btn btn-sm btn-info me-1">
+                                <i class="fas fa-circle-info"></i> Detay
+                            </a>
+                            <a href="/Brand/Edit/@item.BrandId" class="btn btn-sm btn-warning me-1">
+                                <i class="fas fa-pen-to-square"></i> Güncelle
+                            </a>
+
+                            <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(@item.BrandId)">
+                                <i class="fas fa-trash"></i> Sil
+                            </button>
+                        </td>
+                    </tr>
+                    count++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    function deleteBrand(brandId) {
+        Swal.fire({
+            title: "Emin misiniz?",
+            text: "Bu markayı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Evet, sil!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/Brand/Delete/' + brandId,
+                    type: 'POST',
+                    success: function () {
+                        Swal.fire("Silindi!", "Marka başarıyla silindi.", "success").then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function () {
+                        Swal.fire("Hata!", "Silme işlemi başarısız oldu.", "error");
+                    }
+                });
+            }
+        });
+    }
+</script>

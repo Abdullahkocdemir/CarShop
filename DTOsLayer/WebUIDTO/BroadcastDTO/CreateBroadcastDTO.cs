@@ -9,6 +9,7 @@ namespace DTOsLayer.WebUIDTO.BroadcastDTO
     public class CreateBroadcastDTO
     {
         public string Title { get; set; } = string.Empty;
+        public bool IsActive { get; set; }
         public string SmallTitle { get; set; } = string.Empty;
     }
 }
