@@ -17,10 +17,8 @@ builder.Services.AddDbContext<CarShopContext>(options =>
 
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
-// ?? YENÝ ENHANCED RABBITMQ SERVÝSLERÝ
 builder.Services.AddSingleton<EnhancedRabbitMQService>();
 
-// Dependency Injection
 builder.Services.ConteinerDependencies();
 
 builder.Services.AddIdentity<AppUser, AppRole>(options =>
@@ -54,6 +52,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles(); 
 app.UseAuthorization();
 app.MapControllers();
 
@@ -62,7 +61,6 @@ using (var scope = app.Services.CreateScope())
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
 
-    // ?? TÜM ENTÝTY'LER ÝÇÝN RABBITMQ KURULUMU
     var rabbitMqService = scope.ServiceProvider.GetRequiredService<EnhancedRabbitMQService>();
     rabbitMqService.SetupAllEntityQueues();
 

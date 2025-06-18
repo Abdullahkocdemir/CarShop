@@ -52,12 +52,17 @@ namespace CarShop.WebAPI.Mapping
             CreateMap<ResultContactDTO, Contact>().ReverseMap();
 
 
-            //Feature
+            // Entity'den WebApi DTO'larına
+            CreateMap<Feature, ResultFeatureDTO>();
+            CreateMap<Feature, GetByIdFeatureDTO>();
+            CreateMap<Feature, UpdateFeatureDTO>(); // UI'a mevcut veriyi doldurmak için kullanılabilir
 
-            CreateMap<CreateFeatureDTO, Feature>().ReverseMap();
-            CreateMap<UpdateContactDTO, Feature>().ReverseMap();
-            CreateMap<GetByIdContactDTO, Feature>().ReverseMap();
-            CreateMap<ResultContactDTO, Feature>().ReverseMap();
+            // WebApi DTO'larından Entity'ye
+            CreateMap<CreateFeatureDTO, Feature>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore()).ReverseMap(); // ImageUrl'i manuel yöneteceğimiz için yoksay
+            CreateMap<UpdateFeatureDTO, Feature>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore()).ReverseMap() ; // ImageUrl'i manuel yöneteceğimiz için yoksay
+            CreateMap<GetByIdFeatureDTO, Feature>().ReverseMap();
 
 
             //NewLatest

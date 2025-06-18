@@ -46,6 +46,8 @@ namespace BusinessLayer.Conteiner
 
             Services.AddScoped<IWhyUseDal, EfWhyUseDal>();
             Services.AddScoped<IWhyUseService, WhyUseManager>();
+
+
         }
     }
 }

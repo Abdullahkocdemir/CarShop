@@ -29,4 +29,9 @@
     <ProjectReference Include="..\DTOsLayer\DTOsLayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>

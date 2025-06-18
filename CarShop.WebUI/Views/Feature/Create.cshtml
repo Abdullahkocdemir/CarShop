@@ -1,0 +1,63 @@
+﻿@model DTOsLayer.WebUIDTO.FeatureDTO.CreateFeatureDTO
+@{
+    ViewData["Title"] = "Yeni Özellik Ekle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml"; // Layout yolunuzu kontrol edin
+}
+
+<header class="header">
+    <div>
+        <h2>Yeni Özellik Ekle</h2>
+        <p style="color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">Yeni bir özellik girişi yapın.</p>
+    </div>
+    <div class="user-info">
+        <div class="user-avatar">AK</div>
+        <div>
+            <div>Admin Kullanıcı</div>
+            <div style="font-size: 0.8rem; opacity: 0.7;">admin@example.com</div>
+        </div>
+    </div>
+</header>
+
+<div class="form-card">
+    <form asp-controller="Feature" asp-action="Create" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken() @* Güvenlik için Anti-Forgery Token *@
+
+        <div class="mb-3">
+            <label for="title" class="form-label">Başlık</label>
+            <input type="text" asp-for="Title" class="form-control" id="title" placeholder="Başlık girin" required>
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="smallTitle" class="form-label">Küçük Başlık</label>
+            <input type="text" asp-for="SmallTitle" class="form-control" id="smallTitle" placeholder="Küçük başlık girin" required>
+            <span asp-validation-for="SmallTitle" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Açıklama</label>
+            <textarea asp-for="Description" class="form-control" id="description" rows="3" placeholder="Açıklama girin" required></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="imageFile" class="form-label">Resim Yükle</label>
+            <input type="file" asp-for="ImageFile" class="form-control" id="imageFile">
+            <span asp-validation-for="ImageFile" class="text-danger"></span>
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <a href="/Feature/Index" class="btn btn-secondary me-2">İptal</a>
+            <button type="submit" class="btn btn-primary">Kaydet</button>
+        </div>
+
+        @* Model doğrulama hatalarını göstermek için *@
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

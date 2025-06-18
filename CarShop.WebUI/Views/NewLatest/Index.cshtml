@@ -1,0 +1,96 @@
+﻿@model List<ResultNewLatestDTO>
+@{
+    ViewData["Title"] = "Son Haberler Yönetimi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<header class="header">
+    <div>
+        <h2>Son Haberler Listesi</h2>
+    </div>
+</header>
+
+<div class="product-table-card">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-white">Mevcut Son Haberler</h3>
+        <a href="/NewLatest/Create" class="btn btn-new-product">
+            <i class="fas fa-plus"></i> Yeni Haber Ekle
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered shadow">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Ad</th>
+                    <th>Başlık</th>
+                    <th>Açıklama</th>
+                    <th>Yorum</th>
+                    <th>Tarih</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int count = 1;
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@count</td>
+                        <td>@item.Name</td>
+                        <td>@item.Title</td>
+                        <td>@(item.Description.Length > 50 ? item.Description.Substring(0, 50) + "..." : item.Description)</td>
+                        <td>@(item.Comment.Length > 50 ? item.Comment.Substring(0, 50) + "..." : item.Comment)</td>
+                        <td>@item.Date.ToShortDateString()</td>
+                        <td class="text-center">
+                            <a href="/NewLatest/Details/@item.NewLatestId" class="btn btn-sm btn-info me-1">
+                                <i class="fas fa-circle-info"></i> Detay
+                            </a>
+                            <a href="/NewLatest/Edit/@item.NewLatestId" class="btn btn-sm btn-warning me-1">
+                                <i class="fas fa-pen-to-square"></i> Güncelle
+                            </a>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(@item.NewLatestId)">
+                                <i class="fas fa-trash"></i> Sil
+                            </button>
+                        </td>
+                    </tr>
+                    count++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    function confirmDelete(newLatestId) {
+        Swal.fire({
+            title: "Emin misiniz?",
+            text: "Bu haberi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Evet, sil!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/NewLatest/Delete/' + newLatestId,
+                    type: 'POST',
+                    success: function () {
+                        Swal.fire("Silindi!", "Haber başarıyla silindi.", "success").then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function () {
+                        Swal.fire("Hata!", "Silme işlemi başarısız oldu.", "error");
+                    }
+                });
+            }
+        });
+    }
+</script>
