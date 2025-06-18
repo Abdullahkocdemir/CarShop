@@ -1,8 +1,8 @@
 ﻿using EntityLayer.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion; // Bu using'i ekleyin
-using System; // DateTime için ekleyin
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion; 
+using System; 
 
 namespace DataAccessLayer.Context
 {
@@ -17,26 +17,26 @@ namespace DataAccessLayer.Context
         {
             base.OnModelCreating(builder);
 
-            // Tüm DateTime ve Nullable DateTime tipleri için Value Converter uygula
-            // Bu, Entity Framework Core'un DateTime değerlerini veritabanına kaydederken
-            // ve okurken nasıl işleyeceğini belirtir.
+            builder.Entity<FeatureImage>()
+                .HasOne(fi => fi.Feature)
+                .WithMany(f => f.FeatureImages)
+                .HasForeignKey(fi => fi.FeatureId)
+                .OnDelete(DeleteBehavior.Cascade);
             foreach (var entityType in builder.Model.GetEntityTypes())
             {
                 foreach (var property in entityType.GetProperties())
                 {
                     if (property.ClrType == typeof(DateTime))
                     {
-                        // DateTime için: Kaydederken UTC'ye çevir, okurken Kind'ı UTC olarak işaretle
                         property.SetValueConverter(new ValueConverter<DateTime, DateTime>(
-                            v => v.ToUniversalTime(),          // Veritabanına yazmadan önce
-                            v => DateTime.SpecifyKind(v, DateTimeKind.Utc))); // Veritabanından okuduktan sonra
+                            v => v.ToUniversalTime(),
+                            v => DateTime.SpecifyKind(v, DateTimeKind.Utc))); 
                     }
                     else if (property.ClrType == typeof(DateTime?))
                     {
-                        // Nullable DateTime için: Null değilse UTC'ye çevir, Kind'ı işaretle
                         property.SetValueConverter(new ValueConverter<DateTime?, DateTime?>(
-                            v => v.HasValue ? v.Value.ToUniversalTime() : v, // Veritabanına yazmadan önce
-                            v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v)); // Veritabanından okuduktan sonra
+                            v => v.HasValue ? v.Value.ToUniversalTime() : v,
+                            v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v)); 
                     }
                 }
             }
@@ -52,5 +52,6 @@ namespace DataAccessLayer.Context
         public DbSet<Service> Services { get; set; }
         public DbSet<Showroom> Showrooms { get; set; }
         public DbSet<WhyUse> WhyUses { get; set; }
+        public DbSet<FeatureImage> FeatureImages { get; set; }
     }
 }

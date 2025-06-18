@@ -1,19 +1,31 @@
-﻿using DataAccessLayer.Abstract;
+﻿// DataAccessLayer.Concrete/EfFeatureDal.cs
+using DataAccessLayer.Abstract;
 using DataAccessLayer.Context;
 using DataAccessLayer.Repositories;
 using EntityLayer.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore; // Bunu eklemeyi unutmayın!
 
-namespace DataAccessLayer.EntityFrameWork
+public class EfFeatureDal : GenericRepository<Feature>, IFeatureDal
 {
-    public class EfFeatureDal : GenericRepository<Feature>,IFeatureDal
+    private readonly CarShopContext _context; // DbContext'i doğrudan kullanmak için
+
+    public EfFeatureDal(CarShopContext context) : base(context)
     {
-        public EfFeatureDal(CarShopContext context) : base(context)
-        {
-        }
+        _context = context; // DbContext'i saklıyoruz
     }
+
+    public List<Feature> GetListWithImage() // Bu metod adını kullanıyorsanız
+    {
+        return _context.Features.Include(f => f.FeatureImages).ToList();
+    }
+
+    public Feature GetByIdWithImage(int id) // Bu metod adını kullanıyorsanız
+    {
+        return _context.Features.Include(f => f.FeatureImages).FirstOrDefault(f => f.FeatureId == id)!;
+    }
+
+    // Eğer GetListAll ve GetById isimleri zaten varsa ve onları kullanmak istiyorsanız,
+    // GenericRepository'nizi Include yapabilecek şekilde genişletmeniz gerekebilir
+    // veya bu metodları (BGetListAll, BGetById) kendi IFeatureDal'ınızda tanımlayıp
+    // Include'u burada kullanın.
 }

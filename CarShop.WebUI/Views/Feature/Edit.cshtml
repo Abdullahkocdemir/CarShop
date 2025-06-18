@@ -1,7 +1,9 @@
 ﻿@model DTOsLayer.WebUIDTO.FeatureDTO.UpdateFeatureDTO
+@using DTOsLayer.WebUIDTO.FeatureImageDTO // ResultFeatureImageDTO için
 @{
     ViewData["Title"] = "Özellik Güncelle";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var existingImages = ViewBag.ExistingImages as List<ResultFeatureImageDTO>; // Mevcut resimler ViewBag'den alınır
 }
 
 <header class="header">
@@ -22,7 +24,6 @@
     <form asp-controller="Feature" asp-action="Edit" method="post" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="FeatureId" />
-        @* ImageUrl'ı gizli input olarak tutmaya gerek yok, API tarafı DB'den alıp yönetiyor. *@
 
         <div class="mb-3">
             <label for="title" class="form-label">Başlık</label>
@@ -43,26 +44,38 @@
         </div>
 
         <div class="mb-3">
-            <label for="imageFile" class="form-label">Resim Yükle</label>
-            <input type="file" asp-for="ImageFile" class="form-control" id="imageFile">
-            <span asp-validation-for="ImageFile" class="text-danger"></span>
-
-            @if (!string.IsNullOrEmpty(Model.ImageUrl))
-            {
-                <div class="mt-2">
-                    <strong>Mevcut Resim:</strong><br />
-                    <img src="@Model.ImageUrl" alt="Mevcut Resim" style="max-width: 200px; max-height: 200px;" />
-                    <div class="form-check mt-2">
-                        <input type="checkbox" id="removeImage" name="removeImage" value="true" class="form-check-input" />
-                        <label class="form-check-label" for="removeImage">Resmi Kaldır</label>
-                    </div>
-                </div>
-            }
-            else
-            {
-                <p class="mt-2 text-muted">Mevcut resim yok.</p>
-            }
+            <label for="newImageFiles" class="form-label">Yeni Resimler Yükle (Birden fazla seçebilirsiniz)</label>
+            <input type="file" name="NewImageFiles" class="form-control" id="newImageFiles" multiple>
+            <span asp-validation-for="NewImageFiles" class="text-danger"></span>
         </div>
+
+        @* Mevcut resimleri listele ve silme checkbox'ları ekle *@
+        @if (existingImages != null && existingImages.Any())
+        {
+            <div class="mb-3">
+                <strong>Mevcut Resimler:</strong><br />
+                <div class="row row-cols-1 row-cols-md-3 g-4 mt-2">
+                    @foreach (var image in existingImages)
+                    {
+                        <div class="col">
+                            <div class="card h-100">
+                                <img src="@image.ImageUrl" class="card-img-top" alt="Özellik Resmi" style="max-height: 150px; object-fit: contain;">
+                                <div class="card-body">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="ImageIdsToRemove" value="@image.FeatureImageId" class="form-check-input" id="removeImage_@image.FeatureImageId" />
+                                        <label class="form-check-label" for="removeImage_@image.FeatureImageId">Kaldır</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <p class="mt-2 text-muted">Mevcut resim yok.</p>
+        }
 
         <div class="d-flex justify-content-end">
             <a href="/Feature/Index" class="btn btn-secondary me-2">İptal</a>
@@ -77,20 +90,4 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    <script>
-        document.getElementById('removeImage')?.addEventListener('change', function() {
-            var imageFileInput = document.querySelector('input[name="ImageFile"]');
-
-            if (this.checked) {
-                if (imageFileInput) {
-                    imageFileInput.disabled = true;
-                    imageFileInput.value = '';
-                }
-            } else {
-                if (imageFileInput) {
-                    imageFileInput.disabled = false;
-                }
-            }
-        });
-    </script>
 }

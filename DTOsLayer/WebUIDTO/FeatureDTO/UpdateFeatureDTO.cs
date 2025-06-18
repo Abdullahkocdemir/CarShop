@@ -13,7 +13,7 @@ namespace DTOsLayer.WebUIDTO.FeatureDTO
         public string Title { get; set; } = string.Empty;
         public string SmallTitle { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public string? ImageUrl { get; set; } // Mevcut resmin URL'si, UI'da göstermek için (nullable yapılabilir)
-        public IFormFile? ImageFile { get; set; }
+        public List<IFormFile>? NewImageFiles { get; set; }
+        public List<int>? ImageIdsToRemove { get; set; }
     }
 }

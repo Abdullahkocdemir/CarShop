@@ -13,7 +13,7 @@ namespace DTOsLayer.WebApiDTO.FeatureDTO
         public string Title { get; set; } = string.Empty;
         public string SmallTitle { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public IFormFile? ImageFile { get; set; } // Yeni resim dosyası burada
-        public string? ImageUrl { get; set; } // Eski resim URL'si (UI'dan gelebilir, veya API'den çekilir)
+        public List<IFormFile>? NewImageFiles { get; set; } 
+        public List<int>? ImageIdsToRemove { get; set; } 
     }
 }

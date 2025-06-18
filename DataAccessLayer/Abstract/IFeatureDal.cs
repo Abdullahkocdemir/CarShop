@@ -1,13 +1,13 @@
-﻿using EntityLayer.Entities;
-using System;
+﻿// DataAccessLayer.Abstract/IFeatureDal.cs
+using EntityLayer.Entities;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccessLayer.Abstract
 {
     public interface IFeatureDal : IGenericDal<Feature>
     {
+        List<Feature> GetListWithImage();
+
+        Feature GetByIdWithImage(int id);
     }
 }

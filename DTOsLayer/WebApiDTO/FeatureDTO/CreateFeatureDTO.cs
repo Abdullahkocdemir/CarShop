@@ -12,7 +12,6 @@ namespace DTOsLayer.WebApiDTO.FeatureDTO
         public string Title { get; set; } = string.Empty;
         public string SmallTitle { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public IFormFile? ImageFile { get; set; } // Resim dosyası burada
-                                                  // ImageUrl burada olmaz, API oluşturacak
+        public List<IFormFile>? ImageFiles { get; set; } 
     }
 }

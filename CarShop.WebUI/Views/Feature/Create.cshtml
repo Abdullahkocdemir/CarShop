@@ -41,9 +41,10 @@
         </div>
 
         <div class="mb-3">
-            <label for="imageFile" class="form-label">Resim Yükle</label>
-            <input type="file" asp-for="ImageFile" class="form-control" id="imageFile">
-            <span asp-validation-for="ImageFile" class="text-danger"></span>
+            <label for="imageFiles" class="form-label">Resimler Yükle (Birden fazla seçebilirsiniz)</label>
+            @* name="ImageFiles" olarak değiştirildi ve multiple eklendi *@
+            <input type="file" name="ImageFiles" class="form-control" id="imageFiles" multiple>
+            <span asp-validation-for="ImageFiles" class="text-danger"></span>
         </div>
 
         <div class="d-flex justify-content-end">

@@ -1,15 +1,12 @@
-﻿using BusinessLayer.Abstract;
+﻿// BusinessLayer.Concrete/FeatureManager.cs (veya FeatureService.cs)
+using BusinessLayer.Abstract;
 using DataAccessLayer.Abstract;
 using EntityLayer.Entities;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLayer.Concrete
 {
-    public class FeatureManager : IFeatureService
+    public class FeatureManager : IFeatureService // IFeatureService'i uyguladığından emin olun
     {
         private readonly IFeatureDal _featureDal;
 
@@ -17,15 +14,30 @@ namespace BusinessLayer.Concrete
         {
             _featureDal = featureDal;
         }
+        
+        public List<Feature> BGetListWithImage()
+        {
+            return _featureDal.GetListWithImage();
+        }
+
+        public Feature BGetByIdWithImage(int id)
+        {
+            return _featureDal.GetByIdWithImage(id);
+        }
 
         public void BAdd(Feature entity)
         {
-            _featureDal.Add(entity);
+           _featureDal.Add(entity);
         }
 
         public void BDelete(Feature entity)
         {
             _featureDal.Delete(entity);
+        }
+
+        public void BUpdate(Feature entity)
+        {
+            _featureDal.Update(entity);
         }
 
         public Feature BGetById(int id)
@@ -36,11 +48,6 @@ namespace BusinessLayer.Concrete
         public List<Feature> BGetListAll()
         {
             return _featureDal.GetListAll();
-        }
-
-        public void BUpdate(Feature entity)
-        {
-            _featureDal.Update(entity);
         }
     }
 }

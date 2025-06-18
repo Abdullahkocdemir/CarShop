@@ -21,6 +21,11 @@ builder.Services.AddSingleton<EnhancedRabbitMQService>();
 
 builder.Services.ConteinerDependencies();
 
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+});
+
 builder.Services.AddIdentity<AppUser, AppRole>(options =>
 {
     options.Password.RequireDigit = true;

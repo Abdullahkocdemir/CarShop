@@ -2,7 +2,10 @@
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using DTOsLayer.WebUIDTO.FeatureDTO;
+using DTOsLayer.WebUIDTO.FeatureImageDTO; // Yeni using directive
 using System.IO;
+using System.Collections.Generic; // List için
+using System.Linq; // Any() için
 
 namespace CarShop.WebUI.Controllers
 {
@@ -46,11 +49,16 @@ namespace CarShop.WebUI.Controllers
                 content.Add(new StringContent(dTO.SmallTitle ?? string.Empty), "SmallTitle");
                 content.Add(new StringContent(dTO.Description ?? string.Empty), "Description");
 
-                if (dTO.ImageFile != null)
+                // Birden fazla resim dosyası için döngü
+                if (dTO.ImageFiles != null && dTO.ImageFiles.Any())
                 {
-                    var fileContent = new StreamContent(dTO.ImageFile.OpenReadStream());
-                    fileContent.Headers.ContentType = new MediaTypeHeaderValue(dTO.ImageFile.ContentType);
-                    content.Add(fileContent, "ImageFile", dTO.ImageFile.FileName);
+                    foreach (var imageFile in dTO.ImageFiles)
+                    {
+                        var fileContent = new StreamContent(imageFile.OpenReadStream());
+                        fileContent.Headers.ContentType = new MediaTypeHeaderValue(imageFile.ContentType);
+                        // API'daki "ImageFiles" koleksiyon adını burada da kullanıyoruz
+                        content.Add(fileContent, "ImageFiles", imageFile.FileName);
+                    }
                 }
 
                 var response = await _httpClient.PostAsync("api/Features", content);
@@ -86,8 +94,8 @@ namespace CarShop.WebUI.Controllers
                         Title = apiFeature.Title,
                         SmallTitle = apiFeature.SmallTitle,
                         Description = apiFeature.Description,
-                        ImageUrl = apiFeature.ImageUrl // API'den gelen tam URL buraya atanıyor.
                     };
+                    ViewBag.ExistingImages = apiFeature.FeatureImages;
                     return View(uiDto);
                 }
                 else
@@ -111,7 +119,7 @@ namespace CarShop.WebUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UpdateFeatureDTO dTO, bool removeImage)
+        public async Task<IActionResult> Edit(UpdateFeatureDTO dTO, [FromForm] List<int>? imageIdsToRemove) // imageIdsToRemove doğrudan formdan alınacak
         {
             if (ModelState.IsValid)
             {
@@ -122,16 +130,24 @@ namespace CarShop.WebUI.Controllers
                 content.Add(new StringContent(dTO.SmallTitle ?? string.Empty), "SmallTitle");
                 content.Add(new StringContent(dTO.Description ?? string.Empty), "Description");
 
-                if (removeImage)
+                if (imageIdsToRemove != null && imageIdsToRemove.Any())
                 {
-                    content.Add(new StringContent("true"), "removeImage");
+                    foreach (var imageId in imageIdsToRemove)
+                    {
+                        content.Add(new StringContent(imageId.ToString()), "ImageIdsToRemove");
+                    }
                 }
 
-                if (dTO.ImageFile != null)
+                // Yeni yüklenecek resim dosyaları için döngü
+                if (dTO.NewImageFiles != null && dTO.NewImageFiles.Any())
                 {
-                    var fileContent = new StreamContent(dTO.ImageFile.OpenReadStream());
-                    fileContent.Headers.ContentType = new MediaTypeHeaderValue(dTO.ImageFile.ContentType);
-                    content.Add(fileContent, "ImageFile", dTO.ImageFile.FileName);
+                    foreach (var newImageFile in dTO.NewImageFiles)
+                    {
+                        var fileContent = new StreamContent(newImageFile.OpenReadStream());
+                        fileContent.Headers.ContentType = new MediaTypeHeaderValue(newImageFile.ContentType);
+                        // API'daki "NewImageFiles" koleksiyon adını kullanıyoruz
+                        content.Add(fileContent, "NewImageFiles", newImageFile.FileName);
+                    }
                 }
 
                 var response = await _httpClient.PutAsync("api/Features", content);
@@ -146,6 +162,14 @@ namespace CarShop.WebUI.Controllers
                     var errorContent = await response.Content.ReadAsStringAsync();
                     ModelState.AddModelError("", $"API Hatası: {response.ReasonPhrase}. Detay: {errorContent}");
                 }
+            }
+            // Model geçersizse veya hata oluşursa, mevcut resimleri tekrar yükleyip View'a geri gönder.
+            var apiResponse = await _httpClient.GetAsync($"api/Features/{dTO.FeatureId}");
+            if (apiResponse.IsSuccessStatusCode)
+            {
+                var jsonData = await apiResponse.Content.ReadAsStringAsync();
+                var apiFeature = JsonConvert.DeserializeObject<GetByIdFeatureDTO>(jsonData);
+                ViewBag.ExistingImages = apiFeature?.FeatureImages;
             }
             return View(dTO);
         }

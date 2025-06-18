@@ -11,6 +11,7 @@ using DTOsLayer.WebApiDTO.NewLatestDTO;
 using DTOsLayer.WebApiDTO.ServiceDTO;
 using DTOsLayer.WebApiDTO.ShowroomDTO;
 using DTOsLayer.WebApiDTO.WhyUseDTO;
+using DTOsLayer.WebApiDTO.FeatureImageDTO;
 
 namespace CarShop.WebAPI.Mapping
 {
@@ -57,12 +58,25 @@ namespace CarShop.WebAPI.Mapping
             CreateMap<Feature, GetByIdFeatureDTO>();
             CreateMap<Feature, UpdateFeatureDTO>(); // UI'a mevcut veriyi doldurmak için kullanılabilir
 
-            // WebApi DTO'larından Entity'ye
+            // Feature Mappings
+            CreateMap<Feature, ResultFeatureDTO>()
+                .ForMember(dest => dest.FeatureImages, opt => opt.MapFrom(src => src.FeatureImages))
+                .ReverseMap();
+
+            CreateMap<Feature, GetByIdFeatureDTO>()
+                .ForMember(dest => dest.FeatureImages, opt => opt.MapFrom(src => src.FeatureImages))
+                .ReverseMap();
+
             CreateMap<CreateFeatureDTO, Feature>()
-                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore()).ReverseMap(); // ImageUrl'i manuel yöneteceğimiz için yoksay
+                .ForMember(dest => dest.FeatureImages, opt => opt.Ignore()); // Images handled separately
             CreateMap<UpdateFeatureDTO, Feature>()
-                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore()).ReverseMap() ; // ImageUrl'i manuel yöneteceğimiz için yoksay
-            CreateMap<GetByIdFeatureDTO, Feature>().ReverseMap();
+                .ForMember(dest => dest.FeatureImages, opt => opt.Ignore()); // Images handled separately
+
+
+            // FeatureImage Mappings
+            CreateMap<FeatureImage, ResultFeatureImageDTO>().ReverseMap();
+            // You might not need a mapping for UploadFeatureImageDTO directly to FeatureImage
+            // as you'll be creating FeatureImage objects manually.
 
 
             //NewLatest

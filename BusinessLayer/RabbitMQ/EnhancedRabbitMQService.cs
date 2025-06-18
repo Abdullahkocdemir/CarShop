@@ -1,4 +1,5 @@
-﻿using DTOsLayer.WebApiDTO.RabbitMQ;
+﻿// BusinessLayer.RabbitMQ/EnhancedRabbitMQService.cs
+using DTOsLayer.WebApiDTO.RabbitMQ;
 using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization; // Yeni ekleyin
 
 namespace BusinessLayer.RabbitMQ
 {
@@ -25,6 +27,21 @@ namespace BusinessLayer.RabbitMQ
                 Password = "Abdullah159"
             };
         }
+
+        // --- EnsureConnectionAndChannel metodunu buraya taşıdık ---
+        private void EnsureConnectionAndChannel()
+        {
+            if (_connection == null || !_connection.IsOpen)
+            {
+                _connection = _factory.CreateConnection();
+            }
+
+            if (_channel == null || !_channel.IsOpen)
+            {
+                _channel = _connection.CreateModel();
+            }
+        }
+        // --------------------------------------------------------
 
         public void PublishEntityMessage<T>(T entity, string operation, string entityType)
         {
@@ -47,7 +64,14 @@ namespace BusinessLayer.RabbitMQ
                     durable: true
                 );
 
-                object message = operation.ToLower() switch
+                var options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve,
+                    // PropertyNamingPolicy = JsonNamingPolicy.CamelCase // İsteğe bağlı
+                };
+
+                object message;
+                message = operation.ToLower() switch
                 {
                     "created" => new EntityCreatedMessage<T>
                     {
@@ -67,7 +91,7 @@ namespace BusinessLayer.RabbitMQ
                     _ => throw new ArgumentException($"Unknown operation: {operation}")
                 };
 
-                var json = JsonSerializer.Serialize(message);
+                var json = JsonSerializer.Serialize(message, options);
                 var body = Encoding.UTF8.GetBytes(json);
 
                 _channel.BasicPublish(
@@ -148,19 +172,6 @@ namespace BusinessLayer.RabbitMQ
             foreach (var entityType in entityTypes)
             {
                 SetupEntityQueues(entityType);
-            }
-        }
-
-        private void EnsureConnectionAndChannel()
-        {
-            if (_connection == null || !_connection.IsOpen)
-            {
-                _connection = _factory.CreateConnection();
-            }
-
-            if (_channel == null || !_channel.IsOpen)
-            {
-                _channel = _connection.CreateModel();
             }
         }
 
