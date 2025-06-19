@@ -42,5 +42,16 @@ namespace BusinessLayer.Concrete
         {
             _whyUseDal.Update(entity);
         }
+
+        // Yeni eklenen metotlar
+        public List<WhyUse> BGetListAllWithReasons()
+        {
+            return _whyUseDal.GetListAllWithReasons();
+        }
+
+        public WhyUse? BGetByIdWithReasons(int id)
+        {
+            return _whyUseDal.GetByIdWithReasons(id);
+        }
     }
 }

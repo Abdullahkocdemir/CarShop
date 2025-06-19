@@ -1,0 +1,149 @@
+﻿@model UpdateWhyUseDTO
+
+@{
+    ViewData["Title"] = "'Neden Biz?' Güncelle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<header class="header">
+    <div>
+        <h2>"Neden Biz?" Güncelle</h2>
+        <p style="color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">Mevcut "Neden Biz?" bilgilerini güncelleyin.</p>
+    </div>
+</header>
+
+<div class="form-card">
+    <form asp-controller="WhyUse" asp-action="UpdateWhyUse" method="post">
+        @Html.AntiForgeryToken() @* Güvenlik için Anti-Forgery Token *@
+        <input type="hidden" asp-for="WhyUseId" />
+
+        <div class="mb-3">
+            <label for="mainTitle" class="form-label">Ana Başlık</label>
+            <input type="text" asp-for="MainTitle" class="form-control" id="mainTitle" placeholder="Ana başlığı girin" required>
+            <span asp-validation-for="MainTitle" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="mainDescription" class="form-label">Ana Açıklama</label>
+            <textarea asp-for="MainDescription" class="form-control" id="mainDescription" rows="3" placeholder="Ana açıklamayı girin" required></textarea>
+            <span asp-validation-for="MainDescription" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="videoUrl" class="form-label">Video URL (Opsiyonel)</label>
+            <input type="url" asp-for="VideoUrl" class="form-control" id="videoUrl" placeholder="Video URL'sini girin (örn: https://youtube.com/watch?v=...)">
+            <span asp-validation-for="VideoUrl" class="text-danger"></span>
+        </div>
+
+        <hr class="my-4" />
+
+        <h4>İlişkili Nedenler</h4>
+        <div id="whyUseReasonsContainer">
+            @* Mevcut nedenler ve dinamik olarak eklenen nedenler buraya gelecek *@
+            @if (Model.WhyUseReasons != null && Model.WhyUseReasons.Any())
+            {
+                for (int i = 0; i < Model.WhyUseReasons.Count; i++)
+                {
+                    <div class="card mb-3 p-3 reason-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title">Neden #@(i + 1)</h5>
+                            <button type="button" class="btn btn-danger btn-sm remove-reason-button">
+                                <i class="fas fa-times"></i> Sil
+                            </button>
+                        </div>
+                        <input type="hidden" name="WhyUseReasons[@i].WhyUseReasonId" value="@Model.WhyUseReasons[i].WhyUseReasonId" />
+                        <input type="hidden" name="WhyUseReasons[@i].WhyUseId" value="@Model.WhyUseId" />
+                        <div class="mb-3">
+                            <label for="reasonText_@i" class="form-label">Neden Metni</label>
+                            <input type="text" name="WhyUseReasons[@i].ReasonText" class="form-control" id="reasonText_@i" value="@Model.WhyUseReasons[i].ReasonText" placeholder="Neden metnini girin" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="displayOrder_@i" class="form-label">Sıralama</label>
+                            <input type="number" name="WhyUseReasons[@i].DisplayOrder" class="form-control" id="displayOrder_@i" value="@Model.WhyUseReasons[i].DisplayOrder" placeholder="Sıralama numarasını girin" min="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="iconCssClass_@i" class="form-label">İkon CSS Sınıfı (Örn: fa fa-check-circle)</label>
+                            <input type="text" name="WhyUseReasons[@i].IconCssClass" class="form-control" id="iconCssClass_@i" value="@Model.WhyUseReasons[i].IconCssClass" placeholder="İkon sınıfını girin">
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm mb-3" id="addReasonButton">
+            <i class="fas fa-plus"></i> Neden Ekle
+        </button>
+
+        <div class="d-flex justify-content-end mt-4">
+            <a href="/WhyUse/Index" class="btn btn-secondary me-2">İptal</a>
+            <button type="submit" class="btn btn-primary">Güncelle</button>
+        </div>
+
+        @* Model doğrulama hatalarını göstermek için *@
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    let reasonIndex = @(Model.WhyUseReasons?.Count ?? 0); // Mevcut neden sayısından başla
+
+    function addReasonRow(reasonText = '', displayOrder = '', iconCssClass = 'fa fa-check-circle', whyUseReasonId = 0) {
+        const container = $('#whyUseReasonsContainer');
+        const newRow = `
+                <div class="card mb-3 p-3 reason-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title">Neden #${reasonIndex + 1}</h5>
+                        <button type="button" class="btn btn-danger btn-sm remove-reason-button">
+                            <i class="fas fa-times"></i> Sil
+                        </button>
+                    </div>
+                    <input type="hidden" name="WhyUseReasons[${reasonIndex}].WhyUseReasonId" value="${whyUseReasonId}" />
+                    <input type="hidden" name="WhyUseReasons[${reasonIndex}].WhyUseId" value="@Model.WhyUseId" />
+                    <div class="mb-3">
+                        <label for="reasonText_${reasonIndex}" class="form-label">Neden Metni</label>
+                        <input type="text" name="WhyUseReasons[${reasonIndex}].ReasonText" class="form-control" id="reasonText_${reasonIndex}" value="${reasonText}" placeholder="Neden metnini girin" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="displayOrder_${reasonIndex}" class="form-label">Sıralama</label>
+                        <input type="number" name="WhyUseReasons[${reasonIndex}].DisplayOrder" class="form-control" id="displayOrder_${reasonIndex}" value="${displayOrder}" placeholder="Sıralama numarasını girin" min="1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="iconCssClass_${reasonIndex}" class="form-label">İkon CSS Sınıfı (Örn: fa fa-check-circle)</label>
+                        <input type="text" name="WhyUseReasons[${reasonIndex}].IconCssClass" class="form-control" id="iconCssClass_${reasonIndex}" value="${iconCssClass}" placeholder="İkon sınıfını girin">
+                    </div>
+                </div>
+            `;
+        container.append(newRow);
+        reasonIndex++;
+        updateReasonIndices(); // Yeni eklenen satır için indeksleri güncelle
+    }
+
+    function updateReasonIndices() {
+        $('#whyUseReasonsContainer .reason-item').each(function (idx) {
+            $(this).find('input, select, textarea').each(function () {
+                const name = $(this).attr('name');
+                if (name) {
+                    $(this).attr('name', name.replace(/WhyUseReasons\[\d+\]/, `WhyUseReasons[${idx}]`));
+                }
+                const id = $(this).attr('id');
+                if (id) {
+                    $(this).attr('id', id.replace(/_\d+$/, `_${idx}`));
+                }
+            });
+            $(this).find('.card-title').text(`Neden #${idx + 1}`);
+        });
+        reasonIndex = $('#whyUseReasonsContainer .reason-item').length; // Son indeksi güncelle
+    }
+
+
+    $(document).ready(function () {
+        $('#addReasonButton').click(function () {
+            addReasonRow();
+        });
+
+        $('#whyUseReasonsContainer').on('click', '.remove-reason-button', function () {
+            $(this).closest('.reason-item').remove();
+            updateReasonIndices(); // Bir öğe silindiğinde indeksleri yeniden düzenle
+        });
+    });
+</script>

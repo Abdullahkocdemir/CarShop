@@ -1,4 +1,5 @@
 using BusinessLayer.RabbitMQ;
+using CarShop.WebUI.Mapping;
 using CarShop.WebUI.Models;
 using Microsoft.Extensions.Options;
 using NuGet.Configuration;
@@ -16,7 +17,8 @@ builder.Services.AddHttpClient("CarShopApiClient", (sp, client) =>
     }
     client.BaseAddress = new Uri(apiSettings.BaseUrl); 
 });
-
+// AutoMapper'ý kaydetme
+builder.Services.AddAutoMapper(typeof(GeneralMapping)); 
 
 builder.Services.AddSingleton<EnhancedRabbitMQConsumerService>(sp =>
 {

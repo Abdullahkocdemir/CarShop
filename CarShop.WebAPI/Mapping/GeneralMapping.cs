@@ -12,6 +12,7 @@ using DTOsLayer.WebApiDTO.ServiceDTO;
 using DTOsLayer.WebApiDTO.ShowroomDTO;
 using DTOsLayer.WebApiDTO.WhyUseDTO;
 using DTOsLayer.WebApiDTO.FeatureImageDTO;
+using DTOsLayer.WebApiDTO.WhyUseReasonDTO;
 
 namespace CarShop.WebAPI.Mapping
 {
@@ -27,10 +28,22 @@ namespace CarShop.WebAPI.Mapping
                 .ForMember(dest => dest.ProductId, opt => opt.Condition(src => src.ProductId != 0));
 
             // Banner Mappings
+            // Existing mappings (assuming they exist)
+            CreateMap<Banner, ResultBannerDTO>().ReverseMap();
             CreateMap<CreateBannerDTO, Banner>().ReverseMap();
             CreateMap<UpdateBannerDTO, Banner>().ReverseMap();
-            CreateMap<GetByIdBannerDTO, Banner>().ReverseMap();
-            CreateMap<ResultBannerDTO, Banner>().ReverseMap();
+
+            // New mappings for DTOs with image uploads
+            CreateMap<CreateBannerDTO, Banner>()
+                .ForMember(dest => dest.CarImageUrl, opt => opt.Ignore()) // CarImageUrl will be set manually in the controller
+                .ForMember(dest => dest.LogoImageUrl, opt => opt.Ignore()); // LogoImageUrl will be set manually in the controller
+
+            CreateMap<UpdateBannerDTO, Banner>()
+                .ForMember(dest => dest.CarImageUrl, opt => opt.Ignore()) // CarImageUrl will be set manually in the controller
+                .ForMember(dest => dest.LogoImageUrl, opt => opt.Ignore()); // LogoImageUrl will be set manually in the controller
+
+            // This mapping will be used for GET operations to convert Banner to ResultBannerDTO
+            CreateMap<Banner, ResultBannerDTO>();
 
             // Brand Mappings
             CreateMap<CreateBrandDTO, Brand>().ReverseMap();
@@ -88,10 +101,17 @@ namespace CarShop.WebAPI.Mapping
 
             //Service
 
-            CreateMap<CreateServiceDTO, Service>().ReverseMap();
-            CreateMap<UpdateServiceDTO, Service>().ReverseMap();
-            CreateMap<GetByIdServiceDTO, Service>().ReverseMap();
-            CreateMap<ResultServiceDTO, Service>().ReverseMap();
+            CreateMap<Service, ResultServiceDTO>().ReverseMap();
+            CreateMap<Service, GetByIdServiceDTO>().ReverseMap();
+
+            // For CreateServiceDTO, ignore ImageUrl as it's handled separately
+            CreateMap<CreateServiceDTO, Service>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
+
+            // For UpdateServiceDTO, ignore ImageUrl as it's handled separately
+            CreateMap<UpdateServiceDTO, Service>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore())
+                .ForMember(dest => dest.ServiceId, opt => opt.Condition(src => src.ServiceId != 0)); // Example: only map ServiceId if it's not default
 
             //ShowRoom
 
@@ -101,10 +121,16 @@ namespace CarShop.WebAPI.Mapping
             CreateMap<ResultShowroomDTO, Showroom>().ReverseMap();
 
             //WhyUse
+            // WhyUse Mappings
             CreateMap<CreateWhyUseDTO, WhyUse>().ReverseMap();
             CreateMap<UpdateWhyUseDTO, WhyUse>().ReverseMap();
-            CreateMap<GetByIdWhyUseDTO, WhyUse>().ReverseMap();
             CreateMap<ResultWhyUseDTO, WhyUse>().ReverseMap();
+            CreateMap<GetByIdWhyUseDTO, WhyUse>().ReverseMap();
+
+            // WhyUseReason Mappings
+            CreateMap<CreateWhyUseReasonDTO, WhyUseReason>().ReverseMap();
+            CreateMap<UpdateWhyUseReasonDTO, WhyUseReason>().ReverseMap();
+            CreateMap<ResultWhyUseReasonDTO, WhyUseReason>().ReverseMap();
 
 
         }

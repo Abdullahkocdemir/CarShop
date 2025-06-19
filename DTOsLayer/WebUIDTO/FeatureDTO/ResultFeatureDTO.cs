@@ -14,6 +14,7 @@ namespace DTOsLayer.WebUIDTO.FeatureDTO
         public string Title { get; set; } = string.Empty;
         public string SmallTitle { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        // Özelliğe ait resimlerin listesi.
         public List<ResultFeatureImageDTO>? FeatureImages { get; set; }
     }
 }

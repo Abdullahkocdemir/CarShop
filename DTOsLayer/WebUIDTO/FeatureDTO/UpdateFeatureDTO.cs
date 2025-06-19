@@ -13,7 +13,9 @@ namespace DTOsLayer.WebUIDTO.FeatureDTO
         public string Title { get; set; } = string.Empty;
         public string SmallTitle { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        // Güncelleme sırasında yüklenecek yeni resim dosyaları.
         public List<IFormFile>? NewImageFiles { get; set; }
+        // Kaldırılacak mevcut resimlerin ID'leri.
         public List<int>? ImageIdsToRemove { get; set; }
     }
 }

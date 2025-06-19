@@ -1,0 +1,71 @@
+﻿@model GetByIdBannerDTO
+
+@{
+    ViewData["Title"] = "Afiş Detayı";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<header class="header">
+    <div>
+        <h2>Afiş Detayı</h2>
+        <p style="color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">Afişe ait detaylı bilgilere buradan ulaşabilirsiniz.</p>
+    </div>
+</header>
+
+<div class="detail-card shadow">
+    <h4 class="mb-4">@Model.SmallTitle Detayları</h4>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="detail-item">
+                <i class="fas fa-id-badge"></i> <strong>Afiş ID:</strong> <span>@Model.BannerId</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-heading"></i> <strong>Küçük Başlık:</strong> <span>@Model.SmallTitle</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-tag"></i> <strong>Alt Başlık:</strong> <span>@Model.SubTitle</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-car"></i> <strong>Araba Modeli:</strong> <span>@Model.CarModel</span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="detail-item">
+                <i class="fas fa-calendar-alt"></i> <strong>Ay:</strong> <span>@Model.Month</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-dollar-sign"></i> <strong>Fiyat:</strong> <span>@Model.Price</span>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4">
+        <div class="detail-item">
+            <strong>Araba Görseli:</strong>
+            @if (!string.IsNullOrEmpty(Model.CarImageUrl))
+            {
+                <img src="@Model.CarImageUrl" alt="Araba Görseli" style="max-width: 300px; height: auto; display: block; margin-top: 10px; border-radius: 8px;">
+            }
+            else
+            {
+                <span>Görsel Yok</span>
+            }
+        </div>
+        <div class="detail-item mt-3">
+            <strong>Logo Görseli:</strong>
+            @if (!string.IsNullOrEmpty(Model.LogoImageUrl))
+            {
+                <img src="@Model.LogoImageUrl" alt="Logo Görseli" style="max-width: 150px; height: auto; display: block; margin-top: 10px; border-radius: 8px;">
+            }
+            else
+            {
+                <span>Görsel Yok</span>
+            }
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end mt-4">
+        <a asp-action="Index" class="btn btn-secondary me-2">
+            <i class="fas fa-arrow-left"></i> Afişlere Geri Dön
+        </a>
+    </div>
+</div>

@@ -1,0 +1,85 @@
+﻿@model UpdateBannerDTO
+@{
+    ViewData["Title"] = "Afiş Güncelle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<header class="header">
+    <div>
+        <h2>Afiş Güncelle</h2>
+        <p style="color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">Mevcut afiş bilgilerini güncelleyin.</p>
+    </div>
+</header>
+
+<div class="form-card">
+    <form asp-controller="Banner" asp-action="Edit" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="BannerId" />
+
+        <div class="mb-3">
+            <label for="smallTitle" class="form-label">Küçük Başlık</label>
+            <input type="text" asp-for="SmallTitle" class="form-control" id="smallTitle" placeholder="Küçük başlığı girin" required>
+            <span asp-validation-for="SmallTitle" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="subTitle" class="form-label">Alt Başlık</label>
+            <input type="text" asp-for="SubTitle" class="form-control" id="subTitle" placeholder="Alt başlığı girin" required>
+            <span asp-validation-for="SubTitle" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="carImage" class="form-label">Araba Görseli</label>
+            @if (!string.IsNullOrEmpty(Model.ExistingCarImageUrl))
+            {
+                <div class="mb-2">
+                    <img src="@Model.ExistingCarImageUrl" alt="Mevcut Araba Görseli" style="width: 150px; height: auto; object-fit: cover; border-radius: 5px;">
+                    <small class="text-muted d-block">Mevcut görsel. Değiştirmek için yeni bir dosya seçin.</small>
+                </div>
+            }
+            <input type="file" asp-for="CarImage" class="form-control" id="carImage" accept="image/*">
+            <span asp-validation-for="CarImage" class="text-danger"></span>
+        </div>
+        <input type="hidden" asp-for="ExistingCarImageUrl" /> @* Mevcut URL'yi gizli alanda tutmak, API'ye gönderilmemesi için *@
+
+        <div class="mb-3">
+        <label for="carModel" class="form-label">Araba Modeli</label>
+        <input type="text" asp-for="CarModel" class="form-control" id="carModel" placeholder="Araba modelini girin" required>
+        <span asp-validation-for="CarModel" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+        <label for="month" class="form-label">Ay</label>
+        <input type="text" asp-for="Month" class="form-control" id="month" placeholder="Ay bilgisini girin (örn: Mart)" required>
+        <span asp-validation-for="Month" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+        <label for="logoImage" class="form-label">Logo Görseli</label>
+        @if (!string.IsNullOrEmpty(Model.ExistingLogoImageUrl))
+        {
+        <div class="mb-2">
+        <img src="@Model.ExistingLogoImageUrl" alt="Mevcut Logo Görseli" style="width: 100px; height: auto; object-fit: contain; border-radius: 5px;">
+        <small class="text-muted d-block">Mevcut görsel. Değiştirmek için yeni bir dosya seçin.</small>
+        </div>
+        }
+        <input type="file" asp-for="LogoImage" class="form-control" id="logoImage" accept="image/*">
+        <span asp-validation-for="LogoImage" class="text-danger"></span>
+        </div>
+        <input type="hidden" asp-for="ExistingLogoImageUrl" /> @* Mevcut URL'yi gizli alanda tutmak, API'ye gönderilmemesi için *@
+
+        <div class="mb-3">
+        <label for="price" class="form-label">Fiyat</label>
+        <input type="text" asp-for="Price" class="form-control" id="price" placeholder="Fiyatı girin (örn: 15.000 TL)" required>
+        <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
+
+        <div class="d-flex justify-content-end">
+        <a href="/Banner/Index" class="btn btn-secondary me-2">İptal</a>
+        <button type="submit" class="btn btn-primary">Güncelle</button>
+        </div>
+
+        @* Model doğrulama hatalarını göstermek için *@
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    </form>
+</div>

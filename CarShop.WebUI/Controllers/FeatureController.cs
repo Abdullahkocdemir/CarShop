@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿// CarShop.WebUI.Controllers/FeatureController.cs
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
-using DTOsLayer.WebUIDTO.FeatureDTO;
-using DTOsLayer.WebUIDTO.FeatureImageDTO; // Yeni using directive
-using System.IO;
-using System.Collections.Generic; // List için
-using System.Linq; // Any() için
+using DTOsLayer.WebUIDTO.FeatureDTO; // WebUI'ye özel DTO'lar
+using DTOsLayer.WebUIDTO.FeatureImageDTO; // WebUI'ye özel resim DTO'ları
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CarShop.WebUI.Controllers
 {
@@ -18,6 +19,7 @@ namespace CarShop.WebUI.Controllers
             _httpClient = httpClientFactory.CreateClient("CarShopApiClient");
         }
 
+        // Tüm özellikleri listeleme
         public async Task<IActionResult> Index()
         {
             var response = await _httpClient.GetAsync("api/Features");
@@ -31,12 +33,14 @@ namespace CarShop.WebUI.Controllers
             return View(new List<ResultFeatureDTO>());
         }
 
+        // Yeni özellik oluşturma (GET)
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
+        // Yeni özellik oluşturma (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateFeatureDTO dTO)
@@ -45,6 +49,7 @@ namespace CarShop.WebUI.Controllers
             {
                 using var content = new MultipartFormDataContent();
 
+                // DTO'daki string alanları ekle
                 content.Add(new StringContent(dTO.Title ?? string.Empty), "Title");
                 content.Add(new StringContent(dTO.SmallTitle ?? string.Empty), "SmallTitle");
                 content.Add(new StringContent(dTO.Description ?? string.Empty), "Description");
@@ -77,6 +82,7 @@ namespace CarShop.WebUI.Controllers
             return View(dTO);
         }
 
+        // Özellik düzenleme (GET)
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -88,14 +94,14 @@ namespace CarShop.WebUI.Controllers
 
                 if (apiFeature != null)
                 {
-                    var uiDto = new DTOsLayer.WebUIDTO.FeatureDTO.UpdateFeatureDTO
+                    var uiDto = new UpdateFeatureDTO
                     {
                         FeatureId = apiFeature.FeatureId,
                         Title = apiFeature.Title,
                         SmallTitle = apiFeature.SmallTitle,
                         Description = apiFeature.Description,
                     };
-                    ViewBag.ExistingImages = apiFeature.FeatureImages;
+                    ViewBag.ExistingImages = apiFeature.FeatureImages; // Mevcut resimleri View'a gönder
                     return View(uiDto);
                 }
                 else
@@ -117,9 +123,10 @@ namespace CarShop.WebUI.Controllers
             return View();
         }
 
+        // Özellik düzenleme (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UpdateFeatureDTO dTO, [FromForm] List<int>? imageIdsToRemove) // imageIdsToRemove doğrudan formdan alınacak
+        public async Task<IActionResult> Edit(UpdateFeatureDTO dTO, [FromForm] List<int>? ImageIdsToRemove) // imageIdsToRemove doğrudan formdan alınacak
         {
             if (ModelState.IsValid)
             {
@@ -130,15 +137,16 @@ namespace CarShop.WebUI.Controllers
                 content.Add(new StringContent(dTO.SmallTitle ?? string.Empty), "SmallTitle");
                 content.Add(new StringContent(dTO.Description ?? string.Empty), "Description");
 
-                if (imageIdsToRemove != null && imageIdsToRemove.Any())
+                // Kaldırılacak resim ID'lerini ekle
+                if (ImageIdsToRemove != null && ImageIdsToRemove.Any())
                 {
-                    foreach (var imageId in imageIdsToRemove)
+                    foreach (var imageId in ImageIdsToRemove)
                     {
                         content.Add(new StringContent(imageId.ToString()), "ImageIdsToRemove");
                     }
                 }
 
-                // Yeni yüklenecek resim dosyaları için döngü
+                // Yeni yüklenecek resim dosyalarını ekle
                 if (dTO.NewImageFiles != null && dTO.NewImageFiles.Any())
                 {
                     foreach (var newImageFile in dTO.NewImageFiles)
@@ -174,6 +182,7 @@ namespace CarShop.WebUI.Controllers
             return View(dTO);
         }
 
+        // Özellik silme
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
@@ -191,6 +200,7 @@ namespace CarShop.WebUI.Controllers
             return RedirectToAction("Index");
         }
 
+        // Özellik detayları
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
@@ -199,7 +209,7 @@ namespace CarShop.WebUI.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var jsonData = await response.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<DTOsLayer.WebUIDTO.FeatureDTO.GetByIdFeatureDTO>(jsonData);
+                var value = JsonConvert.DeserializeObject<GetByIdFeatureDTO>(jsonData);
                 return View(value);
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)

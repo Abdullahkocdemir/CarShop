@@ -52,6 +52,10 @@ namespace BusinessLayer.Conteiner
             Services.AddScoped<IFeatureImageService, FeatureImageManager>();
 
 
+            Services.AddScoped<IWhyUseReasonDal, EfWhyUseReasonDal>();
+            Services.AddScoped<IWhyUseReasonService, WhyUseReasonManager>();
+
+
         }
     }
 }

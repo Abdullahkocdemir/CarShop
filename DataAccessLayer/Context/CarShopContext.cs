@@ -53,5 +53,6 @@ namespace DataAccessLayer.Context
         public DbSet<Showroom> Showrooms { get; set; }
         public DbSet<WhyUse> WhyUses { get; set; }
         public DbSet<FeatureImage> FeatureImages { get; set; }
+        public DbSet<WhyUseReason> WhyUseReasons { get; set; }
     }
 }

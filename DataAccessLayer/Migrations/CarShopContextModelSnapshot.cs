@@ -150,6 +150,22 @@ namespace DataAccessLayer.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("BannerId"));
 
+                    b.Property<string>("CarImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("CarModel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LogoImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Month")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Price")
                         .IsRequired()
                         .HasColumnType("text");
@@ -444,17 +460,50 @@ namespace DataAccessLayer.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("WhyUseId"));
 
-                    b.Property<string>("Description")
+                    b.Property<string>("MainDescription")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("SmallTitle")
+                    b.Property<string>("MainTitle")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("VideoUrl")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("WhyUseId");
 
                     b.ToTable("WhyUses");
+                });
+
+            modelBuilder.Entity("EntityLayer.Entities.WhyUseReason", b =>
+                {
+                    b.Property<int>("WhyUseReasonId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("WhyUseReasonId"));
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("IconCssClass")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ReasonText")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("WhyUseId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("WhyUseReasonId");
+
+                    b.HasIndex("WhyUseId");
+
+                    b.ToTable("WhyUseReasons");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -595,6 +644,17 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Brand");
                 });
 
+            modelBuilder.Entity("EntityLayer.Entities.WhyUseReason", b =>
+                {
+                    b.HasOne("EntityLayer.Entities.WhyUse", "WhyUse")
+                        .WithMany("WhyUseReasons")
+                        .HasForeignKey("WhyUseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("WhyUse");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("EntityLayer.Entities.AppRole", null)
@@ -672,6 +732,11 @@ namespace DataAccessLayer.Migrations
             modelBuilder.Entity("EntityLayer.Entities.Feature", b =>
                 {
                     b.Navigation("FeatureImages");
+                });
+
+            modelBuilder.Entity("EntityLayer.Entities.WhyUse", b =>
+                {
+                    b.Navigation("WhyUseReasons");
                 });
 #pragma warning restore 612, 618
         }

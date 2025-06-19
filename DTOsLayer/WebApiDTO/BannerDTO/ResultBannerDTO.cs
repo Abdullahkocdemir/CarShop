@@ -11,6 +11,10 @@ namespace DTOsLayer.WebApiDTO.BannerDTO
         public int BannerId { get; set; }
         public string SmallTitle { get; set; } = string.Empty;
         public string SubTitle { get; set; } = string.Empty;
+        public string CarImageUrl { get; set; } = string.Empty; // Eklendi
+        public string CarModel { get; set; } = string.Empty;    // Eklendi
+        public string Month { get; set; } = string.Empty;       // Eklendi
+        public string LogoImageUrl { get; set; } = string.Empty; // Eklendi
         public string Price { get; set; } = string.Empty;
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ namespace DTOsLayer.WebUIDTO.ServiceDTO
         public int ServiceId { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public string ImageUrl { get; set; } = string.Empty;
+        public IFormFile? ImageFile { get; set; } // For file upload
+        public string? ExistingImageUrl { get; set; } // To display and retain current image
     }
 }
