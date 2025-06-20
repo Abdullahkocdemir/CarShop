@@ -8,7 +8,7 @@ namespace EntityLayer.Entities
 {
     public class BlogDetail
     {
-        public int BlogDetailsId { get; set; }
+        public int BlogDetailId { get; set; }
         public int BlogId { get; set; }
         public Blog? Blog { get; set; }
         public DateTime Date { get; set; } 

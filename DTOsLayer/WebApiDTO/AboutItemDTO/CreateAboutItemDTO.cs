@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EntityLayer.Entities
+namespace DTOsLayer.WebApiDTO.AboutItem
 {
-    public class CallBackTitle
+    public class CreateAboutItemDTO
     {
-        public int CallBackTitleId { get; set; }
+        public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
     }
 }

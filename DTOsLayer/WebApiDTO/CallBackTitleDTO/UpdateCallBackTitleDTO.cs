@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EntityLayer.Entities
+namespace DTOsLayer.WebApiDTO.CallBackTitleDTO
 {
-    public class CallBackTitle
+    public class UpdateCallBackTitleDTO
     {
         public int CallBackTitleId { get; set; }
         public string Description { get; set; } = string.Empty;

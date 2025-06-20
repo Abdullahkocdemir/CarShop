@@ -43,7 +43,7 @@ namespace BusinessLayer.RabbitMQ
                 var entityTypes = new[]
                 {
                     "brand", "product", "service", "contact", "banner",
-                    "broadcast", "feature", "newlatest", "showroom", "whyuse"
+                    "broadcast", "feature", "newlatest", "showroom", "whyuse","aboutfeature","about","staff","testimonial","aboutItem","callback","callbactitle","callbackaction","whyusereaseon"
                 };
 
                 foreach (var entityType in entityTypes)

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using DTOsLayer.WebApiDTO.BannerDTO;
 using DTOsLayer.WebApiDTO.ProductDTOs;
-using DTOsLayer.WebApiDTO.BrandDTO; // Brand DTO'larını ekledik
+using DTOsLayer.WebApiDTO.BrandDTO;
 using EntityLayer.Entities;
 using System;
 using DTOsLayer.WebApiDTO.ContactDTO;
@@ -12,6 +12,13 @@ using DTOsLayer.WebApiDTO.ShowroomDTO;
 using DTOsLayer.WebApiDTO.WhyUseDTO;
 using DTOsLayer.WebApiDTO.FeatureImageDTO;
 using DTOsLayer.WebApiDTO.WhyUseReasonDTO;
+using DTOsLayer.WebApiDTO.AboutFeature;
+using DTOsLayer.WebApiDTO.AboutItem;
+using DTOsLayer.WebApiDTO.AboutItemDTO;
+using DTOsLayer.WebApiDTO.AboutDTO;
+using DTOsLayer.WebApiDTO.CallBackDTO;
+using DTOsLayer.WebApiDTO.CallBackTitleDTO;
+using DTOsLayer.WebApiDTO.CalltoActionDTO;
 
 namespace CarShop.WebAPI.Mapping
 {
@@ -19,6 +26,43 @@ namespace CarShop.WebAPI.Mapping
     {
         public GeneralMapping()
         {
+
+            //CalltoAction Mapping
+
+            CreateMap<CalltoAction, ResultCalltoActionDTO>().ReverseMap();
+            CreateMap<CalltoAction, GetByIdCalltoActionDTO>().ReverseMap();
+
+            CreateMap<CreateCalltoActionDTO, CalltoAction>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore()).ReverseMap();
+
+            CreateMap<UpdateCalltoActionDTO, CalltoAction>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore()).ReverseMap();
+
+
+            //CallBackTitle Mapping
+            CreateMap<CreateCallBackTitleDTO, CallBackTitle>().ReverseMap();
+            CreateMap<GetByIdCallBackTitleDTO, CallBackTitle>().ReverseMap();
+            CreateMap<UpdateCallBackTitleDTO, CallBackTitle>().ReverseMap();
+            CreateMap<ResultCallBackTitleDTO, CallBackTitle>().ReverseMap();
+
+            //CallBack Mapping
+            CreateMap<CreateCallBackDTO, CallBack>().ReverseMap();
+            CreateMap<ResultCallBackDTO, CallBack>().ReverseMap();
+            CreateMap<UpdateCallBackDTO, CallBack>().ReverseMap();
+            CreateMap<UpdateCallBackDTO, CallBack>().ReverseMap();
+
+            //About Mapping
+            CreateMap<CreateAboutDTO, About>().ReverseMap();
+            CreateMap<ResultAboutDTO, About>().ReverseMap();
+            CreateMap<UpdateAboutDTO, About>().ReverseMap();
+            CreateMap<GetByIdAboutDTO, About>().ReverseMap();
+
+            //AboutItem Mapping
+            CreateMap<CreateAboutItemDTO, AboutItem>().ReverseMap();
+            CreateMap<ResultAboutItemDTO, AboutItem>().ReverseMap();
+            CreateMap<UpdateAboutItemDTO, AboutItem>().ReverseMap();
+            CreateMap<GetByIdAboutItemDTO, AboutItem>().ReverseMap();
+
             // Product Mappings
             CreateMap<CreateProductDTO, Product>()
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
@@ -124,6 +168,17 @@ namespace CarShop.WebAPI.Mapping
             CreateMap<CreateWhyUseReasonDTO, WhyUseReason>().ReverseMap();
             CreateMap<UpdateWhyUseReasonDTO, WhyUseReason>().ReverseMap();
             CreateMap<ResultWhyUseReasonDTO, WhyUseReason>().ReverseMap();
+
+
+            //AboutFeature Mapping
+            CreateMap<AboutFeature, ResultAboutFeatureDTO>().ReverseMap();
+            CreateMap<AboutFeature, GetByIdAboutFeatureDTO>().ReverseMap();
+
+            CreateMap<CreateAboutFeatureDTO, AboutFeature>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
+
+            CreateMap<UpdateAboutFeatureDTO, AboutFeature>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
 
 
         }
