@@ -4,7 +4,6 @@ using DTOsLayer.WebApiDTO.ProductDTOs;
 using DTOsLayer.WebApiDTO.BrandDTO; // Brand DTO'larını ekledik
 using EntityLayer.Entities;
 using System;
-using DTOsLayer.WebApiDTO.BroadcastDTO;
 using DTOsLayer.WebApiDTO.ContactDTO;
 using DTOsLayer.WebApiDTO.FeatureDTO;
 using DTOsLayer.WebApiDTO.NewLatestDTO;
@@ -51,12 +50,6 @@ namespace CarShop.WebAPI.Mapping
             CreateMap<GetByIdBrandDTO, Brand>().ReverseMap();
             CreateMap<ResultBrandDTO, Brand>().ReverseMap();
 
-
-            //BroadCast
-            CreateMap<CreateBroadcastDTO, Broadcast>().ReverseMap();
-            CreateMap<UpdateBroadcastDTO, Broadcast>().ReverseMap();
-            CreateMap<GetByIdBroadcastDTO, Broadcast>().ReverseMap();
-            CreateMap<ResultBroadcastDTO, Broadcast>().ReverseMap();
 
 
             //Contact

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace EntityLayer.Entities
 {
-    public class Broadcast
+    public class AboutFeature
     {
-        public int BroadcastId { get; set; }
+        public int AboutFeatureId { get; set; }
+        public string ImageUrl { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
-        public bool IsActive { get; set; }
-        public string SmallTitle { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
     }
 }

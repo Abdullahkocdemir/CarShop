@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DTOsLayer.WebUIDTO.BroadcastDTO
+namespace EntityLayer.Entities
 {
-    public class CreateBroadcastDTO
+    public class AboutItem
     {
+        public int AboutItemId { get; set; }
         public string Title { get; set; } = string.Empty;
-        public bool IsActive { get; set; }
-        public string SmallTitle { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
     }
 }

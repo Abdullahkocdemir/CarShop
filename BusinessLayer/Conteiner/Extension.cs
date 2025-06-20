@@ -21,9 +21,6 @@ namespace BusinessLayer.Conteiner
             Services.AddScoped<IBrandDal, EfBrandDal>();
             Services.AddScoped<IBrandService, BrandManager>();
 
-            Services.AddScoped<IBroadcastDal, EfBroadcastDal>();
-            Services.AddScoped<IBroadcastService, BroadcastManager>();
-
             Services.AddScoped<IContactDal, EfContactDal>();
             Services.AddScoped<IContactService, ContactManager>();
 
@@ -54,6 +51,10 @@ namespace BusinessLayer.Conteiner
 
             Services.AddScoped<IWhyUseReasonDal, EfWhyUseReasonDal>();
             Services.AddScoped<IWhyUseReasonService, WhyUseReasonManager>();
+
+
+            Services.AddScoped<ICalltoActionDal, EfCalltoActionDal>();
+            Services.AddScoped<ICalltoActionService, CalltoActionManager>();
 
 
         }

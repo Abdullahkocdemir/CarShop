@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.EntityFrameWork
 {
-    public class EfBroadcastDal : GenericRepository<Broadcast>,IBroadcastDal
+    public class EfCalltoActionDal : GenericRepository<CalltoAction>, ICalltoActionDal
     {
-        public EfBroadcastDal(CarShopContext context) : base(context)
+        public EfCalltoActionDal(CarShopContext context) : base(context)
         {
         }
     }

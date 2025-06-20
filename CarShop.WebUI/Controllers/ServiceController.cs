@@ -74,7 +74,7 @@ namespace CarShop.WebUI.Controllers
                 // 2. Map data from apiServiceDto to your Web UI's UpdateServiceDTO
                 var updateDto = new UpdateServiceDTO
                 {
-                    ServiceId = apiServiceDto.ServiceId,
+                    ServiceId = apiServiceDto!.ServiceId,
                     Title = apiServiceDto.Title,
                     Description = apiServiceDto.Description,
                     ExistingImageUrl = apiServiceDto.ImageUrl // Now correctly assigning from API's ImageUrl

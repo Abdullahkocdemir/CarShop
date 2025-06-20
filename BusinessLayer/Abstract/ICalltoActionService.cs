@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer.Abstract
 {
-    public interface IBroadcastService : IGenericService<Broadcast>
+    public interface ICalltoActionService:IGenericService<CalltoAction>
     {
     }
 }
