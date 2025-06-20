@@ -2,6 +2,7 @@
 using BusinessLayer.Concrete;
 using DataAccessLayer.Abstract;
 using DataAccessLayer.EntityFrameWork;
+using EntityLayer.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -55,6 +56,44 @@ namespace BusinessLayer.Conteiner
 
             Services.AddScoped<ICalltoActionDal, EfCalltoActionDal>();
             Services.AddScoped<ICalltoActionService, CalltoActionManager>();
+
+            Services.AddScoped<IAboutDal, EfAboutDal>();
+            Services.AddScoped<IAboutService, AboutManager>();
+
+
+            Services.AddScoped<IAboutFeatureDal, EfAboutFeatureDal>();
+            Services.AddScoped<IAboutFeatureService, AboutFeatureManager>();
+
+
+
+            Services.AddScoped<IAboutItemDal, EfAboutItemDal>();
+            Services.AddScoped<IAboutItemService, AboutItemManager>();
+
+
+            Services.AddScoped<IBlogDal, EfBlogDal>();
+            Services.AddScoped<IBlogService, BlogManager>();
+
+
+            Services.AddScoped<IBlogDetailsDal, EfBlogDetailsDal>();
+            Services.AddScoped<IBlogDetailService, BlogDetailManager>();
+
+            Services.AddScoped<ICallBackDal, EfCallBackDal>();
+            Services.AddScoped<ICallBackService, CallBackManager>();
+
+            Services.AddScoped<ICallBackTitleDal, EfCallBackTitleDal>();
+            Services.AddScoped<ICallBackTitleService, CallBackTitleManager>();
+
+            Services.AddScoped<IPartnerDal, EfPartnerDal>();
+            Services.AddScoped<IPartnerService, PartnerManager>();
+
+
+            Services.AddScoped<IStaffDal, EfStaffDal>();
+            Services.AddScoped<IStaffService, StaffManager>();
+
+
+            Services.AddScoped<ITestimonialDal, EfTestimonialDal>();
+            Services.AddScoped<ITestimonialService, TestimonialManager>();
+
 
 
         }

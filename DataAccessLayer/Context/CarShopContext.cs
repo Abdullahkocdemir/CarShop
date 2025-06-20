@@ -1,8 +1,8 @@
 ﻿using EntityLayer.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion; 
-using System; 
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System;
 
 namespace DataAccessLayer.Context
 {
@@ -30,13 +30,13 @@ namespace DataAccessLayer.Context
                     {
                         property.SetValueConverter(new ValueConverter<DateTime, DateTime>(
                             v => v.ToUniversalTime(),
-                            v => DateTime.SpecifyKind(v, DateTimeKind.Utc))); 
+                            v => DateTime.SpecifyKind(v, DateTimeKind.Utc)));
                     }
                     else if (property.ClrType == typeof(DateTime?))
                     {
                         property.SetValueConverter(new ValueConverter<DateTime?, DateTime?>(
                             v => v.HasValue ? v.Value.ToUniversalTime() : v,
-                            v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v)); 
+                            v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v));
                     }
                 }
             }
@@ -45,13 +45,23 @@ namespace DataAccessLayer.Context
         public DbSet<Product> Products { get; set; }
         public DbSet<Banner> Banners { get; set; }
         public DbSet<Brand> Brands { get; set; }
-        public DbSet<Contact> Contacts { get; set; }
+        public DbSet<About> Abouts { get; set; }
+        public DbSet<AboutFeature> AboutFeatures { get; set; }
+        public DbSet<AboutItem> AboutItems { get; set; }
+        public DbSet<Blog> Blogs { get; set; }
+        public DbSet<BlogDetail> BlogDetails { get; set; }
+        public DbSet<CallBack> CallBacks { get; set; }
+        public DbSet<CallBackTitle> BackTitles { get; set; }
         public DbSet<CalltoAction> CalltoActions { get; set; }
+        public DbSet<Partner> Partners { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
         public DbSet<Feature> Features { get; set; }
         public DbSet<NewLatest> NewLatests { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<Showroom> Showrooms { get; set; }
         public DbSet<WhyUse> WhyUses { get; set; }
+        public DbSet<Staff> Staffs { get; set; }
+        public DbSet<Testimonial> Testimonials { get; set; }
         public DbSet<FeatureImage> FeatureImages { get; set; }
         public DbSet<WhyUseReason> WhyUseReasons { get; set; }
     }

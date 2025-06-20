@@ -15,6 +15,6 @@ namespace EntityLayer.Entities
         public string Author { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public BlogDetails? Details { get; set; }
+        public BlogDetail? Details { get; set; }
     }
 }
