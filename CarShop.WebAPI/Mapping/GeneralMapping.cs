@@ -19,6 +19,9 @@ using DTOsLayer.WebApiDTO.AboutDTO;
 using DTOsLayer.WebApiDTO.CallBackDTO;
 using DTOsLayer.WebApiDTO.CallBackTitleDTO;
 using DTOsLayer.WebApiDTO.CalltoActionDTO;
+using DTOsLayer.WebApiDTO.PartnerDTO;
+using DTOsLayer.WebApiDTO.StaffDTO;
+using DTOsLayer.WebApiDTO.TestimonialDTO;
 
 namespace CarShop.WebAPI.Mapping
 {
@@ -26,6 +29,12 @@ namespace CarShop.WebAPI.Mapping
     {
         public GeneralMapping()
         {
+            //Testimonial Mapping
+            CreateMap<CreateTestimonialDTO, Testimonial>().ReverseMap();
+            CreateMap<UpdateTestimonialDTO, Testimonial>().ReverseMap();
+            CreateMap<ResultTestimonialDTO, Testimonial>().ReverseMap();
+            CreateMap<GetByIdTestimonialDTO, Testimonial>().ReverseMap();
+
 
             //CalltoAction Mapping
 
@@ -44,6 +53,28 @@ namespace CarShop.WebAPI.Mapping
             CreateMap<GetByIdCallBackTitleDTO, CallBackTitle>().ReverseMap();
             CreateMap<UpdateCallBackTitleDTO, CallBackTitle>().ReverseMap();
             CreateMap<ResultCallBackTitleDTO, CallBackTitle>().ReverseMap();
+
+            //Partner Mapping
+            CreateMap<Partner, ResultPartnerDTO>().ReverseMap();
+            CreateMap<Partner, GetByIdPartnerDTO>().ReverseMap();
+
+            CreateMap<CreatePartnerDTO, Partner>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
+
+            CreateMap<UpdatePartnerDTO, Partner>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
+
+            //Staff Mapping
+
+
+            CreateMap<Staff, ResultStaffDTO>().ReverseMap();
+            CreateMap<Staff, GetByIdStaffDTO>().ReverseMap();
+
+            CreateMap<CreateStaffDTO, Staff>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
+
+            CreateMap<UpdateStaffDTO, Staff>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
 
             //CallBack Mapping
             CreateMap<CreateCallBackDTO, CallBack>().ReverseMap();
@@ -76,16 +107,14 @@ namespace CarShop.WebAPI.Mapping
             CreateMap<CreateBannerDTO, Banner>().ReverseMap();
             CreateMap<UpdateBannerDTO, Banner>().ReverseMap();
 
-            // New mappings for DTOs with image uploads
             CreateMap<CreateBannerDTO, Banner>()
-                .ForMember(dest => dest.CarImageUrl, opt => opt.Ignore()) // CarImageUrl will be set manually in the controller
-                .ForMember(dest => dest.LogoImageUrl, opt => opt.Ignore()); // LogoImageUrl will be set manually in the controller
+                .ForMember(dest => dest.CarImageUrl, opt => opt.Ignore())
+                .ForMember(dest => dest.LogoImageUrl, opt => opt.Ignore());
 
             CreateMap<UpdateBannerDTO, Banner>()
-                .ForMember(dest => dest.CarImageUrl, opt => opt.Ignore()) // CarImageUrl will be set manually in the controller
-                .ForMember(dest => dest.LogoImageUrl, opt => opt.Ignore()); // LogoImageUrl will be set manually in the controller
+                .ForMember(dest => dest.CarImageUrl, opt => opt.Ignore())
+                .ForMember(dest => dest.LogoImageUrl, opt => opt.Ignore());
 
-            // This mapping will be used for GET operations to convert Banner to ResultBannerDTO
             CreateMap<Banner, ResultBannerDTO>();
 
             // Brand Mappings
@@ -103,10 +132,9 @@ namespace CarShop.WebAPI.Mapping
             CreateMap<ResultContactDTO, Contact>().ReverseMap();
 
 
-            // Entity'den WebApi DTO'larına
             CreateMap<Feature, ResultFeatureDTO>();
             CreateMap<Feature, GetByIdFeatureDTO>();
-            CreateMap<Feature, UpdateFeatureDTO>(); // UI'a mevcut veriyi doldurmak için kullanılabilir
+            CreateMap<Feature, UpdateFeatureDTO>();
 
             // Feature Mappings
             CreateMap<Feature, ResultFeatureDTO>()
@@ -118,15 +146,13 @@ namespace CarShop.WebAPI.Mapping
                 .ReverseMap();
 
             CreateMap<CreateFeatureDTO, Feature>()
-                .ForMember(dest => dest.FeatureImages, opt => opt.Ignore()); // Images handled separately
+                .ForMember(dest => dest.FeatureImages, opt => opt.Ignore());
             CreateMap<UpdateFeatureDTO, Feature>()
-                .ForMember(dest => dest.FeatureImages, opt => opt.Ignore()); // Images handled separately
+                .ForMember(dest => dest.FeatureImages, opt => opt.Ignore());
 
 
             // FeatureImage Mappings
             CreateMap<FeatureImage, ResultFeatureImageDTO>().ReverseMap();
-            // You might not need a mapping for UploadFeatureImageDTO directly to FeatureImage
-            // as you'll be creating FeatureImage objects manually.
 
 
             //NewLatest
