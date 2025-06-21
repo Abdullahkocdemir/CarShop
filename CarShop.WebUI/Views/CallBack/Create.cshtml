@@ -1,0 +1,50 @@
+﻿@model CreateCallBackDTO
+@{
+    ViewData["Title"] = "Yeni Geri Arama İsteği Ekle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<header class="header">
+    <div>
+        <h2>Yeni Geri Arama İsteği Ekle</h2>
+        <p style="color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">Yeni bir geri arama isteği girişi yapın.</p>
+    </div>
+    <div class="user-info">
+        <div class="user-avatar">AK</div>
+        <div>
+            <div>Admin Kullanıcı</div>
+            <div style="font-size: 0.8rem; opacity: 0.7;">admin@example.com</div>
+        </div>
+    </div>
+</header>
+
+<div class="form-card">
+    <form asp-controller="CallBack" asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label for="nameSurname" class="form-label">Ad Soyad</label>
+            <input type="text" asp-for="NameSurname" class="form-control" id="nameSurname" placeholder="Adınızı ve Soyadınızı girin" required>
+            <span asp-validation-for="NameSurname" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="email" class="form-label">E-posta</label>
+            <input type="email" asp-for="Email" class="form-control" id="email" placeholder="E-posta adresinizi girin" required>
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="phoneNumber" class="form-label">Telefon Numarası</label>
+            <input type="text" asp-for="PhoneNumber" class="form-control" id="phoneNumber" placeholder="Telefon numaranızı girin" required>
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <a href="/CallBack/Index" class="btn btn-secondary me-2">İptal</a>
+            <button type="submit" class="btn btn-primary">Kaydet</button>
+        </div>
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    </form>
+</div>

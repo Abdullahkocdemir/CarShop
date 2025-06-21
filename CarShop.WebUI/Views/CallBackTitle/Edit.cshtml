@@ -1,0 +1,39 @@
+﻿@model UpdateCallBackTitleDTO
+@{
+    ViewData["Title"] = "Geri Arama Başlığı Güncelle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<header class="header">
+    <div>
+        <h2>Geri Arama Başlığı Güncelle</h2>
+        <p style="color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">Mevcut geri arama başlığı bilgilerini güncelleyin.</p>
+    </div>
+    <div class="user-info">
+        <div class="user-avatar">AK</div>
+        <div>
+            <div>Admin Kullanıcı</div>
+            <div style="font-size: 0.8rem; opacity: 0.7;">admin@example.com</div>
+        </div>
+    </div>
+</header>
+
+<div class="form-card">
+    <form asp-controller="CallBackTitle" asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="CallBackTitleId" />
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Açıklama</label>
+            <textarea asp-for="Description" class="form-control" id="description" rows="3" placeholder="Geri arama başlığı açıklamasını girin" required></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <a href="/CallBackTitle/Index" class="btn btn-secondary me-2">İptal</a>
+            <button type="submit" class="btn btn-primary">Güncelle</button>
+        </div>
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    </form>
+</div>

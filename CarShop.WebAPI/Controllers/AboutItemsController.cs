@@ -11,13 +11,13 @@ namespace CarShop.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AboutItemController : BaseEntityController
+    public class AboutItemsController : BaseEntityController
     {
         private readonly IAboutItemService _aboutItemService;
         private readonly IMapper _mapper;
         protected override string EntityTypeName => "AboutItem";
 
-        public AboutItemController(IAboutItemService aboutItemService, EnhancedRabbitMQService rabbitMqService, IMapper mapper)
+        public AboutItemsController(IAboutItemService aboutItemService, EnhancedRabbitMQService rabbitMqService, IMapper mapper)
             : base(rabbitMqService)
         {
             _aboutItemService = aboutItemService;
