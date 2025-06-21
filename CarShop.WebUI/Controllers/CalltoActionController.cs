@@ -1,4 +1,4 @@
-﻿using DTOsLayer.WebUIDTO.AboutFeatureDTO; // UI DTO'larınız
+﻿using DTOsLayer.WebUIDTO.CalltoActionDTO;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Text;
@@ -7,26 +7,24 @@ using System.Net.Http;
 
 namespace CarShop.WebUI.Controllers
 {
-    public class AboutFeatureController : Controller
+    public class CalltoActionController : Controller
     {
         private readonly HttpClient _httpClient;
 
-        public AboutFeatureController(IHttpClientFactory httpClientFactory)
+        public CalltoActionController(IHttpClientFactory httpClientFactory)
         {
             _httpClient = httpClientFactory.CreateClient("CarShopApiClient");
         }
-
-
         public async Task<IActionResult> Index()
         {
-            var response = await _httpClient.GetAsync("api/AboutFeatures");
+            var response = await _httpClient.GetAsync("api/CalltoActions");
             if (response.IsSuccessStatusCode)
             {
                 var jsonData = await response.Content.ReadAsStringAsync();
-                var values = JsonConvert.DeserializeObject<List<ResultAboutFeatureDTO>>(jsonData);
+                var values = JsonConvert.DeserializeObject<List<ResultCalltoActionDTO>>(jsonData);
                 return View(values);
             }
-            return View(new List<ResultAboutFeatureDTO>());
+            return View(new List<ResultCalltoActionDTO>());
         }
 
         [HttpGet]
@@ -37,13 +35,13 @@ namespace CarShop.WebUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateAboutFeatureDTO dto)
+        public async Task<IActionResult> Create(CreateCalltoActionDTO dto)
         {
             if (ModelState.IsValid)
             {
                 using var formData = new MultipartFormDataContent();
                 formData.Add(new StringContent(dto.Title), "Title");
-                formData.Add(new StringContent(dto.Description), "Description");
+                formData.Add(new StringContent(dto.SmallTitle), "SmallTitle");
 
                 if (dto.ImageFile != null && dto.ImageFile.Length > 0)
                 {
@@ -57,11 +55,11 @@ namespace CarShop.WebUI.Controllers
                     return View(dto);
                 }
 
-                var response = await _httpClient.PostAsync("api/AboutFeatures", formData);
+                var response = await _httpClient.PostAsync("api/CalltoActions", formData);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    TempData["SuccessMessage"] = "Hakkımızda Özelliği başarıyla eklendi!";
+                    TempData["SuccessMessage"] = "Call to Action başarıyla eklendi!";
                     return RedirectToAction("Index");
                 }
                 else
@@ -76,36 +74,35 @@ namespace CarShop.WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var response = await _httpClient.GetAsync($"api/AboutFeatures/{id}");
+            var response = await _httpClient.GetAsync($"api/CalltoActions/{id}");
             if (response.IsSuccessStatusCode)
             {
-                var apiDto = JsonConvert.DeserializeObject<GetByIdAboutFeatureDTO>(await response.Content.ReadAsStringAsync());
+                var apiDto = JsonConvert.DeserializeObject<GetByIdCalltoActionDTO>(await response.Content.ReadAsStringAsync());
 
-                var updateDto = new UpdateAboutFeatureDTO
+                var updateDto = new UpdateCalltoActionDTO
                 {
-                    AboutFeatureId = apiDto!.AboutFeatureId,
+                    CalltoActionId = apiDto!.CalltoActionId,
                     Title = apiDto.Title,
-                    Description = apiDto.Description,
+                    SmallTitle = apiDto.SmallTitle,
                     ExistingImageUrl = apiDto.ImageUrl
                 };
                 return View(updateDto);
             }
-            TempData["ErrorMessage"] = $"ID'si {id} olan Hakkımızda Özelliği bulunamadı.";
+            TempData["ErrorMessage"] = $"ID'si {id} olan Call to Action bulunamadı.";
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UpdateAboutFeatureDTO dto)
+        public async Task<IActionResult> Edit(UpdateCalltoActionDTO dto)
         {
             if (ModelState.IsValid)
             {
                 using var formData = new MultipartFormDataContent();
-                formData.Add(new StringContent(dto.AboutFeatureId.ToString()), "AboutFeatureId");
+                formData.Add(new StringContent(dto.CalltoActionId.ToString()), "CalltoActionId");
                 formData.Add(new StringContent(dto.Title), "Title");
-                formData.Add(new StringContent(dto.Description), "Description");
+                formData.Add(new StringContent(dto.SmallTitle), "SmallTitle");
 
-                // Mevcut resim URL'sini (eğer varsa) gönder
                 if (!string.IsNullOrEmpty(dto.ExistingImageUrl))
                 {
                     formData.Add(new StringContent(dto.ExistingImageUrl), "ExistingImageUrl");
@@ -118,11 +115,11 @@ namespace CarShop.WebUI.Controllers
                     formData.Add(fileContent, "ImageFile", dto.ImageFile.FileName);
                 }
 
-                var response = await _httpClient.PutAsync("api/AboutFeatures", formData);
+                var response = await _httpClient.PutAsync("api/CalltoActions", formData);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    TempData["SuccessMessage"] = "Hakkımızda Özelliği başarıyla güncellendi!";
+                    TempData["SuccessMessage"] = "Call to Action başarıyla güncellendi!";
                     return RedirectToAction("Index");
                 }
                 else
@@ -137,28 +134,28 @@ namespace CarShop.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            var responseMessage = await _httpClient.DeleteAsync($"api/AboutFeatures/{id}");
+            var responseMessage = await _httpClient.DeleteAsync($"api/CalltoActions/{id}");
             if (responseMessage.IsSuccessStatusCode)
             {
-                TempData["SuccessMessage"] = "Hakkımızda Özelliği başarıyla silindi!";
+                TempData["SuccessMessage"] = "Call to Action başarıyla silindi!";
                 return RedirectToAction("Index");
             }
-            TempData["ErrorMessage"] = $"ID'si {id} olan Hakkımızda Özelliği silinirken bir hata oluştu.";
+            TempData["ErrorMessage"] = $"ID'si {id} olan Call to Action silinirken bir hata oluştu.";
             return RedirectToAction("Index");
         }
 
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var response = await _httpClient.GetAsync($"api/AboutFeatures/{id}");
+            var response = await _httpClient.GetAsync($"api/CalltoActions/{id}");
 
             if (response.IsSuccessStatusCode)
             {
                 var jsonData = await response.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<GetByIdAboutFeatureDTO>(jsonData);
+                var value = JsonConvert.DeserializeObject<GetByIdCalltoActionDTO>(jsonData);
                 return View(value);
             }
-            TempData["ErrorMessage"] = $"ID'si {id} olan Hakkımızda Özelliği detayları bulunamadı.";
+            TempData["ErrorMessage"] = $"ID'si {id} olan Call to Action detayları bulunamadı.";
             return RedirectToAction("Index");
         }
     }

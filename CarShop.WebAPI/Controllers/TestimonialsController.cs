@@ -15,13 +15,13 @@ namespace CarShop.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TestimonialssController : BaseEntityController
+    public class TestimonialsController : BaseEntityController
     {
         private readonly ITestimonialService _testimonialService;
         private readonly IMapper _mapper;
         protected override string EntityTypeName => "Testimonial";
 
-        public TestimonialssController(ITestimonialService testimonialService, EnhancedRabbitMQService rabbitMqService, IMapper mapper)
+        public TestimonialsController(ITestimonialService testimonialService, EnhancedRabbitMQService rabbitMqService, IMapper mapper)
             : base(rabbitMqService)
         {
             _testimonialService = testimonialService;
