@@ -2,16 +2,27 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Text;
+using System.Net.Http.Headers;
+using System.Net.Http;
+using FluentValidation;
+using FluentValidation.Results;
+
 
 namespace CarShop.WebUI.Controllers
 {
     public class ServiceController : Controller
     {
         private readonly HttpClient _httpClient;
+        private readonly IValidator<CreateServiceDTO> _createServiceValidator;
+        private readonly IValidator<UpdateServiceDTO> _updateServiceValidator;
 
-        public ServiceController(IHttpClientFactory httpClientFactory)
+        public ServiceController(IHttpClientFactory httpClientFactory,
+                                 IValidator<CreateServiceDTO> createServiceValidator,
+                                 IValidator<UpdateServiceDTO> updateServiceValidator)
         {
             _httpClient = httpClientFactory.CreateClient("CarShopApiClient");
+            _createServiceValidator = createServiceValidator;
+            _updateServiceValidator = updateServiceValidator;
         }
 
         public async Task<IActionResult> Index()
@@ -23,7 +34,8 @@ namespace CarShop.WebUI.Controllers
                 var values = JsonConvert.DeserializeObject<List<ResultServiceDTO>>(jsonData);
                 return View(values);
             }
-            return View(); // Or handle error
+            ModelState.AddModelError("", "Hizmetler yüklenirken bir hata oluştu.");
+            return View(new List<ResultServiceDTO>());
         }
 
         [HttpGet]
@@ -36,27 +48,40 @@ namespace CarShop.WebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateServiceDTO dto)
         {
-            using var formData = new MultipartFormDataContent();
-            formData.Add(new StringContent(dto.Title), "Title");
-            formData.Add(new StringContent(dto.Description), "Description");
+            ValidationResult result = await _createServiceValidator.ValidateAsync(dto);
 
-            if (dto.ImageFile != null)
+            if (result.IsValid)
             {
-                var fileContent = new StreamContent(dto.ImageFile.OpenReadStream());
-                fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(dto.ImageFile.ContentType);
-                formData.Add(fileContent, "ImageFile", dto.ImageFile.FileName);
-            }
+                using var formData = new MultipartFormDataContent();
+                formData.Add(new StringContent(dto.Title), "Title");
+                formData.Add(new StringContent(dto.Description), "Description");
 
-            var response = await _httpClient.PostAsync("api/Services", formData);
+                if (dto.ImageFile != null)
+                {
+                    var fileContent = new StreamContent(dto.ImageFile.OpenReadStream());
+                    fileContent.Headers.ContentType = new MediaTypeHeaderValue(dto.ImageFile.ContentType);
+                    formData.Add(fileContent, "ImageFile", dto.ImageFile.FileName);
+                }
 
-            if (response.IsSuccessStatusCode)
-            {
-                return RedirectToAction("Index");
+                var response = await _httpClient.PostAsync("api/Services", formData);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SuccessMessage"] = "Hizmet başarıyla eklendi!";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    ModelState.AddModelError("", $"API Hatası: {response.StatusCode} - {errorContent}");
+                }
             }
             else
             {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                ModelState.AddModelError("", $"API Hata: {response.StatusCode} - {errorContent}");
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                }
             }
             return View(dto);
         }
@@ -68,66 +93,82 @@ namespace CarShop.WebUI.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var jsonData = await response.Content.ReadAsStringAsync();
-                // 1. Deserialize to GetByIdServiceDTO, as this matches the API's return structure for a single service
                 var apiServiceDto = JsonConvert.DeserializeObject<GetByIdServiceDTO>(jsonData);
 
-                // 2. Map data from apiServiceDto to your Web UI's UpdateServiceDTO
                 var updateDto = new UpdateServiceDTO
                 {
                     ServiceId = apiServiceDto!.ServiceId,
                     Title = apiServiceDto.Title,
                     Description = apiServiceDto.Description,
-                    ExistingImageUrl = apiServiceDto.ImageUrl // Now correctly assigning from API's ImageUrl
+                    ExistingImageUrl = apiServiceDto.ImageUrl
                 };
                 return View(updateDto);
             }
-            return View(); // Or handle error
+            TempData["ErrorMessage"] = $"ID'si {id} olan hizmet bulunamadı.";
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UpdateServiceDTO dto)
         {
-            using var formData = new MultipartFormDataContent();
-            formData.Add(new StringContent(dto.ServiceId.ToString()), "ServiceId");
-            formData.Add(new StringContent(dto.Title), "Title");
-            formData.Add(new StringContent(dto.Description), "Description");
-            if (!string.IsNullOrEmpty(dto.ExistingImageUrl))
-            {
-                formData.Add(new StringContent(dto.ExistingImageUrl), "ExistingImageUrl");
-            }
+            ValidationResult result = await _updateServiceValidator.ValidateAsync(dto);
 
-            if (dto.ImageFile != null)
+            if (result.IsValid)
             {
-                var fileContent = new StreamContent(dto.ImageFile.OpenReadStream());
-                fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(dto.ImageFile.ContentType);
-                formData.Add(fileContent, "ImageFile", dto.ImageFile.FileName);
-            }
+                using var formData = new MultipartFormDataContent();
+                formData.Add(new StringContent(dto.ServiceId.ToString()), "ServiceId");
+                formData.Add(new StringContent(dto.Title), "Title");
+                formData.Add(new StringContent(dto.Description), "Description");
 
-            var response = await _httpClient.PutAsync("api/Services", formData);
+                if (!string.IsNullOrEmpty(dto.ExistingImageUrl))
+                {
+                    formData.Add(new StringContent(dto.ExistingImageUrl), "ExistingImageUrl");
+                }
 
-            if (response.IsSuccessStatusCode)
-            {
-                return RedirectToAction("Index");
+                // ImageFile null değilse ekle
+                if (dto.ImageFile != null)
+                {
+                    var fileContent = new StreamContent(dto.ImageFile.OpenReadStream());
+                    fileContent.Headers.ContentType = new MediaTypeHeaderValue(dto.ImageFile.ContentType);
+                    formData.Add(fileContent, "ImageFile", dto.ImageFile.FileName);
+                }
+
+                var response = await _httpClient.PutAsync("api/Services", formData);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SuccessMessage"] = "Hizmet başarıyla güncellendi!";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    ModelState.AddModelError("", $"API Hatası: {response.StatusCode} - {errorContent}");
+                }
             }
             else
             {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                ModelState.AddModelError("", $"API Hata: {response.StatusCode} - {errorContent}");
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                }
             }
             return View(dto);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             var responseMessage = await _httpClient.DeleteAsync($"api/Services/{id}");
             if (responseMessage.IsSuccessStatusCode)
             {
+                TempData["SuccessMessage"] = "Hizmet başarıyla silindi!";
                 return RedirectToAction("Index");
             }
-            // Handle error, maybe show an error message
-            return View(); // Or redirect with an error message
+            TempData["ErrorMessage"] = $"ID'si {id} olan hizmet silinirken bir hata oluştu.";
+            return RedirectToAction("Index");
         }
 
         [HttpGet]
@@ -141,7 +182,8 @@ namespace CarShop.WebUI.Controllers
                 var value = JsonConvert.DeserializeObject<GetByIdServiceDTO>(jsonData);
                 return View(value);
             }
-            return View(); // Or handle error
+            TempData["ErrorMessage"] = $"ID'si {id} olan hizmet detayları bulunamadı.";
+            return RedirectToAction("Index");
         }
     }
 }

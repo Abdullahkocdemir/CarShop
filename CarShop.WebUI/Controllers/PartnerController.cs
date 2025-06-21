@@ -4,18 +4,26 @@ using Newtonsoft.Json;
 using System.Text;
 using System.Net.Http.Headers;
 using System.Net.Http;
+using FluentValidation;
+using FluentValidation.Results;
+
 
 namespace CarShop.WebUI.Controllers
 {
     public class PartnerController : Controller
     {
         private readonly HttpClient _httpClient;
+        private readonly IValidator<CreatePartnerDTO> _createPartnerValidator;
+        private readonly IValidator<UpdatePartnerDTO> _updatePartnerValidator;
 
-        public PartnerController(IHttpClientFactory httpClientFactory)
+        public PartnerController(IHttpClientFactory httpClientFactory,
+                                 IValidator<CreatePartnerDTO> createPartnerValidator,
+                                 IValidator<UpdatePartnerDTO> updatePartnerValidator)
         {
             _httpClient = httpClientFactory.CreateClient("CarShopApiClient");
+            _createPartnerValidator = createPartnerValidator;
+            _updatePartnerValidator = updatePartnerValidator;
         }
-
 
         public async Task<IActionResult> Index()
         {
@@ -26,6 +34,7 @@ namespace CarShop.WebUI.Controllers
                 var values = JsonConvert.DeserializeObject<List<ResultPartnerDTO>>(jsonData);
                 return View(values);
             }
+            ModelState.AddModelError("", "Ortaklar yüklenirken bir hata oluştu.");
             return View(new List<ResultPartnerDTO>());
         }
 
@@ -39,20 +48,17 @@ namespace CarShop.WebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreatePartnerDTO dto)
         {
-            if (ModelState.IsValid)
+            ValidationResult result = await _createPartnerValidator.ValidateAsync(dto);
+
+            if (result.IsValid)
             {
                 using var formData = new MultipartFormDataContent();
 
-                if (dto.ImageFile != null && dto.ImageFile.Length > 0)
+                if (dto.ImageFile != null)
                 {
                     var fileContent = new StreamContent(dto.ImageFile.OpenReadStream());
                     fileContent.Headers.ContentType = new MediaTypeHeaderValue(dto.ImageFile.ContentType);
                     formData.Add(fileContent, "ImageFile", dto.ImageFile.FileName);
-                }
-                else
-                {
-                    ModelState.AddModelError("ImageFile", "Lütfen bir resim dosyası yükleyin.");
-                    return View(dto);
                 }
 
                 var response = await _httpClient.PostAsync("api/Partners", formData);
@@ -66,6 +72,13 @@ namespace CarShop.WebUI.Controllers
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
                     ModelState.AddModelError("", $"API Hatası: {response.StatusCode} - {errorContent}");
+                }
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
                 }
             }
             return View(dto);
@@ -94,7 +107,9 @@ namespace CarShop.WebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UpdatePartnerDTO dto)
         {
-            if (ModelState.IsValid)
+            ValidationResult result = await _updatePartnerValidator.ValidateAsync(dto);
+
+            if (result.IsValid)
             {
                 using var formData = new MultipartFormDataContent();
                 formData.Add(new StringContent(dto.PartnerId.ToString()), "PartnerId");
@@ -104,7 +119,7 @@ namespace CarShop.WebUI.Controllers
                     formData.Add(new StringContent(dto.ExistingImageUrl), "ExistingImageUrl");
                 }
 
-                if (dto.ImageFile != null && dto.ImageFile.Length > 0)
+                if (dto.ImageFile != null)
                 {
                     var fileContent = new StreamContent(dto.ImageFile.OpenReadStream());
                     fileContent.Headers.ContentType = new MediaTypeHeaderValue(dto.ImageFile.ContentType);
@@ -124,9 +139,18 @@ namespace CarShop.WebUI.Controllers
                     ModelState.AddModelError("", $"API Hatası: {response.StatusCode} - {errorContent}");
                 }
             }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                }
+            }
             return View(dto);
         }
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             var responseMessage = await _httpClient.DeleteAsync($"api/Partners/{id}");
@@ -138,6 +162,7 @@ namespace CarShop.WebUI.Controllers
             TempData["ErrorMessage"] = $"ID'si {id} olan ortak silinirken bir hata oluştu.";
             return RedirectToAction("Index");
         }
+
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {

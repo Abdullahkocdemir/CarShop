@@ -30,11 +30,6 @@ namespace CarShop.WebAPI.Controllers
             _mapper = mapper;
             _webHostEnvironment = webHostEnvironment;
         }
-
-        /// <summary>
-        /// Tüm iş ortağı öğelerini listeler.
-        /// </summary>
-        /// <returns>İş ortağı listesi.</returns>
         [HttpGet]
         public IActionResult GetListAllPartners()
         {
@@ -42,12 +37,6 @@ namespace CarShop.WebAPI.Controllers
             var partnerDtos = _mapper.Map<List<ResultPartnerDTO>>(partners);
             return Ok(partnerDtos);
         }
-
-        /// <summary>
-        /// Belirli bir ID'ye sahip iş ortağı öğesini getirir.
-        /// </summary>
-        /// <param name="id">İş ortağı ID'si.</param>
-        /// <returns>Belirtilen ID'ye sahip iş ortağı.</returns>
         [HttpGet("{id}")]
         public IActionResult GetPartnerById(int id)
         {
@@ -59,12 +48,6 @@ namespace CarShop.WebAPI.Controllers
             var partnerDto = _mapper.Map<GetByIdPartnerDTO>(partner);
             return Ok(partnerDto);
         }
-
-        /// <summary>
-        /// Yeni bir iş ortağı öğesi oluşturur. Resim dosyası Form-Data olarak gönderilmelidir.
-        /// </summary>
-        /// <param name="dto">Oluşturulacak iş ortağı verileri ve resim dosyası.</param>
-        /// <returns>Başarılı sonuç mesajı ve oluşturulan iş ortağının bilgileri.</returns>
         [HttpPost]
         public async Task<IActionResult> CreatePartner([FromForm] CreatePartnerDTO dto)
         {
@@ -72,13 +55,10 @@ namespace CarShop.WebAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-
             var partner = _mapper.Map<Partner>(dto);
-
-            // Resim dosyası kontrolü ve kaydetme
             if (dto.ImageFile != null && dto.ImageFile.Length > 0)
             {
-                partner.ImageUrl = await SaveImage(dto.ImageFile, "partners"); // "partners" klasörüne kaydet
+                partner.ImageUrl = await SaveImage(dto.ImageFile, "partners");
             }
             else
             {
@@ -90,12 +70,6 @@ namespace CarShop.WebAPI.Controllers
 
             return StatusCode(201, new { Message = "İş ortağı başarıyla eklendi ve mesaj gönderildi.", PartnerId = partner.PartnerId, ImageUrl = partner.ImageUrl });
         }
-
-        /// <summary>
-        /// Mevcut bir iş ortağı öğesini günceller. Resim dosyası (isteğe bağlı) Form-Data olarak gönderilmelidir.
-        /// </summary>
-        /// <param name="dto">Güncellenecek iş ortağı verileri ve yeni resim dosyası (isteğe bağlı).</param>
-        /// <returns>Başarılı sonuç mesajı ve güncellenen iş ortağının bilgileri.</returns>
         [HttpPut]
         public async Task<IActionResult> UpdatePartner([FromForm] UpdatePartnerDTO dto)
         {
@@ -112,26 +86,20 @@ namespace CarShop.WebAPI.Controllers
 
             _mapper.Map(dto, existingPartner);
 
-            // Resim güncelleme mantığı
             if (dto.ImageFile != null && dto.ImageFile.Length > 0)
             {
-                // Yeni resim yüklendiyse eski resmi sil
                 if (!string.IsNullOrEmpty(existingPartner.ImageUrl))
                 {
                     DeleteImage(existingPartner.ImageUrl, "partners");
                 }
-                // Yeni resmi kaydet ve URL'i güncelle
                 existingPartner.ImageUrl = await SaveImage(dto.ImageFile, "partners");
             }
             else if (!string.IsNullOrEmpty(dto.ExistingImageUrl))
             {
-                // Yeni resim yüklenmedi ama mevcut bir URL varsa, onu koru
                 existingPartner.ImageUrl = dto.ExistingImageUrl;
             }
             else
             {
-                // Ne yeni resim yüklendi ne de mevcut bir URL belirtildi.
-                // Eski resim varsa sil ve ImageUrl'i boşalt.
                 if (!string.IsNullOrEmpty(existingPartner.ImageUrl))
                 {
                     DeleteImage(existingPartner.ImageUrl, "partners");
@@ -144,12 +112,6 @@ namespace CarShop.WebAPI.Controllers
 
             return Ok(new { Message = "İş ortağı başarıyla güncellendi ve mesaj yayınlandı.", PartnerId = existingPartner.PartnerId, ImageUrl = existingPartner.ImageUrl });
         }
-
-        /// <summary>
-        /// Belirli bir ID'ye sahip iş ortağı öğesini siler.
-        /// </summary>
-        /// <param name="id">Silinecek iş ortağı ID'si.</param>
-        /// <returns>Başarılı sonuç mesajı.</returns>
         [HttpDelete("{id}")]
         public IActionResult DeletePartner(int id)
         {
@@ -171,12 +133,6 @@ namespace CarShop.WebAPI.Controllers
             return Ok(new { Message = "İş ortağı başarıyla silindi ve mesaj yayınlandı.", PartnerId = id });
         }
 
-        /// <summary>
-        /// Yüklenen resmi belirtilen klasöre kaydeder ve URL'sini döndürür.
-        /// </summary>
-        /// <param name="imageFile">Yüklenecek resim dosyası.</param>
-        /// <param name="folderName">Resmin kaydedileceği wwwroot altındaki klasör adı (örn: "partners").</param>
-        /// <returns>Kaydedilen resmin tam URL'si (örn: http://localhost:port/partners/unique_file_name.jpg).</returns>
         private async Task<string> SaveImage(IFormFile imageFile, string folderName)
         {
             var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, folderName);
@@ -197,12 +153,6 @@ namespace CarShop.WebAPI.Controllers
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
             return $"{baseUrl}/{folderName}/{uniqueFileName}";
         }
-
-        /// <summary>
-        /// Belirtilen URL'deki resim dosyasını sunucudan siler.
-        /// </summary>
-        /// <param name="imageUrl">Silinecek resmin tam URL'si (örn: http://localhost:port/partners/unique_file_name.jpg).</param>
-        /// <param name="folderName">Resmin bulunduğu wwwroot altındaki klasör adı.</param>
         private void DeleteImage(string imageUrl, string folderName)
         {
             // URL'den dosya adını çıkar

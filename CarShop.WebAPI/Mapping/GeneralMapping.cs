@@ -123,8 +123,6 @@ namespace CarShop.WebAPI.Mapping
             CreateMap<GetByIdBrandDTO, Brand>().ReverseMap();
             CreateMap<ResultBrandDTO, Brand>().ReverseMap();
 
-
-
             //Contact
             CreateMap<CreateContactDTO, Contact>().ReverseMap();
             CreateMap<UpdateContactDTO, Contact>().ReverseMap();

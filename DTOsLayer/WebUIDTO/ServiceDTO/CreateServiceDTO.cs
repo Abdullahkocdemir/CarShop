@@ -11,6 +11,6 @@ namespace DTOsLayer.WebUIDTO.ServiceDTO
     {
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public IFormFile? ImageFile { get; set; } // For file upload
+        public IFormFile? ImageFile { get; set; } 
     }
 }

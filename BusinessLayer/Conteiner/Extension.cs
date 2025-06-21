@@ -74,9 +74,6 @@ namespace BusinessLayer.Conteiner
             Services.AddScoped<IBlogService, BlogManager>();
 
 
-            Services.AddScoped<IBlogDetailsDal, EfBlogDetailsDal>();
-            Services.AddScoped<IBlogDetailService, BlogDetailManager>();
-
             Services.AddScoped<ICallBackDal, EfCallBackDal>();
             Services.AddScoped<ICallBackService, CallBackManager>();
 

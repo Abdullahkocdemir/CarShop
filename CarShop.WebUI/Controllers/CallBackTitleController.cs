@@ -1,24 +1,28 @@
 ﻿using DTOsLayer.WebUIDTO.CallBackTitleDTO;
-using EntityLayer.Entities;
-using Humanizer;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using Newtonsoft.Json;
-using System;
 using System.Text;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using FluentValidation;
+using FluentValidation.Results;
+
 
 namespace CarShop.WebUI.Controllers
 {
     public class CallBackTitleController : Controller
     {
         private readonly HttpClient _httpClient;
+        private readonly IValidator<CreateCallBackTitleDTO> _createCallBackTitleValidator;
+        private readonly IValidator<UpdateCallBackTitleDTO> _updateCallBackTitleValidator;
 
-        public CallBackTitleController(IHttpClientFactory httpClientFactory)
+        public CallBackTitleController(IHttpClientFactory httpClientFactory,
+                                       IValidator<CreateCallBackTitleDTO> createCallBackTitleValidator,
+                                       IValidator<UpdateCallBackTitleDTO> updateCallBackTitleValidator)
         {
             _httpClient = httpClientFactory.CreateClient("CarShopApiClient");
+            _createCallBackTitleValidator = createCallBackTitleValidator;
+            _updateCallBackTitleValidator = updateCallBackTitleValidator;
         }
+
         public async Task<IActionResult> Index()
         {
             var response = await _httpClient.GetAsync("api/CallBackTitles");
@@ -41,7 +45,9 @@ namespace CarShop.WebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateCallBackTitleDTO dto)
         {
-            if (ModelState.IsValid)
+            ValidationResult result = await _createCallBackTitleValidator.ValidateAsync(dto);
+
+            if (result.IsValid)
             {
                 var jsonData = JsonConvert.SerializeObject(dto);
                 var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
@@ -51,7 +57,17 @@ namespace CarShop.WebUI.Controllers
                     TempData["SuccessMessage"] = "Geri Arama Başlığı başarıyla eklendi!";
                     return RedirectToAction("Index");
                 }
-                TempData["ErrorMessage"] = "Geri Arama Başlığı eklenirken bir hata oluştu.";
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "API üzerinde Geri Arama Başlığı oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.");
+                }
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                }
             }
             return View(dto);
         }
@@ -69,11 +85,14 @@ namespace CarShop.WebUI.Controllers
             TempData["ErrorMessage"] = $"ID'si {id} olan Geri Arama Başlığı bulunamadı.";
             return RedirectToAction("Index");
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UpdateCallBackTitleDTO dto)
         {
-            if (ModelState.IsValid)
+            ValidationResult result = await _updateCallBackTitleValidator.ValidateAsync(dto);
+
+            if (result.IsValid)
             {
                 var jsonData = JsonConvert.SerializeObject(dto);
                 var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
@@ -83,20 +102,34 @@ namespace CarShop.WebUI.Controllers
                     TempData["SuccessMessage"] = "Geri Arama Başlığı başarıyla güncellendi!";
                     return RedirectToAction("Index");
                 }
-                TempData["ErrorMessage"] = "Geri Arama Başlığı güncellenirken bir hata oluştu.";
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "API üzerinde Geri Arama Başlığı güncellenirken bir hata oluştu. Lütfen tekrar deneyin.");
+                }
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                }
             }
             return View(dto);
         }
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             var responseMessage = await _httpClient.DeleteAsync($"api/CallBackTitles/{id}");
             if (responseMessage.IsSuccessStatusCode)
             {
                 TempData["SuccessMessage"] = "Geri Arama Başlığı başarıyla silindi!";
-                return RedirectToAction("Index");
             }
-            TempData["ErrorMessage"] = $"ID'si {id} olan Geri Arama Başlığı silinirken bir hata oluştu.";
+            else
+            {
+                TempData["ErrorMessage"] = $"ID'si {id} olan Geri Arama Başlığı silinirken bir hata oluştu.";
+            }
             return RedirectToAction("Index");
         }
 

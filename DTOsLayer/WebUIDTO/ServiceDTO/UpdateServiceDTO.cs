@@ -12,7 +12,7 @@ namespace DTOsLayer.WebUIDTO.ServiceDTO
         public int ServiceId { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public IFormFile? ImageFile { get; set; } // For file upload
-        public string? ExistingImageUrl { get; set; } // To display and retain current image
+        public IFormFile? ImageFile { get; set; } 
+        public string? ExistingImageUrl { get; set; } 
     }
 }

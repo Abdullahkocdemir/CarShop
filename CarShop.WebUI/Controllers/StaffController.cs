@@ -4,16 +4,25 @@ using Newtonsoft.Json;
 using System.Text;
 using System.Net.Http.Headers;
 using System.Net.Http;
+using FluentValidation;
+using FluentValidation.Results;
+
 
 namespace CarShop.WebUI.Controllers
 {
     public class StaffController : Controller
     {
         private readonly HttpClient _httpClient;
+        private readonly IValidator<CreateStaffDTO> _createStaffValidator;
+        private readonly IValidator<UpdateStaffDTO> _updateStaffValidator;
 
-        public StaffController(IHttpClientFactory httpClientFactory)
+        public StaffController(IHttpClientFactory httpClientFactory,
+                               IValidator<CreateStaffDTO> createStaffValidator,
+                               IValidator<UpdateStaffDTO> updateStaffValidator)
         {
             _httpClient = httpClientFactory.CreateClient("CarShopApiClient");
+            _createStaffValidator = createStaffValidator;
+            _updateStaffValidator = updateStaffValidator;
         }
 
 
@@ -26,6 +35,7 @@ namespace CarShop.WebUI.Controllers
                 var values = JsonConvert.DeserializeObject<List<ResultStaffDTO>>(jsonData);
                 return View(values);
             }
+            ModelState.AddModelError("", "Personel listesi yüklenirken bir hata oluştu.");
             return View(new List<ResultStaffDTO>());
         }
         [HttpGet]
@@ -38,22 +48,19 @@ namespace CarShop.WebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateStaffDTO dto)
         {
-            if (ModelState.IsValid)
+            ValidationResult result = await _createStaffValidator.ValidateAsync(dto);
+
+            if (result.IsValid)
             {
                 using var formData = new MultipartFormDataContent();
                 formData.Add(new StringContent(dto.Name), "Name");
                 formData.Add(new StringContent(dto.Duty), "Duty");
 
-                if (dto.ImageFile != null && dto.ImageFile.Length > 0)
+                if (dto.ImageFile != null)
                 {
                     var fileContent = new StreamContent(dto.ImageFile.OpenReadStream());
                     fileContent.Headers.ContentType = new MediaTypeHeaderValue(dto.ImageFile.ContentType);
                     formData.Add(fileContent, "ImageFile", dto.ImageFile.FileName);
-                }
-                else
-                {
-                    ModelState.AddModelError("ImageFile", "Lütfen bir resim dosyası yükleyin.");
-                    return View(dto);
                 }
 
                 var response = await _httpClient.PostAsync("api/Staffs", formData);
@@ -67,6 +74,13 @@ namespace CarShop.WebUI.Controllers
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
                     ModelState.AddModelError("", $"API Hatası: {response.StatusCode} - {errorContent}");
+                }
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
                 }
             }
             return View(dto);
@@ -97,7 +111,9 @@ namespace CarShop.WebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UpdateStaffDTO dto)
         {
-            if (ModelState.IsValid)
+            ValidationResult result = await _updateStaffValidator.ValidateAsync(dto);
+
+            if (result.IsValid)
             {
                 using var formData = new MultipartFormDataContent();
                 formData.Add(new StringContent(dto.StaffId.ToString()), "StaffId");
@@ -109,7 +125,7 @@ namespace CarShop.WebUI.Controllers
                     formData.Add(new StringContent(dto.ExistingImageUrl), "ExistingImageUrl");
                 }
 
-                if (dto.ImageFile != null && dto.ImageFile.Length > 0)
+                if (dto.ImageFile != null)
                 {
                     var fileContent = new StreamContent(dto.ImageFile.OpenReadStream());
                     fileContent.Headers.ContentType = new MediaTypeHeaderValue(dto.ImageFile.ContentType);
@@ -129,13 +145,21 @@ namespace CarShop.WebUI.Controllers
                     ModelState.AddModelError("", $"API Hatası: {response.StatusCode} - {errorContent}");
                 }
             }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                }
+            }
             return View(dto);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            var responseMessage = await _httpClient.DeleteAsync($"api/Staffs/{id}"); 
+            var responseMessage = await _httpClient.DeleteAsync($"api/Staffs/{id}");
             if (responseMessage.IsSuccessStatusCode)
             {
                 TempData["SuccessMessage"] = "Personel başarıyla silindi!";
