@@ -91,23 +91,7 @@
             cancelButtonText: "İptal"
         }).then((result) => {
             if (result.isConfirmed) {
-                // Controller'daki DeleteWhyUse metoduna POST isteği gönderiyoruz
-                window.location.href = '/WhyUse/Delete/' + whyUseId; // Redirect ile de silme işlemi yapılabilir
-                // Alternatif olarak AJAX ile de yapabiliriz:
-                /*
-                $.ajax({
-                    url: '/WhyUse/DeleteWhyUse/' + whyUseId,
-                    type: 'POST', // Veya DELETE eğer controller'da Delete metodunu HttpDelete olarak işaretlediyseniz
-                    success: function () {
-                        Swal.fire("Silindi!", "'Neden Biz?' kaydı başarıyla silindi.", "success").then(() => {
-                            location.reload();
-                        });
-                    },
-                    error: function () {
-                        Swal.fire("Hata!", "Silme işlemi başarısız oldu.", "error");
-                    }
-                });
-                */
+                window.location.href = '/WhyUse/Delete/' + whyUseId; 
             }
         });
     }

@@ -90,7 +90,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-    function confirmDelete(bannerId) { // Fonksiyon adını düzeltildi
+    function confirmDelete(bannerId) { 
         Swal.fire({
             title: "Emin misiniz?",
             text: "Bu afişi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!",
@@ -103,7 +103,7 @@
             if (result.isConfirmed) {
                 $.ajax({
                     url: '/Banner/Delete/' + bannerId,
-                    type: 'POST', // HttpDelete yerine POST kullanıyoruz çünkü HTML formları doğrudan DELETE isteği gönderemez
+                    type: 'POST', 
                     success: function () {
                         Swal.fire("Silindi!", "Afiş başarıyla silindi.", "success").then(() => {
                             location.reload();

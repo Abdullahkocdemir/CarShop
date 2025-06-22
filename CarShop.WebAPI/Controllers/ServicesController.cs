@@ -5,8 +5,8 @@ using DTOsLayer.WebApiDTO.ServiceDTO;
 using EntityLayer.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Hosting; // Add this using directive
-using System.IO; // Add this for file operations
+using Microsoft.AspNetCore.Hosting; 
+using System.IO; 
 
 namespace CarShop.WebAPI.Controllers
 {
@@ -16,7 +16,7 @@ namespace CarShop.WebAPI.Controllers
     {
         private readonly IServiceService _serviceService;
         private readonly IMapper _mapper;
-        private readonly IWebHostEnvironment _webHostEnvironment; // Inject IWebHostEnvironment
+        private readonly IWebHostEnvironment _webHostEnvironment; 
         protected override string EntityTypeName => "Service";
 
         public ServicesController(IServiceService serviceService, IMapper mapper, EnhancedRabbitMQService rabbitMqService, IWebHostEnvironment webHostEnvironment)
@@ -24,7 +24,7 @@ namespace CarShop.WebAPI.Controllers
         {
             _serviceService = serviceService;
             _mapper = mapper;
-            _webHostEnvironment = webHostEnvironment; // Initialize it
+            _webHostEnvironment = webHostEnvironment; 
         }
 
         [HttpGet]
@@ -42,12 +42,11 @@ namespace CarShop.WebAPI.Controllers
             {
                 return NotFound($"ID'si {id} olan hizmet bulunamadı.");
             }
-            // You might want to map this to GetByIdServiceDTO if you have one that matches your entity structure
             return Ok(value);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateService([FromForm] CreateServiceDTO dto) // Use [FromForm] for file uploads
+        public async Task<IActionResult> CreateService([FromForm] CreateServiceDTO dto) 
         {
             var service = _mapper.Map<Service>(dto);
 
@@ -63,7 +62,7 @@ namespace CarShop.WebAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateService([FromForm] UpdateServiceDTO dto) // Use [FromForm] for file uploads
+        public async Task<IActionResult> UpdateService([FromForm] UpdateServiceDTO dto) 
         {
             var existingService = _serviceService.BGetById(dto.ServiceId);
             if (existingService == null)
@@ -71,12 +70,10 @@ namespace CarShop.WebAPI.Controllers
                 return NotFound($"ID'si {dto.ServiceId} olan hizmet bulunamadı.");
             }
 
-            // Map updated properties, excluding ImageUrl for now
             _mapper.Map(dto, existingService);
 
             if (dto.ImageFile != null)
             {
-                // Delete old image if it exists
                 if (!string.IsNullOrEmpty(existingService.ImageUrl))
                 {
                     DeleteImage(existingService.ImageUrl);
@@ -85,12 +82,8 @@ namespace CarShop.WebAPI.Controllers
             }
             else if (!string.IsNullOrEmpty(dto.ExistingImageUrl))
             {
-                // If no new file is uploaded but ExistingImageUrl is provided, retain it
                 existingService.ImageUrl = dto.ExistingImageUrl;
             }
-            // If no new file and no ExistingImageUrl, ImageUrl might become null or empty depending on DTO mapping
-            // Consider if you want to explicitly keep the old image if no new one is provided.
-            // A safer approach might be to only update ImageUrl if dto.ImageFile is not null.
 
             _serviceService.BUpdate(existingService);
             PublishEntityUpdated(existingService);
@@ -107,7 +100,6 @@ namespace CarShop.WebAPI.Controllers
                 return NotFound($"ID'si {id} olan hizmet bulunamadı.");
             }
 
-            // Delete the associated image file
             if (!string.IsNullOrEmpty(serviceToDelete.ImageUrl))
             {
                 DeleteImage(serviceToDelete.ImageUrl);
@@ -119,7 +111,6 @@ namespace CarShop.WebAPI.Controllers
             return Ok(new { Message = "Hizmet başarıyla silindi ve mesaj yayınlandı.", ServiceId = id });
         }
 
-        // --- Helper methods for image handling ---
         private async Task<string> SaveImage(IFormFile imageFile)
         {
             var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "services");
@@ -135,17 +126,12 @@ namespace CarShop.WebAPI.Controllers
             {
                 await imageFile.CopyToAsync(fileStream);
             }
-
-            // Construct the URL to be stored in the database
-            // Assuming your application runs on localhost:port and wwwroot is served directly
-            // For production, this base URL might need to be configured differently
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
             return $"{baseUrl}/services/{uniqueFileName}";
         }
 
         private void DeleteImage(string imageUrl)
         {
-            // Extract the file name from the URL
             var fileName = Path.GetFileName(imageUrl);
             var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "services", fileName);
 

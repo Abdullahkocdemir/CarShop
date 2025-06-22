@@ -149,13 +149,11 @@ namespace CarShop.WebAPI.Controllers
                 await imageFile.CopyToAsync(fileStream);
             }
 
-            // Veritabanına kaydedilecek tam URL'yi oluştur
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
             return $"{baseUrl}/{folderName}/{uniqueFileName}";
         }
         private void DeleteImage(string imageUrl, string folderName)
         {
-            // URL'den dosya adını çıkar
             var fileName = Path.GetFileName(imageUrl);
             var filePath = Path.Combine(_webHostEnvironment.WebRootPath, folderName, fileName);
 

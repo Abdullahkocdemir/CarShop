@@ -25,7 +25,6 @@
             </div>
             <div class="col-md-6 mb-3">
                 <label for="brandId" class="form-label">Marka</label>
-                @* ViewBag.Brands null ise veya içeriği boşsa bu hatayı alıyordunuz *@
                 <select asp-for="BrandId" asp-items="@(ViewBag.Brands as SelectList)" class="form-control" id="brandId" required>
                     <option value="">Marka Seçin</option>
                 </select>
@@ -33,7 +32,6 @@
             </div>
             <div class="col-md-6 mb-3">
                 <label for="modelId" class="form-label">Model</label>
-                @* ViewBag.Models null ise veya içeriği boşsa bu hatayı alıyordunuz *@
                 <select asp-for="ModelId" asp-items="@(ViewBag.Models as SelectList)" class="form-control" id="modelId" required>
                     <option value="">Model Seçin</option>
                 </select>
@@ -41,7 +39,6 @@
             </div>
             <div class="col-md-6 mb-3">
                 <label for="colorId" class="form-label">Renk</label>
-                @* ViewBag.Colors null ise veya içeriği boşsa bu hatayı alıyordunuz *@
                 <select asp-for="ColorId" asp-items="@(ViewBag.Colors as SelectList)" class="form-control" id="colorId" required>
                     <option value="">Renk Seçin</option>
                 </select>
@@ -218,7 +215,6 @@
             <button type="submit" class="btn btn-primary">Güncelle</button>
         </div>
 
-        @* Model doğrulama hatalarını göstermek için *@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     </form>
 </div>
@@ -229,9 +225,7 @@
     }
     <script>
         $(document).ready(function () {
-            // Model.Images null ise 0 olarak başlat, değilse sayısını al
-            let nextNewImageIndex = @(Model?.Images?.Count ?? 0); 
-            // Model.Images null olabilir, bu yüzden '?' (null-conditional operator) kullanıldı.
+            let nextNewImageIndex = @(Model?.Images?.Count ?? 0) 
 
             $('#add-new-image-file').click(function () {
                 var newImageInputHtml = `
@@ -249,16 +243,13 @@
                 nextNewImageIndex++;
             });
 
-            // Yeni eklenen resim input'unu kaldır
             $('#new-image-upload-area').on('click', '.remove-new-image-file', function () {
                 $(this).closest('.new-image-item').remove();
             });
 
-            // Mevcut resimlerin silme checkbox'ı değiştiğinde input'u disable/enable et
             $('#image-list').on('change', '.delete-image-checkbox', function () {
                 var imageItem = $(this).closest('.image-item');
                 var fileInput = imageItem.find('input[type="file"]');
-                // var hiddenImageUrl = imageItem.find('input[type="hidden"][name$=".ImageUrl"]'); // Bu satıra gerek yok
 
                 if ($(this).is(':checked')) {
                     fileInput.prop('disabled', true);

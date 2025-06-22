@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using BusinessLayer.Abstract; // Assuming IAboutService is here
+using BusinessLayer.Abstract; 
 using BusinessLayer.RabbitMQ;
-using DTOsLayer.WebApiDTO.AboutDTO; // Assuming you have About DTOs here
-using EntityLayer.Entities; // Assuming your About entity is here
+using DTOsLayer.WebApiDTO.AboutDTO; 
+using EntityLayer.Entities; 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Pipelines.Sockets.Unofficial;

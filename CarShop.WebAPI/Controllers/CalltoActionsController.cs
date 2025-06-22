@@ -15,9 +15,9 @@ namespace CarShop.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CalltoActionsController : BaseEntityController // Genellikle çoğul isim kullanılır, "Gotus" veya "Goes" gibi.
+    public class CalltoActionsController : BaseEntityController 
     {
-        private readonly ICalltoActionService _calltoActionService; // IGotoService'i enjekte et
+        private readonly ICalltoActionService _calltoActionService; 
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _webHostEnvironment;
         protected override string EntityTypeName => "CalltoAction"; 
@@ -29,10 +29,6 @@ namespace CarShop.WebAPI.Controllers
             _mapper = mapper;
             _webHostEnvironment = webHostEnvironment;
         }
-
-        /// <summary>
-        /// Tüm Goto öğelerini listeler.
-        /// </summary>
         [HttpGet]
         public IActionResult GetListAllGotus()
         {
@@ -40,15 +36,10 @@ namespace CarShop.WebAPI.Controllers
             var gotoDtos = _mapper.Map<List<ResultCalltoActionDTO>>(gotus);
             return Ok(gotoDtos);
         }
-
-        /// <summary>
-        /// Belirli bir ID'ye sahip Goto öğesini getirir.
-        /// </summary>
-        /// <param name="id">Goto ID'si.</param>
         [HttpGet("{id}")]
         public IActionResult GetGotoById(int id)
         {
-            var @goto = _calltoActionService.BGetById(id); // @goto, 'goto' anahtar kelimesiyle çakışmayı engeller
+            var @goto = _calltoActionService.BGetById(id); 
             if (@goto == null)
             {
                 return NotFound($"ID'si {id} olan Goto bulunamadı.");
@@ -56,11 +47,6 @@ namespace CarShop.WebAPI.Controllers
             var gotoDto = _mapper.Map<GetByIdCalltoActionDTO>(@goto);
             return Ok(gotoDto);
         }
-
-        /// <summary>
-        /// Yeni bir Goto öğesi oluşturur. Resim dosyası Form-Data olarak gönderilmelidir.
-        /// </summary>
-        /// <param name="dto">Oluşturulacak Goto verileri ve resim dosyası.</param>
         [HttpPost]
         public async Task<IActionResult> CreateGoto([FromForm] CreateCalltoActionDTO dto)
         {
@@ -71,27 +57,20 @@ namespace CarShop.WebAPI.Controllers
 
             var @goto = _mapper.Map<CalltoAction>(dto);
 
-            // Resim yükleme işlemi
             if (dto.ImageFile != null && dto.ImageFile.Length > 0)
             {
-                @goto.ImageUrl = await SaveImage(dto.ImageFile, "goto"); // 'goto' klasörüne kaydet
+                @goto.ImageUrl = await SaveImage(dto.ImageFile, "goto"); 
             }
             else
             {
-                // Resim dosyası zorunlu ise hata döndür
                 return BadRequest("Resim dosyası yüklenmelidir.");
             }
 
             _calltoActionService.BAdd(@goto);
-            PublishEntityCreated(@goto); // RabbitMQ'ya mesaj yayınla
+            PublishEntityCreated(@goto); 
 
             return StatusCode(201, new { Message = "Goto başarıyla eklendi ve mesaj gönderildi.", GotoId = @goto.CalltoActionId, ImageUrl = @goto.ImageUrl });
         }
-
-        /// <summary>
-        /// Mevcut bir Goto öğesini günceller. Resim dosyası (isteğe bağlı) Form-Data olarak gönderilmelidir.
-        /// </summary>
-        /// <param name="dto">Güncellenecek Goto verileri ve yeni resim dosyası (isteğe bağlı).</param>
         [HttpPut]
         public async Task<IActionResult> UpdateGoto([FromForm] UpdateCalltoActionDTO dto)
         {
@@ -106,39 +85,30 @@ namespace CarShop.WebAPI.Controllers
                 return NotFound($"ID'si {dto.CalltoActionId} olan Goto bulunamadı.");
             }
 
-            _mapper.Map(dto, existingGoto); // DTO'dan varlığa map'le
+            _mapper.Map(dto, existingGoto); 
 
-            // Yeni resim yüklenip yüklenmediğini kontrol et
             if (dto.ImageFile != null && dto.ImageFile.Length > 0)
             {
-                // Eski resmi sil (eğer varsa ve yeni bir resim yükleniyorsa)
                 if (!string.IsNullOrEmpty(existingGoto.ImageUrl))
                 {
                     DeleteImage(existingGoto.ImageUrl, "goto");
                 }
-                existingGoto.ImageUrl = await SaveImage(dto.ImageFile, "goto"); // Yeni resmi kaydet
+                existingGoto.ImageUrl = await SaveImage(dto.ImageFile, "goto"); 
             }
             else if (!string.IsNullOrEmpty(dto.ExistingImageUrl))
             {
-                // Yeni dosya yüklenmediyse ancak mevcut bir URL varsa, onu koru
                 existingGoto.ImageUrl = dto.ExistingImageUrl;
             }
             else
             {
-                // Ne yeni dosya ne de mevcut URL sağlanmadıysa, boş string olarak ayarla
                 existingGoto.ImageUrl = string.Empty;
             }
 
             _calltoActionService.BUpdate(existingGoto);
-            PublishEntityUpdated(existingGoto); // RabbitMQ'ya mesaj yayınla
+            PublishEntityUpdated(existingGoto); 
 
             return Ok(new { Message = "Goto başarıyla güncellendi ve mesaj yayınlandı.", GotoId = existingGoto.CalltoActionId, ImageUrl = existingGoto.ImageUrl });
         }
-
-        /// <summary>
-        /// Belirli bir ID'ye sahip Goto öğesini siler.
-        /// </summary>
-        /// <param name="id">Silinecek Goto ID'si.</param>
         [HttpDelete("{id}")]
         public IActionResult DeleteGoto(int id)
         {
@@ -148,24 +118,16 @@ namespace CarShop.WebAPI.Controllers
                 return NotFound($"ID'si {id} olan Goto bulunamadı.");
             }
 
-            // İlişkili resim dosyasını sil
             if (!string.IsNullOrEmpty(gotoToDelete.ImageUrl))
             {
                 DeleteImage(gotoToDelete.ImageUrl, "goto");
             }
 
             _calltoActionService.BDelete(gotoToDelete);
-            PublishEntityDeleted(gotoToDelete); // RabbitMQ'ya mesaj yayınla
+            PublishEntityDeleted(gotoToDelete); 
 
             return Ok(new { Message = "Goto başarıyla silindi ve mesaj yayınlandı.", GotoId = id });
         }
-
-        /// <summary>
-        /// Yüklenen resmi belirtilen klasöre kaydeder ve URL'sini döndürür.
-        /// </summary>
-        /// <param name="imageFile">Yüklenecek resim dosyası.</param>
-        /// <param name="folderName">Resmin kaydedileceği wwwroot altındaki klasör adı (örn: "goto").</param>
-        /// <returns>Kaydedilen resmin URL'si.</returns>
         private async Task<string> SaveImage(IFormFile imageFile, string folderName)
         {
             var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, folderName);
@@ -182,20 +144,11 @@ namespace CarShop.WebAPI.Controllers
                 await imageFile.CopyToAsync(fileStream);
             }
 
-            // Veritabanına kaydedilecek URL'yi oluştur
-            // Uygulamanızın çalıştığı şema ve host adını kullanarak dinamik URL oluşturulur.
             var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
             return $"{baseUrl}/{folderName}/{uniqueFileName}";
         }
-
-        /// <summary>
-        /// Belirtilen URL'deki resim dosyasını sunucudan siler.
-        /// </summary>
-        /// <param name="imageUrl">Silinecek resmin URL'si.</param>
-        /// <param name="folderName">Resmin bulunduğu wwwroot altındaki klasör adı.</param>
         private void DeleteImage(string imageUrl, string folderName)
         {
-            // URL'den dosya adını çıkar
             var fileName = Path.GetFileName(imageUrl);
             var filePath = Path.Combine(_webHostEnvironment.WebRootPath, folderName, fileName);
 

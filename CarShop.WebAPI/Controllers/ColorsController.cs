@@ -28,7 +28,7 @@ namespace CarShop.WebAPI.Controllers
         {
             var values = _colorService.BGetListAll();
             var result = _mapper.Map<List<ResultColorDTO>>(values);
-            return Ok(result);
+            return Ok(result); 
         }
         [HttpPost]
         public IActionResult CreateColor(CreateColorDTO dto)

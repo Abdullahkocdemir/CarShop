@@ -1,9 +1,8 @@
-﻿using DTOsLayer.WebUIDTO.AboutItemDTO; // Make sure to use the correct DTO namespace for the UI
+﻿using DTOsLayer.WebUIDTO.AboutItemDTO; 
 using EntityLayer.Entities;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
-using Newtonsoft.Json; // For JSON serialization/deserialization
+using Newtonsoft.Json; 
 using System;
 using System.Text;
 

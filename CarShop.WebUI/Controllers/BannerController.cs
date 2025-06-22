@@ -1,22 +1,21 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Text;
 using System.Net.Http.Headers;
 using AutoMapper;
-using DTOsLayer.WebUIDTO.BannerDTO; // AutoMapper için using
+using DTOsLayer.WebUIDTO.BannerDTO; 
 
 namespace CarShop.WebUI.Controllers
 {
     public class BannerController : Controller
     {
         private readonly HttpClient _httpClient;
-        private readonly IMapper _mapper; // AutoMapper'ı enjekte et
+        private readonly IMapper _mapper; 
 
         public BannerController(IHttpClientFactory httpClientFactory, IMapper mapper)
         {
             _httpClient = httpClientFactory.CreateClient("CarShopApiClient");
-            _mapper = mapper; // Enjekte edilen mapper'ı ata
+            _mapper = mapper; 
         }
 
         public async Task<IActionResult> Index()
@@ -42,19 +41,16 @@ namespace CarShop.WebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateBannerDTO uiDto)
         {
-            // UI DTO'dan API DTO'ya eşleme
             var apiDto = _mapper.Map<DTOsLayer.WebApiDTO.BannerDTO.CreateBannerDTO>(uiDto);
 
             using (var formData = new MultipartFormDataContent())
             {
-                // Metin tabanlı alanları ekle (apiDto'dan al)
                 formData.Add(new StringContent(apiDto.SmallTitle ?? string.Empty), "SmallTitle");
                 formData.Add(new StringContent(apiDto.SubTitle ?? string.Empty), "SubTitle");
                 formData.Add(new StringContent(apiDto.CarModel ?? string.Empty), "CarModel");
                 formData.Add(new StringContent(apiDto.Month ?? string.Empty), "Month");
                 formData.Add(new StringContent(apiDto.Price ?? string.Empty), "Price");
 
-                // CarImage varsa ekle (uiDto'dan al)
                 if (uiDto.CarImage != null)
                 {
                     var fileContent = new StreamContent(uiDto.CarImage.OpenReadStream());
@@ -62,7 +58,6 @@ namespace CarShop.WebUI.Controllers
                     formData.Add(fileContent, "CarImage", uiDto.CarImage.FileName);
                 }
 
-                // LogoImage varsa ekle (uiDto'dan al)
                 if (uiDto.LogoImage != null)
                 {
                     var fileContent = new StreamContent(uiDto.LogoImage.OpenReadStream());
@@ -91,10 +86,7 @@ namespace CarShop.WebUI.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var jsonData = await response.Content.ReadAsStringAsync();
-                // API'dan gelen GetByIdBannerDTO'yu (WebApiDTO) al
-                var apiBanner = JsonConvert.DeserializeObject<DTOsLayer.WebApiDTO.BannerDTO.ResultBannerDTO>(jsonData); // API tarafında GetById Banner da ResultBannerDTO döndürüyor
-
-                // AutoMapper kullanarak API DTO'dan UI DTO'ya eşleme yap
+                var apiBanner = JsonConvert.DeserializeObject<DTOsLayer.WebApiDTO.BannerDTO.ResultBannerDTO>(jsonData); 
                 var updateDto = _mapper.Map<UpdateBannerDTO>(apiBanner);
 
                 return View(updateDto);
@@ -106,7 +98,6 @@ namespace CarShop.WebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UpdateBannerDTO uiDto)
         {
-            // UI DTO'dan API DTO'ya eşleme (sadece metin alanları)
             var apiDto = _mapper.Map<DTOsLayer.WebApiDTO.BannerDTO.UpdateBannerDTO>(uiDto);
 
             using (var formData = new MultipartFormDataContent())
@@ -170,10 +161,8 @@ namespace CarShop.WebUI.Controllers
             if (response.IsSuccessStatusCode)
             {
                 var jsonData = await response.Content.ReadAsStringAsync();
-                // API'dan gelen ResultBannerDTO'yu (WebApiDTO) al
                 var apiBanner = JsonConvert.DeserializeObject<DTOsLayer.WebApiDTO.BannerDTO.ResultBannerDTO>(jsonData);
 
-                // AutoMapper kullanarak API DTO'dan UI DTO'ya eşleme yap
                 var uiBanner = _mapper.Map<ResultBannerDTO>(apiBanner);
                 return View(uiBanner);
             }

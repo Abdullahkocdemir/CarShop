@@ -18,7 +18,7 @@
 </header>
 <div class="form-card">
     <form asp-controller="Feature" asp-action="Create" method="post" enctype="multipart/form-data">
-        @Html.AntiForgeryToken() @* Güvenlik için Anti-Forgery Token *@
+        @Html.AntiForgeryToken() 
         <div class="mb-3">
             <label for="title" class="form-label">Başlık</label>
             <input type="text" asp-for="Title" class="form-control" id="title" placeholder="Başlık girin" required>
@@ -39,7 +39,6 @@
             <input type="file" name="ImageFiles" class="form-control" id="imageFiles" multiple accept="image/*">
             <span asp-validation-for="ImageFiles" class="text-danger"></span>
 
-            <!-- Resim önizleme alanı -->
             <div id="imagePreviewContainer" class="mt-3" style="display: none;">
                 <label class="form-label">Seçilen Resimler:</label>
                 <div id="imagePreviewWrapper" class="d-flex flex-wrap gap-3"></div>
@@ -49,7 +48,6 @@
             <a href="/Feature/Index" class="btn btn-secondary me-2">İptal</a>
             <button type="submit" class="btn btn-primary">Kaydet</button>
         </div>
-        @* Model doğrulama hatalarını göstermek için *@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     </form>
 </div>
@@ -160,7 +158,6 @@
                 }
 
                 function updateFileInput() {
-                    // FileList objesi oluşturup input'a ata
                     const dt = new DataTransfer();
                     selectedFiles.forEach(file => {
                         dt.items.add(file);
@@ -168,7 +165,6 @@
                     fileInput.files = dt.files;
                 }
 
-                // Global function olarak tanımla
                 window.removeImage = function(index) {
                     selectedFiles.splice(index, 1);
                     updatePreview();

@@ -155,7 +155,6 @@ namespace CarShop.WebAPI.Controllers
             return Ok(result);
         }
 
-        // --- Resim işleme için yardımcı metodlar ---
 
         private async Task<string> SaveImage(IFormFile imageFile)
         {

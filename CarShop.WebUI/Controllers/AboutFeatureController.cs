@@ -1,4 +1,4 @@
-﻿using DTOsLayer.WebUIDTO.AboutFeatureDTO; // UI DTO'larınız
+﻿using DTOsLayer.WebUIDTO.AboutFeatureDTO;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Text;
@@ -105,7 +105,6 @@ namespace CarShop.WebUI.Controllers
                 formData.Add(new StringContent(dto.Title), "Title");
                 formData.Add(new StringContent(dto.Description), "Description");
 
-                // Mevcut resim URL'sini (eğer varsa) gönder
                 if (!string.IsNullOrEmpty(dto.ExistingImageUrl))
                 {
                     formData.Add(new StringContent(dto.ExistingImageUrl), "ExistingImageUrl");

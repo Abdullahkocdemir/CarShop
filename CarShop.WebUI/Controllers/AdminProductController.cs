@@ -3,36 +3,34 @@ using Newtonsoft.Json;
 using System.Text;
 using System.Net.Http.Headers;
 using AutoMapper;
-using DTOsLayer.WebUIDTO.ProductDTO; 
-using WebApiDTOs = DTOsLayer.WebApiDTO.ProductDTOs; 
+using DTOsLayer.WebUIDTO.ProductDTO;
+using WebApiDTOs = DTOsLayer.WebApiDTO.ProductDTOs;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
-using Microsoft.AspNetCore.Mvc.Rendering; 
+using Microsoft.AspNetCore.Mvc.Rendering;
 using DTOsLayer.WebUIDTO.BrandDTO;
 using DTOsLayer.WebApiDTO.ColorDTO;
 using DTOsLayer.WebApiDTO.ModelDTO;
+using CarShop.WebUI.Models;
 
 namespace CarShop.WebUI.Controllers
 {
-    public class ProductsController : Controller
+    public class AdminProductController : Controller
     {
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
 
-        public ProductsController(IHttpClientFactory httpClientFactory, IMapper mapper)
+        public AdminProductController(IHttpClientFactory httpClientFactory, IMapper mapper)
         {
-            _httpClient = httpClientFactory.CreateClient("CarShopApiClient"); // Program.cs'de tanımladığınız isim
+            _httpClient = httpClientFactory.CreateClient("CarShopApiClient");
             _mapper = mapper;
         }
 
-        /// <summary>
-        /// Tüm ürünleri listeler.
-        /// </summary>
         public async Task<IActionResult> Index()
         {
-            var response = await _httpClient.GetAsync("api/Products"); // API endpoint'iniz
+            var response = await _httpClient.GetAsync("api/Products");
             if (response.IsSuccessStatusCode)
             {
                 var jsonData = await response.Content.ReadAsStringAsync();
@@ -40,43 +38,39 @@ namespace CarShop.WebUI.Controllers
                 var uiProducts = _mapper.Map<List<ResultProductDTO>>(apiProducts);
                 return View(uiProducts);
             }
-            // Hata durumunda boş liste veya hata mesajı gösterebiliriz
             return View(new List<ResultProductDTO>());
         }
 
-        /// <summary>
-        /// Yeni ürün oluşturma formunu gösterir.
-        /// Ayrıca Brand, Color, Model seçeneklerini doldurmak için API'den verileri çeker.
-        /// </summary>
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            await LoadDropdowns(); // Brand, Color, Model seçeneklerini yükle
-            return View();
+            var viewModel = new CreateProductViewModel();
+            await LoadDropdownsToViewModel(viewModel);
+            return View(viewModel);
         }
 
-        /// <summary>
-        /// Yeni ürün oluşturma işlemini yapar.
-        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Consumes("multipart/form-data")] // Dosya yüklemeleri için
-        public async Task<IActionResult> Create(CreateProductDTO uiDto)
+        [Consumes("multipart/form-data")] 
+        public async Task<IActionResult> Create(CreateProductViewModel viewModel) 
         {
-            // UI DTO'dan API DTO'ya eşleme
-            var apiDto = _mapper.Map<WebApiDTOs.CreateProductDTO>(uiDto);
+            if (!ModelState.IsValid)
+            {
+                await LoadDropdownsToViewModel(viewModel);
+                return View(viewModel);
+            }
 
-            // MultipartFormDataContent oluştur
+            var apiDto = _mapper.Map<WebApiDTOs.CreateProductDTO>(viewModel.Product);
+
             using (var formData = new MultipartFormDataContent())
             {
-                // Metin tabanlı alanları ekle
                 formData.Add(new StringContent(apiDto.Name ?? string.Empty), "Name");
                 formData.Add(new StringContent(apiDto.ColorId.ToString()), "ColorId");
                 formData.Add(new StringContent(apiDto.BrandId.ToString()), "BrandId");
                 formData.Add(new StringContent(apiDto.ModelId.ToString()), "ModelId");
                 formData.Add(new StringContent(apiDto.Kilometer ?? string.Empty), "Kilometer");
                 formData.Add(new StringContent(apiDto.Year.ToString()), "Year");
-                formData.Add(new StringContent(apiDto.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)), "Price"); // Kültüre duyarsız ondalık nokta
+                formData.Add(new StringContent(apiDto.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)), "Price");
                 formData.Add(new StringContent(apiDto.EngineSize ?? string.Empty), "EngineSize");
                 formData.Add(new StringContent(apiDto.FuelType ?? string.Empty), "FuelType");
                 formData.Add(new StringContent(apiDto.Transmission ?? string.Empty), "Transmission");
@@ -102,13 +96,12 @@ namespace CarShop.WebUI.Controllers
                 formData.Add(new StringContent(apiDto.District ?? string.Empty), "District");
                 formData.Add(new StringContent(apiDto.SellerType ?? string.Empty), "SellerType");
 
-                // Resim dosyalarını ekle
-                if (uiDto.ImageFiles != null && uiDto.ImageFiles.Any())
+                if (viewModel.Product.ImageFiles != null && viewModel.Product.ImageFiles.Any())
                 {
-                    for (int i = 0; i < uiDto.ImageFiles.Count; i++)
+                    for (int i = 0; i < viewModel.Product.ImageFiles.Count; i++)
                     {
-                        var file = uiDto.ImageFiles[i];
-                        if (file != null && file.Length > 0) // Dosya null veya boş değilse ekle
+                        var file = viewModel.Product.ImageFiles[i];
+                        if (file != null && file.Length > 0)
                         {
                             var fileContent = new StreamContent(file.OpenReadStream());
                             fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
@@ -118,6 +111,7 @@ namespace CarShop.WebUI.Controllers
                 }
 
                 var response = await _httpClient.PostAsync("api/Products", formData);
+
                 if (response.IsSuccessStatusCode)
                 {
                     TempData["SuccessMessage"] = "Ürün başarıyla eklendi!";
@@ -127,15 +121,107 @@ namespace CarShop.WebUI.Controllers
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
                     ModelState.AddModelError("", $"API Hatası: {response.StatusCode} - {errorContent}");
+                    TempData["ErrorMessage"] = $"Ürün eklenirken hata oluştu: {errorContent}"; 
                 }
             }
-            await LoadDropdowns(); // Hata durumunda dropdown'ları tekrar yükle
-            return View(uiDto);
+
+            await LoadDropdownsToViewModel(viewModel);
+            return View(viewModel);
+        }
+        private async Task LoadDropdowns()
+        {
+            try
+            {
+                var brandResponse = await _httpClient.GetAsync("api/Brands");
+                if (brandResponse.IsSuccessStatusCode)
+                {
+                    var brands = JsonConvert.DeserializeObject<List<ResultBrandDTO>>(await brandResponse.Content.ReadAsStringAsync());
+                    ViewBag.Brands = new SelectList(brands ?? new List<ResultBrandDTO>(), "BrandId", "BrandName"); 
+                }
+                else { ViewBag.Brands = new SelectList(new List<dynamic>(), "Value", "Text"); }
+
+                var colorResponse = await _httpClient.GetAsync("api/Colors");
+                if (colorResponse.IsSuccessStatusCode)
+                {
+                    var colors = JsonConvert.DeserializeObject<List<ResultColorDTO>>(await colorResponse.Content.ReadAsStringAsync());
+                    ViewBag.Colors = new SelectList(colors ?? new List<ResultColorDTO>(), "ColorId", "Name");
+                }
+                else { ViewBag.Colors = new SelectList(new List<dynamic>(), "Value", "Text"); }
+
+                var modelResponse = await _httpClient.GetAsync("api/Models");
+                if (modelResponse.IsSuccessStatusCode)
+                {
+                    var models = JsonConvert.DeserializeObject<List<ResultModelDTO>>(await modelResponse.Content.ReadAsStringAsync());
+                    ViewBag.Models = new SelectList(models ?? new List<ResultModelDTO>(), "ModelId", "Name");
+                }
+                else { ViewBag.Models = new SelectList(new List<dynamic>(), "Value", "Text"); }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"LoadDropdowns genel hata: {ex.Message}");
+                ViewBag.Brands = new SelectList(new List<dynamic>(), "Value", "Text");
+                ViewBag.Colors = new SelectList(new List<dynamic>(), "Value", "Text");
+                ViewBag.Models = new SelectList(new List<dynamic>(), "Value", "Text");
+            }
         }
 
-        /// <summary>
-        /// Ürün güncelleme formunu gösterir.
-        /// </summary>
+        private async Task LoadDropdownsToViewModel(CreateProductViewModel viewModel)
+        {
+            try
+            {
+                var brandResponse = await _httpClient.GetAsync("api/Brands");
+                if (brandResponse.IsSuccessStatusCode)
+                {
+                    var brandJson = await brandResponse.Content.ReadAsStringAsync();
+                    if (!string.IsNullOrEmpty(brandJson))
+                    {
+                        var brands = JsonConvert.DeserializeObject<List<ResultBrandDTO>>(brandJson);
+                        viewModel.Brands = brands?.Select(b => new SelectListItem
+                        {
+                            Value = b.BrandId.ToString(),
+                            Text = b.BrandName 
+                        }).ToList() ?? new List<SelectListItem>();
+                    }
+                }
+
+                var colorResponse = await _httpClient.GetAsync("api/Colors");
+                if (colorResponse.IsSuccessStatusCode)
+                {
+                    var colorJson = await colorResponse.Content.ReadAsStringAsync();
+                    if (!string.IsNullOrEmpty(colorJson))
+                    {
+                        var colors = JsonConvert.DeserializeObject<List<ResultColorDTO>>(colorJson);
+                        viewModel.Colors = colors?.Select(c => new SelectListItem
+                        {
+                            Value = c.ColorId.ToString(),
+                            Text = c.Name
+                        }).ToList() ?? new List<SelectListItem>();
+                    }
+                }
+
+                var modelResponse = await _httpClient.GetAsync("api/Models");
+                if (modelResponse.IsSuccessStatusCode)
+                {
+                    var modelJson = await modelResponse.Content.ReadAsStringAsync();
+                    if (!string.IsNullOrEmpty(modelJson))
+                    {
+                        var models = JsonConvert.DeserializeObject<List<ResultModelDTO>>(modelJson);
+                        viewModel.Models = models?.Select(m => new SelectListItem
+                        {
+                            Value = m.ModelId.ToString(),
+                            Text = m.Name
+                        }).ToList() ?? new List<SelectListItem>();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"LoadDropdownsToViewModel genel hata: {ex.Message}");
+                viewModel.Brands = new List<SelectListItem>();
+                viewModel.Colors = new List<SelectListItem>();
+                viewModel.Models = new List<SelectListItem>();
+            }
+        }
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -145,40 +231,26 @@ namespace CarShop.WebUI.Controllers
                 var jsonData = await response.Content.ReadAsStringAsync();
                 var apiProduct = JsonConvert.DeserializeObject<WebApiDTOs.GetByIdProductDTO>(jsonData);
 
-                // AutoMapper'ın doğru eşleme yapmasını sağlamak için doğrudan kullanıyoruz
                 var uiDto = _mapper.Map<UpdateProductDTO>(apiProduct);
-
-                // LoadDropdowns() metodunu burada çağırın
-                await LoadDropdowns();
-                return View(uiDto);
+                await LoadDropdowns(); 
+                return View(uiDto);
             }
             TempData["ErrorMessage"] = "Ürün bulunamadı veya bir hata oluştu.";
             return RedirectToAction("Index");
         }
 
-        /// <summary>
-        /// Ürün güncelleme işlemini yapar.
-        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Consumes("multipart/form-data")] // Dosya yüklemeleri için
+        [Consumes("multipart/form-data")]
         public async Task<IActionResult> Edit(UpdateProductDTO uiDto)
         {
-            // ModelState geçerli değilse, formu dropdown'larla birlikte yeniden göster
-            // if (!ModelState.IsValid) // Model doğrulaması yapıyorsanız bu kontrolü ekleyebilirsiniz
-            // {
-            //     await LoadDropdowns();
-            //     return View(uiDto);
-            // }
 
             var apiDto = _mapper.Map<WebApiDTOs.UpdateProductDTO>(uiDto);
 
             using (var formData = new MultipartFormDataContent())
             {
-                // ProductId'yi FormData'ya ekle
                 formData.Add(new StringContent(uiDto.ProductId.ToString()), "ProductId");
 
-                // Metin tabanlı alanları ekle
                 formData.Add(new StringContent(apiDto.Name ?? string.Empty), "Name");
                 formData.Add(new StringContent(apiDto.ColorId.ToString()), "ColorId");
                 formData.Add(new StringContent(apiDto.BrandId.ToString()), "BrandId");
@@ -214,25 +286,20 @@ namespace CarShop.WebUI.Controllers
                 formData.Add(new StringContent(apiDto.IsPopular.ToString()), "IsPopular");
 
 
-                // Resimleri işleme:
                 for (int i = 0; i < uiDto.Images.Count; i++)
                 {
                     var image = uiDto.Images[i];
-                    // Her zaman Id'yi ve ShouldDelete'i gönderin ki API tarafında doğru işlem yapılabilsin
                     formData.Add(new StringContent(image.Id.ToString()), $"Images[{i}].Id");
                     formData.Add(new StringContent(image.ShouldDelete.ToString()), $"Images[{i}].ShouldDelete");
                     formData.Add(new StringContent(image.IsMainImage.ToString()), $"Images[{i}].IsMainImage");
                     formData.Add(new StringContent(image.Order.ToString()), $"Images[{i}].Order");
 
-                    // Yalnızca yeni yüklenen veya güncellenen dosyaları ekle
                     if (image.ImageFile != null)
                     {
                         var fileContent = new StreamContent(image.ImageFile.OpenReadStream());
                         fileContent.Headers.ContentType = new MediaTypeHeaderValue(image.ImageFile.ContentType);
                         formData.Add(fileContent, $"Images[{i}].ImageFile", image.ImageFile.FileName);
                     }
-                    // Eğer resim silinmiyorsa ve yeni bir dosya yüklenmiyorsa, mevcut ImageUrl'i de gönderin
-                    // Bu, API tarafında mevcut resmin tanınmasına yardımcı olabilir (Opsiyonel ama güvenli)
                     else if (!image.ShouldDelete && !string.IsNullOrEmpty(image.ImageUrl))
                     {
                         formData.Add(new StringContent(image.ImageUrl), $"Images[{i}].ImageUrl");
@@ -252,13 +319,10 @@ namespace CarShop.WebUI.Controllers
                     ModelState.AddModelError("", $"API Hatası: {response.StatusCode} - {errorContent}");
                 }
             }
-            await LoadDropdowns(); // Hata durumunda dropdown'ları tekrar yükle
+            await LoadDropdowns(); 
             return View(uiDto);
         }
 
-        /// <summary>
-        /// Ürünü silme işlemini yapar.
-        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
@@ -277,9 +341,6 @@ namespace CarShop.WebUI.Controllers
             return RedirectToAction("Index");
         }
 
-        /// <summary>
-        /// Ürün detaylarını gösterir.
-        /// </summary>
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
@@ -297,52 +358,5 @@ namespace CarShop.WebUI.Controllers
             return RedirectToAction("Index");
         }
 
-        /// <summary>
-        /// Brand, Color ve Model dropdown'ları için verileri API'den çeker ve ViewBag'e atar.
-        /// </summary>
-        private async Task LoadDropdowns()
-        {
-            // Markaları çek
-            var brandResponse = await _httpClient.GetAsync("api/Brands");
-            if (brandResponse.IsSuccessStatusCode)
-            {
-                var brandJson = await brandResponse.Content.ReadAsStringAsync();
-                var brands = JsonConvert.DeserializeObject<List<ResultBrandDTO>>(brandJson); // Doğru DTO tipini kullanın
-                ViewBag.Brands = new SelectList(brands, "BrandId", "Name");
-            }
-            else
-            {
-                ViewBag.Brands = new List<SelectListItem>();
-                ModelState.AddModelError("", "Markalar yüklenirken hata oluştu.");
-            }
-
-            // Renkleri çek
-            var colorResponse = await _httpClient.GetAsync("api/Colors");
-            if (colorResponse.IsSuccessStatusCode)
-            {
-                var colorJson = await colorResponse.Content.ReadAsStringAsync();
-                var colors = JsonConvert.DeserializeObject<List<ResultColorDTO>>(colorJson); // Doğru DTO tipini kullanın
-                ViewBag.Colors = new SelectList(colors, "ColorId", "Name");
-            }
-            else
-            {
-                ViewBag.Colors = new List<SelectListItem>();
-                ModelState.AddModelError("", "Renkler yüklenirken hata oluştu.");
-            }
-
-            // Modelleri çek
-            var modelResponse = await _httpClient.GetAsync("api/Models");
-            if (modelResponse.IsSuccessStatusCode)
-            {
-                var modelJson = await modelResponse.Content.ReadAsStringAsync();
-                var models = JsonConvert.DeserializeObject<List<ResultModelDTO>>(modelJson); // Doğru DTO tipini kullanın
-                ViewBag.Models = new SelectList(models, "ModelId", "Name");
-            }
-            else
-            {
-                ViewBag.Models = new List<SelectListItem>();
-                ModelState.AddModelError("", "Modeller yüklenirken hata oluştu.");
-            }
-        }
     }
 }

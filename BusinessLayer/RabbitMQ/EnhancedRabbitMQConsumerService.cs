@@ -70,14 +70,12 @@ namespace BusinessLayer.RabbitMQ
 
             var exchangeName = $"{entityType}_exchange";
 
-            // Exchange'i declare et
             _channel.ExchangeDeclare(
                 exchange: exchangeName,
                 type: ExchangeType.Topic,
                 durable: true
             );
 
-            // Web UI için özel kuyruk
             var consumerQueueName = $"web_ui_{entityType}_messages_queue";
             _channel.QueueDeclare(
                 queue: consumerQueueName,
@@ -87,7 +85,6 @@ namespace BusinessLayer.RabbitMQ
                 arguments: null
             );
 
-            // Tüm operasyonları dinle
             _channel.QueueBind(
                 queue: consumerQueueName,
                 exchange: exchangeName,
@@ -142,29 +139,22 @@ namespace BusinessLayer.RabbitMQ
 
                 if (deserializedMessage != null)
                 {
-                    // Genel listeye ekle
                     AllMessages.Add(deserializedMessage);
-
-                    // Entity tipine özel listeye ekle
-                    // TryAdd kullanmak daha güvenli ve ConcurrentDictionary'nin yapısına daha uygun
                     MessagesByEntity.TryAdd(entityType, new ConcurrentBag<BaseMessage>());
                     MessagesByEntity[entityType].Add(deserializedMessage);
 
                     Console.WriteLine($" Mesaj kaydedildi. Toplam: {AllMessages.Count}");
                 }
-
-                // _channel null olabileceği için kontrol ekliyoruz, ancak bu metod sadece kanal aktifken çağrılmalı
                 _channel?.BasicAck(ea.DeliveryTag, false);
             }
             catch (JsonException ex)
             {
                 Console.WriteLine($" JSON Parse Hatası: {ex.Message}");
-                _channel?.BasicAck(ea.DeliveryTag, false); // Hata durumunda da acknowledge etmeli
+                _channel?.BasicAck(ea.DeliveryTag, false); 
             }
             catch (Exception ex)
             {
                 Console.WriteLine($" Mesaj işleme hatası: {ex.Message}");
-                // _channel null olabileceği için kontrol ekliyoruz
                 _channel?.BasicNack(ea.DeliveryTag, false, true);
             }
         }

@@ -40,8 +40,7 @@
             <input type="file" asp-for="CarImage" class="form-control" id="carImage" accept="image/*">
             <span asp-validation-for="CarImage" class="text-danger"></span>
         </div>
-        <input type="hidden" asp-for="ExistingCarImageUrl" /> @* Mevcut URL'yi gizli alanda tutmak, API'ye gönderilmemesi için *@
-
+        <input type="hidden" asp-for="ExistingCarImageUrl" /> 
         <div class="mb-3">
         <label for="carModel" class="form-label">Araba Modeli</label>
         <input type="text" asp-for="CarModel" class="form-control" id="carModel" placeholder="Araba modelini girin" required>
@@ -66,7 +65,7 @@
         <input type="file" asp-for="LogoImage" class="form-control" id="logoImage" accept="image/*">
         <span asp-validation-for="LogoImage" class="text-danger"></span>
         </div>
-        <input type="hidden" asp-for="ExistingLogoImageUrl" /> @* Mevcut URL'yi gizli alanda tutmak, API'ye gönderilmemesi için *@
+        <input type="hidden" asp-for="ExistingLogoImageUrl" />
 
         <div class="mb-3">
         <label for="price" class="form-label">Fiyat</label>
@@ -79,7 +78,6 @@
         <button type="submit" class="btn btn-primary">Güncelle</button>
         </div>
 
-        @* Model doğrulama hatalarını göstermek için *@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     </form>
 </div>

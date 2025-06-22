@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BusinessLayer.Abstract;
 using BusinessLayer.RabbitMQ;
-using DTOsLayer.WebApiDTO.ContactDTO; // Yeni DTO'larınızı buraya ekledik
+using DTOsLayer.WebApiDTO.ContactDTO;
 using EntityLayer.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

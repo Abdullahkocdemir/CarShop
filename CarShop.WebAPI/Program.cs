@@ -73,7 +73,6 @@ using (var scope = app.Services.CreateScope())
     string adminEmail = "kcdmirapo96@gmail.com";
     string adminPassword = "123456aA*";
 
-    // Admin rolünün varlýðýný kontrol et ve yoksa oluþtur
     if (!await roleManager.RoleExistsAsync(adminRole))
     {
         await roleManager.CreateAsync(new AppRole
@@ -83,7 +82,6 @@ using (var scope = app.Services.CreateScope())
         });
     }
 
-    // Admin kullanýcýsýnýn varlýðýný kontrol et ve yoksa oluþtur
     var adminUser = await userManager.FindByEmailAsync(adminEmail);
     if (adminUser == null)
     {

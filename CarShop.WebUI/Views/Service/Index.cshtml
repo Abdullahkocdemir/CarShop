@@ -73,7 +73,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-    function confirmDelete(serviceId) { // Renamed function for clarity
+    function confirmDelete(serviceId) {
         Swal.fire({
             title: "Emin misiniz?",
             text: "Bu hizmeti silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!",
@@ -85,7 +85,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: '/Service/Delete/' + serviceId, // Corrected controller name
+                    url: '/Service/Delete/' + serviceId, 
                     type: 'POST',
                     success: function () {
                         Swal.fire("Silindi!", "Hizmet başarıyla silindi.", "success").then(() => {

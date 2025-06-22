@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using BusinessLayer.Abstract; // Assuming ICallBackTitleService is here
+using BusinessLayer.Abstract; 
 using BusinessLayer.RabbitMQ;
-using DTOsLayer.WebApiDTO.CallBackTitleDTO; // Assuming you have CallBackTitle DTOs here
+using DTOsLayer.WebApiDTO.CallBackTitleDTO; 
 using EntityLayer.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

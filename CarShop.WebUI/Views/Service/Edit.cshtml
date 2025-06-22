@@ -20,10 +20,9 @@
 
 <div class="form-card">
     <form asp-controller="Service" asp-action="Edit" method="post" enctype="multipart/form-data">
-        @* ADD THIS: enctype="multipart/form-data" *@
-        @Html.AntiForgeryToken() @* Güvenlik için Anti-Forgery Token *@
+        @Html.AntiForgeryToken() 
         <input type="hidden" asp-for="ServiceId" />
-        <input type="hidden" asp-for="ExistingImageUrl" /> @* Hidden field to send existing URL back to controller *@
+        <input type="hidden" asp-for="ExistingImageUrl" />
 
         <div class="mb-3">
             <label for="title" class="form-label">Başlık</label>
@@ -39,7 +38,7 @@
 
         <div class="mb-3">
             <label for="imageFile" class="form-label">Resim Yükle</label>
-            <input type="file" asp-for="ImageFile" class="form-control" id="imageFile" accept="image/*"> @* Input for new file upload *@
+            <input type="file" asp-for="ImageFile" class="form-control" id="imageFile" accept="image/*"> 
             <span asp-validation-for="ImageFile" class="text-danger"></span>
 
             @if (!string.IsNullOrEmpty(Model.ExistingImageUrl))
@@ -56,7 +55,6 @@
             <button type="submit" class="btn btn-primary">Güncelle</button>
         </div>
 
-        @* Model doğrulama hatalarını göstermek için *@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     </form>
 </div>

@@ -20,13 +20,9 @@ builder.Services.AddHttpClient("CarShopApiClient", (sp, client) =>
     client.BaseAddress = new Uri(apiSettings.BaseUrl); 
 });
 
-// 2. Belirli bir assembly'deki tüm AbstractValidator'larý otomatik olarak kaydet
-// 'BusinessLayer' projenizin adýný buraya yazýn.
-// Bu, o assembly içindeki tüm 'AbstractValidator<T>' sýnýflarýný bulup kaydeder.
 builder.Services.AddValidatorsFromAssemblyContaining<BusinessLayer.ValidationRules.BrandValidation.CreateBrandDTOValidator>();
-builder.Services.AddFluentValidationAutoValidation(); // Doðrulamayý otomatik yapar
-builder.Services.AddFluentValidationClientsideAdapters(); // Client-side (tarayýcý tarafý) doðrulamayý etkinleþtirir
-// AutoMapper'ý kaydetme
+builder.Services.AddFluentValidationAutoValidation(); 
+builder.Services.AddFluentValidationClientsideAdapters(); 
 builder.Services.AddAutoMapper(typeof(GeneralMapping)); 
 
 builder.Services.AddSingleton<EnhancedRabbitMQConsumerService>(sp =>
@@ -42,7 +38,6 @@ builder.Services.AddSingleton<EnhancedRabbitMQConsumerService>(sp =>
 });
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");

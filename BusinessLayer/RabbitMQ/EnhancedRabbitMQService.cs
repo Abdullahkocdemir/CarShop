@@ -1,5 +1,4 @@
-﻿// BusinessLayer.RabbitMQ/EnhancedRabbitMQService.cs
-using DTOsLayer.WebApiDTO.RabbitMQ;
+﻿using DTOsLayer.WebApiDTO.RabbitMQ;
 using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
@@ -7,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Text.Json.Serialization; // Yeni ekleyin
+using System.Text.Json.Serialization;
 
 namespace BusinessLayer.RabbitMQ
 {
@@ -28,7 +27,6 @@ namespace BusinessLayer.RabbitMQ
             };
         }
 
-        // --- EnsureConnectionAndChannel metodunu buraya taşıdık ---
         private void EnsureConnectionAndChannel()
         {
             if (_connection == null || !_connection.IsOpen)
@@ -41,7 +39,6 @@ namespace BusinessLayer.RabbitMQ
                 _channel = _connection.CreateModel();
             }
         }
-        // --------------------------------------------------------
 
         public void PublishEntityMessage<T>(T entity, string operation, string entityType)
         {
@@ -57,7 +54,6 @@ namespace BusinessLayer.RabbitMQ
                 var exchangeName = $"{entityType.ToLower()}_exchange";
                 var routingKey = $"{entityType.ToLower()}.{operation.ToLower()}";
 
-                // Exchange'i declare et
                 _channel.ExchangeDeclare(
                     exchange: exchangeName,
                     type: ExchangeType.Topic,
@@ -67,7 +63,6 @@ namespace BusinessLayer.RabbitMQ
                 var options = new JsonSerializerOptions
                 {
                     ReferenceHandler = ReferenceHandler.Preserve,
-                    // PropertyNamingPolicy = JsonNamingPolicy.CamelCase // İsteğe bağlı
                 };
 
                 object message;

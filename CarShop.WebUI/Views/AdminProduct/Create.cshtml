@@ -1,0 +1,291 @@
+﻿@model CarShop.WebUI.Models.CreateProductViewModel
+@{
+    ViewData["Title"] = "Yeni Ürün Ekle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .header-description {
+        color: blue;
+        transition: color 0.3s ease;
+    }
+
+        .header-description:hover {
+            color: red;
+        }
+
+    .form-control.select-highlight {
+        border-color: #ced4da;
+        box-shadow: none;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        color: #343a40;
+        background-color: #f8f9fa;
+    }
+
+        .form-control.select-highlight:hover {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+        }
+
+        .form-control.select-highlight:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+            outline: none;
+        }
+
+        .form-control.select-highlight option {
+            color: #343a40;
+            background-color: #ffffff;
+        }
+
+            .form-control.select-highlight option:checked {
+                background-color: #007bff;
+                color: #ffffff;
+            }
+</style>
+
+<header class="header">
+    <div>
+        <h2>Yeni Ürün Ekle</h2>
+        <p class="header-description" style="margin-top: 0.5rem;">Yeni bir araç ilanı oluşturun.</p>
+    </div>
+</header>
+
+<div class="form-card">
+    <form asp-controller="Products" asp-action="Create" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <h4 class="mb-4">Temel Bilgiler</h4>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="productName" class="form-label">Ürün Adı</label>
+                <input type="text" asp-for="Product.Name" class="form-control" id="productName" placeholder="Ürün adını girin (örn: Civic Elegance)" required>
+                <span asp-validation-for="Product.Name" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="brandId" class="form-label">Marka</label>
+                <select asp-for="Product.BrandId" class="form-control select-highlight" asp-items="@Model.Brands">
+                    <option value="">-- Marka Seçiniz --</option>
+                </select>
+                <span asp-validation-for="Product.BrandId" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="modelId" class="form-label">Model</label>
+                <select asp-for="Product.ModelId" class="form-control select-highlight" asp-items="@Model.Models">
+                    <option value="">-- Model Seçiniz --</option>
+                </select>
+                <span asp-validation-for="Product.ModelId" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="colorId" class="form-label">Renk</label>
+                <select asp-for="Product.ColorId" class="form-control select-highlight" asp-items="@Model.Colors">
+                    <option value="">-- Renk Seçiniz --</option>
+                </select>
+                <span asp-validation-for="Product.ColorId" class="text-danger"></span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="kilometer" class="form-label">Kilometre</label>
+                <input type="text" asp-for="Product.Kilometer" class="form-control" id="kilometer" placeholder="Kilometre" required>
+                <span asp-validation-for="Product.Kilometer" class="text-danger"></span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="year" class="form-label">Yıl</label>
+                <input type="number" asp-for="Product.Year" class="form-control" id="year" placeholder="Yıl" required min="1900" max="@DateTime.Now.Year + 2">
+                <span asp-validation-for="Product.Year" class="text-danger"></span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="price" class="form-label">Fiyat</label>
+                <input type="number" asp-for="Product.Price" class="form-control" id="price" placeholder="Fiyat" required min="0" step="0.01">
+                <span asp-validation-for="Product.Price" class="text-danger"></span>
+            </div>
+        </div>
+
+        <h4 class="mb-4 mt-4">Teknik Özellikler</h4>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="engineSize" class="form-label">Motor Hacmi</label>
+                <input type="text" asp-for="Product.EngineSize" class="form-control" id="engineSize" placeholder="örn: 1.6L">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="fuelType" class="form-label">Yakıt Türü</label>
+                <input type="text" asp-for="Product.FuelType" class="form-control" id="fuelType" placeholder="örn: Benzin, Dizel">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="transmission" class="form-label">Vites</label>
+                <input type="text" asp-for="Product.Transmission" class="form-control" id="transmission" placeholder="örn: Otomatik, Manuel">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="horsepower" class="form-label">Beygir Gücü</label>
+                <input type="number" asp-for="Product.Horsepower" class="form-control" id="horsepower" placeholder="örn: 120">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="driveType" class="form-label">Çekiş</label>
+                <input type="text" asp-for="Product.DriveType" class="form-control" id="driveType" placeholder="örn: Önden, Arkadan">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="doorCount" class="form-label">Kapı Sayısı</label>
+                <input type="number" asp-for="Product.DoorCount" class="form-control" id="doorCount" placeholder="örn: 4">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="seatCount" class="form-label">Koltuk Sayısı</label>
+                <input type="number" asp-for="Product.SeatCount" class="form-control" id="seatCount" placeholder="örn: 5">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="condition" class="form-label">Durum</label>
+                <input type="text" asp-for="Product.Condition" class="form-control" id="condition" placeholder="örn: İkinci El, Sıfır">
+            </div>
+        </div>
+
+        <h4 class="mb-4 mt-4">Güvenlik ve Donanım</h4>
+        <div class="row">
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="Product.HasAirbag" class="form-check-input" id="hasAirbag">
+                <label class="form-check-label" for="hasAirbag">Airbag</label>
+            </div>
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="Product.HasABS" class="form-check-input" id="hasABS">
+                <label class="form-check-label" for="hasABS">ABS</label>
+            </div>
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="Product.HasESP" class="form-check-input" id="hasESP">
+                <label class="form-check-label" for="hasESP">ESP</label>
+            </div>
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="Product.HasAirConditioning" class="form-check-input" id="hasAirConditioning">
+                <label class="form-check-label" for="hasAirConditioning">Klima</label>
+            </div>
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="Product.HasSunroof" class="form-check-input" id="hasSunroof">
+                <label class="form-check-label" for="hasSunroof">Sunroof</label>
+            </div>
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="Product.HasLeatherSeats" class="form-check-input" id="hasLeatherSeats">
+                <label class="form-check-label" for="hasLeatherSeats">Deri Koltuk</label>
+            </div>
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="Product.HasNavigationSystem" class="form-check-input" id="hasNavigationSystem">
+                <label class="form-check-label" for="hasNavigationSystem">Navigasyon</label>
+            </div>
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="Product.HasParkingSensors" class="form-check-input" id="hasParkingSensors">
+                <label class="form-check-label" for="hasParkingSensors">Park Sensörü</label>
+            </div>
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="Product.HasBackupCamera" class="form-check-input" id="hasBackupCamera">
+                <label class="form-check-label" for="hasBackupCamera">Geri Görüş Kamerası</label>
+            </div>
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="Product.HasCruiseControl" class="form-check-input" id="hasCruiseControl">
+                <label class="form-check-label" for="hasCruiseControl">Hız Sabitleyici</label>
+            </div>
+        </div>
+
+        <h4 class="mb-4 mt-4">Açıklamalar ve Konum</h4>
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <label for="description" class="form-label">Açıklama</label>
+                <textarea asp-for="Product.Description" class="form-control" id="description" rows="3" placeholder="Ürün hakkında detaylı bilgi girin"></textarea>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="features" class="form-label">Öne Çıkan Özellikler</label>
+                <input type="text" asp-for="Product.Features" class="form-control" id="features" placeholder="Virgülle ayırarak girin">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="damageHistory" class="form-label">Hasar Geçmişi</label>
+                <input type="text" asp-for="Product.DamageHistory" class="form-control" id="damageHistory" placeholder="Hasar bilgisi varsa girin">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="city" class="form-label">Şehir</label>
+                <input type="text" asp-for="Product.City" class="form-control" id="city" placeholder="Şehir">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="district" class="form-label">İlçe</label>
+                <input type="text" asp-for="Product.District" class="form-control" id="district" placeholder="İlçe">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="sellerType" class="form-label">Satıcı Tipi</label>
+                <input type="text" asp-for="Product.SellerType" class="form-control" id="sellerType" placeholder="örn: Galeri, Sahibinden">
+            </div>
+        </div>
+
+        <h4 class="mb-4 mt-4">Görseller</h4>
+        <div id="image-upload-area">
+            <div class="mb-3 d-flex align-items-center image-input-group">
+                <input type="file" name="Product.ImageFiles[0]" class="form-control" accept="image/*">
+                <button type="button" class="btn btn-danger btn-sm ms-2 remove-image-file" style="display:none;">Kaldır</button>
+            </div>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm mb-3" id="add-image-file">Yeni Resim Ekle</button>
+
+        <div class="d-flex justify-content-end mt-4">
+            <a href="/Products/Index" class="btn btn-secondary me-2">İptal</a>
+            <button type="submit" class="btn btn-primary">Kaydet</button>
+        </div>
+
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            let imageIndex = 0;
+            const existingInputsCount = $('#image-upload-area .image-input-group').length;
+            if (existingInputsCount > 0) {
+                imageIndex = existingInputsCount;
+                if (existingInputsCount === 1) {
+                    $('#image-upload-area .remove-image-file').first().hide();
+                } else {
+                    $('#image-upload-area .remove-image-file').show();
+                }
+            }
+
+
+            $('#add-image-file').click(function () {
+                var newImageInput = `
+                            <div class="mb-3 d-flex align-items-center image-input-group">
+                                <input type="file" name="Product.ImageFiles[${imageIndex}]" class="form-control" accept="image/*" required>
+                                <button type="button" class="btn btn-danger btn-sm ms-2 remove-image-file">Kaldır</button>
+                            </div>`;
+                $('#image-upload-area').append(newImageInput);
+                imageIndex++;
+
+                $('#image-upload-area .remove-image-file').show();
+
+                updateRemoveButtonsVisibility();
+            });
+
+            $('#image-upload-area').on('click', '.remove-image-file', function () {
+                $(this).closest('.image-input-group').remove();
+                reindexImageInputs();
+                updateRemoveButtonsVisibility();
+            });
+
+            updateRemoveButtonsVisibility();
+
+
+            function updateRemoveButtonsVisibility() {
+                const currentImageInputs = $('#image-upload-area .image-input-group');
+                if (currentImageInputs.length <= 1) {
+                    currentImageInputs.find('.remove-image-file').hide();
+                } else {
+                    currentImageInputs.find('.remove-image-file').show();
+                }
+            }
+
+            function reindexImageInputs() {
+                $('#image-upload-area .image-input-group').each(function (idx) {
+                    $(this).find('input[type="file"]').attr('name', `Product.ImageFiles[${idx}]`);
+                });
+                imageIndex = $('#image-upload-area .image-input-group').length;
+            }
+
+        });
+    </script>
+}

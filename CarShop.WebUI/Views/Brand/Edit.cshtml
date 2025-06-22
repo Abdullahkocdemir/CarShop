@@ -20,25 +20,13 @@
 
 <div class="form-card">
     <form asp-controller="Brand" asp-action="Edit" method="post">
-        @Html.AntiForgeryToken() @* Güvenlik için Anti-Forgery Token *@
+        @Html.AntiForgeryToken() 
         <input type="hidden" asp-for="BrandId" />
 
         <div class="mb-3">
             <label for="brandName" class="form-label">Marka Adı</label>
             <input type="text" asp-for="BrandName" class="form-control" id="brandName" placeholder="Marka adını girin" required>
             <span asp-validation-for="BrandName" class="text-danger"></span>
-        </div>
-
-        <div class="mb-3">
-            <label for="country" class="form-label">Ülke</label>
-            <input type="text" asp-for="Country" class="form-control" id="country" placeholder="Markanın ülkesini girin" required>
-            <span asp-validation-for="Country" class="text-danger"></span>
-        </div>
-
-        <div class="mb-3">
-            <label for="establishedYear" class="form-label">Kuruluş Yılı</label>
-            <input type="text" asp-for="EstablishmentYear" class="form-control" id="establishedYear" placeholder="Kuruluş yılını girin (örn: 1976)" maxlength="4" required>
-            <span asp-validation-for="EstablishmentYear" class="text-danger"></span>
         </div>
 
         <div class="mb-4 form-check">
@@ -51,7 +39,6 @@
             <button type="submit" class="btn btn-primary">Güncelle</button>
         </div>
 
-        @* Model doğrulama hatalarını göstermek için *@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     </form>
 </div>

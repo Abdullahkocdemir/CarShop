@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using BusinessLayer.Abstract; // INewLatestService için
+using BusinessLayer.Abstract; 
 using BusinessLayer.RabbitMQ;
-using DTOsLayer.WebApiDTO.NewLatestDTO; // Yeni DTO'larınız
-using EntityLayer.Entities; // NewLatest entity'niz
+using DTOsLayer.WebApiDTO.NewLatestDTO; 
+using EntityLayer.Entities; 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

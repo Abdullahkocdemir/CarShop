@@ -86,7 +86,7 @@
             if (result.isConfirmed) {
                 $.ajax({
                     url: '/AboutFeature/Delete/' + aboutFeatureId,
-                    type: 'POST', // or 'DELETE' if your route allows it and you adjust the controller
+                    type: 'POST', 
                     success: function () {
                         Swal.fire("Silindi!", "Özellik başarıyla silindi.", "success").then(() => {
                             location.reload();

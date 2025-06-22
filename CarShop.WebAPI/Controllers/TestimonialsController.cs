@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using BusinessLayer.Abstract; // Assuming ITestimonialService is here
+using BusinessLayer.Abstract; 
 using BusinessLayer.RabbitMQ;
-using DTOsLayer.WebApiDTO.TestimonialDTO; // Your Testimonial DTOs
-using EntityLayer.Entities; // Your Testimonial entity
+using DTOsLayer.WebApiDTO.TestimonialDTO; 
+using EntityLayer.Entities; 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Pipelines.Sockets.Unofficial;

@@ -3,22 +3,21 @@ using DTOsLayer.WebUIDTO.WhyUseReasonDTO;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Text;
-using System.Linq; // LINQ metotları için ekleyin
+using System.Linq; 
 
 namespace CarShop.WebUI.Controllers
 {
     public class WhyUseController : Controller
     {
         private readonly HttpClient _httpClient;
-        private const string BaseUrl = "https://localhost:7234/api/WhyUses"; // API'nin çalıştığı URL'yi buraya yazmalısın
+        private const string BaseUrl = "https://localhost:7234/api/WhyUses"; 
 
         public WhyUseController(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClientFactory.CreateClient(); // Named Client kullanmak yerine varsayılan client'ı kullanıyoruz veya buraya "CarShopApiClient" gibi özel bir client tanımı yapabilirsin. Eğer özel bir client kullanıyorsan, program.cs'de tanımlaman gerekir.
+            _httpClient = httpClientFactory.CreateClient(); 
             _httpClient.BaseAddress = new Uri(BaseUrl);
         }
 
-        // --- Listeleme (READ) ---
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -29,10 +28,8 @@ namespace CarShop.WebUI.Controllers
                 var values = JsonConvert.DeserializeObject<List<ResultWhyUseUIDTO>>(jsonData);
                 return View(values);
             }
-            return View(); // Hata durumunda boş bir view döndürebiliriz
+            return View(); 
         }
-
-        // --- Yeni Ekleme (CREATE) ---
         [HttpGet]
         public IActionResult Create()
         {
@@ -53,16 +50,13 @@ namespace CarShop.WebUI.Controllers
 
             if (responseMessage.IsSuccessStatusCode)
             {
-                // Başarılı olursa listeleme sayfasına yönlendir
                 return RedirectToAction("Index");
             }
-            // API'den gelen hata mesajını göstermek için yakalayabiliriz
             var errorContent = await responseMessage.Content.ReadAsStringAsync();
             ModelState.AddModelError("", $"Kayıt eklenirken bir hata oluştu: {errorContent}");
             return View(createWhyUseDto);
         }
 
-        // --- Güncelleme (UPDATE) ---
         [HttpGet]
         public async Task<IActionResult> Update(int id)
         {
@@ -73,7 +67,7 @@ namespace CarShop.WebUI.Controllers
                 var value = JsonConvert.DeserializeObject<UpdateWhyUseDTO>(jsonData);
                 return View(value);
             }
-            return NotFound(); // Kayıt bulunamazsa 404
+            return NotFound(); 
         }
 
         [HttpPost]
@@ -97,7 +91,6 @@ namespace CarShop.WebUI.Controllers
             return View(updateWhyUseDto);
         }
 
-        // --- Silme (DELETE) ---
         public async Task<IActionResult> Delete(int id)
         {
             var responseMessage = await _httpClient.DeleteAsync($"{BaseUrl}/{id}");

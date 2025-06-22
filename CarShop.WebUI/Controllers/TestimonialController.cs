@@ -66,7 +66,6 @@ namespace CarShop.WebUI.Controllers
             }
             else
             {
-                // Doğrulama hatalarını ModelState'e ekle
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(error.PropertyName, error.ErrorMessage);

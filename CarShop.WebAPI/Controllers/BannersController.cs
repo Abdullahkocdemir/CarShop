@@ -4,10 +4,10 @@ using BusinessLayer.RabbitMQ;
 using DTOsLayer.WebApiDTO.BannerDTO;
 using EntityLayer.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Hosting; // Required for IWebHostEnvironment
+using Microsoft.AspNetCore.Hosting; 
 using System;
 using System.Collections.Generic;
-using System.IO; // Required for Path
+using System.IO;
 
 namespace CarShop.WebAPI.Controllers
 {
@@ -17,7 +17,7 @@ namespace CarShop.WebAPI.Controllers
     {
         private readonly IBannerService _bannerService;
         private readonly IMapper _mapper;
-        private readonly IWebHostEnvironment _webHostEnvironment; // Inject IWebHostEnvironment
+        private readonly IWebHostEnvironment _webHostEnvironment; 
         protected override string EntityTypeName => "Banner";
 
         public BannersController(IBannerService bannerService, EnhancedRabbitMQService rabbitMqService, IMapper mapper, IWebHostEnvironment webHostEnvironment)
@@ -25,14 +25,13 @@ namespace CarShop.WebAPI.Controllers
         {
             _bannerService = bannerService;
             _mapper = mapper;
-            _webHostEnvironment = webHostEnvironment; // Initialize
+            _webHostEnvironment = webHostEnvironment; 
         }
 
         [HttpGet]
         public IActionResult GetListAllBanner()
         {
             var values = _bannerService.BGetListAll();
-            // Convert to DTOs and construct full image URLs if needed for the client
             var result = values.Select(banner => new ResultBannerDTO
             {
                 BannerId = banner.BannerId,
@@ -49,7 +48,7 @@ namespace CarShop.WebAPI.Controllers
         }
 
         [HttpPost]
-        [Consumes("multipart/form-data")] // Specify content type for file uploads
+        [Consumes("multipart/form-data")] 
         public async Task<IActionResult> CreateBanner([FromForm] CreateBannerDTO dto)
         {
             var banner = _mapper.Map<Banner>(dto);
@@ -70,7 +69,7 @@ namespace CarShop.WebAPI.Controllers
         }
 
         [HttpPut]
-        [Consumes("multipart/form-data")] // Specify content type for file uploads
+        [Consumes("multipart/form-data")] 
         public async Task<IActionResult> UpdateBanner([FromForm] UpdateBannerDTO dto)
         {
             var existingBanner = _bannerService.BGetById(dto.BannerId);
@@ -80,11 +79,10 @@ namespace CarShop.WebAPI.Controllers
                 return NotFound($"Banner with ID {dto.BannerId} not found.");
             }
 
-            _mapper.Map(dto, existingBanner); // Map common properties
+            _mapper.Map(dto, existingBanner); 
 
             if (dto.CarImage != null)
             {
-                // Delete old image if it exists
                 if (!string.IsNullOrEmpty(existingBanner.CarImageUrl))
                 {
                     DeleteImage(existingBanner.CarImageUrl);
@@ -94,7 +92,6 @@ namespace CarShop.WebAPI.Controllers
 
             if (dto.LogoImage != null)
             {
-                // Delete old image if it exists
                 if (!string.IsNullOrEmpty(existingBanner.LogoImageUrl))
                 {
                     DeleteImage(existingBanner.LogoImageUrl);
@@ -117,7 +114,6 @@ namespace CarShop.WebAPI.Controllers
                 return NotFound($"Banner with ID {id} not found.");
             }
 
-            // Delete associated images
             if (!string.IsNullOrEmpty(banner.CarImageUrl))
             {
                 DeleteImage(banner.CarImageUrl);
@@ -141,7 +137,6 @@ namespace CarShop.WebAPI.Controllers
                 return NotFound($"Banner with ID {id} not found.");
             }
 
-            // Construct full image URLs for the client
             var result = new ResultBannerDTO
             {
                 BannerId = value.BannerId,
@@ -156,7 +151,6 @@ namespace CarShop.WebAPI.Controllers
             return Ok(result);
         }
 
-        // --- Helper methods for image handling ---
 
         private async Task<string> SaveImage(IFormFile imageFile)
         {
@@ -165,14 +159,12 @@ namespace CarShop.WebAPI.Controllers
                 return string.Empty;
             }
 
-            // Ensure the banner directory exists
             string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "banner");
             if (!Directory.Exists(uploadsFolder))
             {
                 Directory.CreateDirectory(uploadsFolder);
             }
 
-            // Generate a unique file name
             string uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
             string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
@@ -181,7 +173,6 @@ namespace CarShop.WebAPI.Controllers
                 await imageFile.CopyToAsync(fileStream);
             }
 
-            // Return just the file name to store in the database
             return uniqueFileName;
         }
 

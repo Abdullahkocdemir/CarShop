@@ -128,46 +128,28 @@ namespace CarShop.WebAPI.Mapping
             CreateMap<GetByIdAboutItemDTO, AboutItem>().ReverseMap();
 
             // Product Mappings
-            // Product'tan ResultProductDTO'ya eşleme
             CreateMap<Product, ResultProductDTO>()
                 .ForMember(dest => dest.ColorName, opt => opt.MapFrom(src => src.Color != null ? src.Color.Name : string.Empty))
                 .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand != null ? src.Brand.BrandName : string.Empty))
                 .ForMember(dest => dest.ModelName, opt => opt.MapFrom(src => src.Model != null ? src.Model.Name : string.Empty))
                 .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.Images != null ? src.Images.Select(img => img.ImageUrl).ToList() : new List<string>()));
-            // Kaldırılan diğer alanlar için ForMember kurallarını çıkardık
 
-            // Product'tan GetByIdProductDTO'ya eşleme
             CreateMap<Product, GetByIdProductDTO>()
                 .ForMember(dest => dest.ColorName, opt => opt.MapFrom(src => src.Color != null ? src.Color.Name : string.Empty))
                 .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand != null ? src.Brand.BrandName : string.Empty))
                 .ForMember(dest => dest.ModelName, opt => opt.MapFrom(src => src.Model != null ? src.Model.Name : string.Empty))
                 .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.Images != null ? src.Images.Select(img => img.ImageUrl).ToList() : new List<string>()));
-            // Kaldırılan diğer alanlar için ForMember kurallarını çıkardık
-
-            // CreateProductDTO'dan Product'a eşleme
-            // Resimler (ImageFiles) manuel olarak işleneceği için Ignore ediyoruz
             CreateMap<CreateProductDTO, Product>()
                 .ForMember(dest => dest.Images, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
-                .ForMember(dest => dest.UpdatedDate, opt => opt.Ignore()); // İlk oluşturmada boş
-                                                                           // Kaldırılan diğer alanlar için ForMember kurallarını çıkardık (örn: ViewCount, FavoriteCount vb.)
-
-
-            // UpdateProductDTO'dan Product'a eşleme
-            // Resimler (Images) manuel olarak işleneceği için Ignore ediyoruz
+                .ForMember(dest => dest.UpdatedDate, opt => opt.Ignore()); 
             CreateMap<UpdateProductDTO, Product>()
                 .ForMember(dest => dest.Images, opt => opt.Ignore())
-                .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow)); // Güncelleme tarihi otomatik atama
-                                                                                                  // Kaldırılan diğer alanlar için ForMember kurallarını çıkardık
-
-
-            // ProductImageDTO'dan ProductImage'a eşleme (Resim yönetimi için)
-            // ImageFile manuel olarak işleneceği için Ignore ediyoruz
+                .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow)); 
             CreateMap<ProductImageDTO, ProductImage>()
                 .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
 
-            // Banner Mappings
-            // Existing mappings (assuming they exist)
+            // Banner Mappings)
             CreateMap<Banner, ResultBannerDTO>().ReverseMap();
             CreateMap<CreateBannerDTO, Banner>().ReverseMap();
             CreateMap<UpdateBannerDTO, Banner>().ReverseMap();
@@ -207,17 +189,11 @@ namespace CarShop.WebAPI.Mapping
             CreateMap<Feature, GetByIdFeatureDTO>()
                 .ForMember(dest => dest.FeatureImages, opt => opt.MapFrom(src => src.FeatureImages))
                 .ReverseMap();
-
             CreateMap<CreateFeatureDTO, Feature>()
                 .ForMember(dest => dest.FeatureImages, opt => opt.Ignore());
             CreateMap<UpdateFeatureDTO, Feature>()
                 .ForMember(dest => dest.FeatureImages, opt => opt.Ignore());
-
-
-            // FeatureImage Mappings
             CreateMap<FeatureImage, ResultFeatureImageDTO>().ReverseMap();
-
-
             //NewLatest
 
             CreateMap<CreateNewLatestDTO, NewLatest>().ReverseMap();
@@ -229,15 +205,11 @@ namespace CarShop.WebAPI.Mapping
 
             CreateMap<Service, ResultServiceDTO>().ReverseMap();
             CreateMap<Service, GetByIdServiceDTO>().ReverseMap();
-
-            // For CreateServiceDTO, ignore ImageUrl as it's handled separately
             CreateMap<CreateServiceDTO, Service>()
                 .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
-
-            // For UpdateServiceDTO, ignore ImageUrl as it's handled separately
             CreateMap<UpdateServiceDTO, Service>()
                 .ForMember(dest => dest.ImageUrl, opt => opt.Ignore())
-                .ForMember(dest => dest.ServiceId, opt => opt.Condition(src => src.ServiceId != 0)); // Example: only map ServiceId if it's not default
+                .ForMember(dest => dest.ServiceId, opt => opt.Condition(src => src.ServiceId != 0)); 
 
             //ShowRoom
 

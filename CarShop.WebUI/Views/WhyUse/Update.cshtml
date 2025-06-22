@@ -39,7 +39,6 @@
 
         <h4>İlişkili Nedenler</h4>
         <div id="whyUseReasonsContainer">
-            @* Mevcut nedenler ve dinamik olarak eklenen nedenler buraya gelecek *@
             @if (Model.WhyUseReasons != null && Model.WhyUseReasons.Any())
             {
                 for (int i = 0; i < Model.WhyUseReasons.Count; i++)
@@ -78,14 +77,13 @@
             <button type="submit" class="btn btn-primary">Güncelle</button>
         </div>
 
-        @* Model doğrulama hatalarını göstermek için *@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     </form>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    let reasonIndex = @(Model.WhyUseReasons?.Count ?? 0); // Mevcut neden sayısından başla
+    let reasonIndex = @(Model.WhyUseReasons?.Count ?? 0); 
 
     function addReasonRow(reasonText = '', displayOrder = '', iconCssClass = 'fa fa-check-circle', whyUseReasonId = 0) {
         const container = $('#whyUseReasonsContainer');
@@ -115,7 +113,7 @@
             `;
         container.append(newRow);
         reasonIndex++;
-        updateReasonIndices(); // Yeni eklenen satır için indeksleri güncelle
+        updateReasonIndices(); 
     }
 
     function updateReasonIndices() {
@@ -132,7 +130,7 @@
             });
             $(this).find('.card-title').text(`Neden #${idx + 1}`);
         });
-        reasonIndex = $('#whyUseReasonsContainer .reason-item').length; // Son indeksi güncelle
+        reasonIndex = $('#whyUseReasonsContainer .reason-item').length; 
     }
 
 
@@ -143,7 +141,7 @@
 
         $('#whyUseReasonsContainer').on('click', '.remove-reason-button', function () {
             $(this).closest('.reason-item').remove();
-            updateReasonIndices(); // Bir öğe silindiğinde indeksleri yeniden düzenle
+            updateReasonIndices(); 
         });
     });
 </script>
