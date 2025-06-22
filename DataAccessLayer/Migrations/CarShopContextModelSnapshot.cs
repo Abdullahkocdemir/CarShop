@@ -266,6 +266,10 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("BannerImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("CommentCount")
                         .HasColumnType("integer");
 
@@ -280,6 +284,14 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("SmallDescription")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SmallTitle")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
@@ -287,39 +299,6 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("BlogId");
 
                     b.ToTable("Blogs");
-                });
-
-            modelBuilder.Entity("EntityLayer.Entities.BlogDetail", b =>
-                {
-                    b.Property<int>("BlogDetailId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("BlogDetailId"));
-
-                    b.Property<int>("BlogId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("CountCommnet")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("BlogDetailId");
-
-                    b.HasIndex("BlogId")
-                        .IsUnique();
-
-                    b.ToTable("BlogDetails");
                 });
 
             modelBuilder.Entity("EntityLayer.Entities.Brand", b =>
@@ -420,6 +399,23 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("CalltoActions");
                 });
 
+            modelBuilder.Entity("EntityLayer.Entities.Color", b =>
+                {
+                    b.Property<int>("ColorId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ColorId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("ColorId");
+
+                    b.ToTable("Colors");
+                });
+
             modelBuilder.Entity("EntityLayer.Entities.Contact", b =>
                 {
                     b.Property<int>("ContactId")
@@ -511,6 +507,23 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("FeatureImages");
                 });
 
+            modelBuilder.Entity("EntityLayer.Entities.Model", b =>
+                {
+                    b.Property<int>("ModelId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ModelId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("ModelId");
+
+                    b.ToTable("Models");
+                });
+
             modelBuilder.Entity("EntityLayer.Entities.NewLatest", b =>
                 {
                     b.Property<int>("NewLatestId")
@@ -571,34 +584,161 @@ namespace DataAccessLayer.Migrations
                     b.Property<int>("BrandId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("City")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int>("ColorId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Condition")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("DamageHistory")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("District")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int?>("DoorCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("DriveType")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("EngineSize")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Features")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("FuelType")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<bool>("HasABS")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("HasAirConditioning")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("HasAirbag")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("HasBackupCamera")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("HasCruiseControl")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("HasESP")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("HasLeatherSeats")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("HasNavigationSystem")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("HasParkingSensors")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("HasSunroof")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("Horsepower")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsPopular")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Kilometer")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<int>("ModelId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
-                    b.Property<int>("Stock")
+                    b.Property<int?>("SeatCount")
                         .HasColumnType("integer");
+
+                    b.Property<string>("SellerType")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Transmission")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("integer");
 
                     b.HasKey("ProductId");
 
                     b.HasIndex("BrandId");
 
+                    b.HasIndex("ColorId");
+
+                    b.HasIndex("ModelId");
+
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("EntityLayer.Entities.ProductImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<bool>("IsMainImage")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductImage");
                 });
 
             modelBuilder.Entity("EntityLayer.Entities.Service", b =>
@@ -871,17 +1011,6 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("EntityLayer.Entities.BlogDetail", b =>
-                {
-                    b.HasOne("EntityLayer.Entities.Blog", "Blog")
-                        .WithOne("Details")
-                        .HasForeignKey("EntityLayer.Entities.BlogDetail", "BlogId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Blog");
-                });
-
             modelBuilder.Entity("EntityLayer.Entities.FeatureImage", b =>
                 {
                     b.HasOne("EntityLayer.Entities.Feature", "Feature")
@@ -901,7 +1030,34 @@ namespace DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("EntityLayer.Entities.Color", "Color")
+                        .WithMany()
+                        .HasForeignKey("ColorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EntityLayer.Entities.Model", "Model")
+                        .WithMany()
+                        .HasForeignKey("ModelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Brand");
+
+                    b.Navigation("Color");
+
+                    b.Navigation("Model");
+                });
+
+            modelBuilder.Entity("EntityLayer.Entities.ProductImage", b =>
+                {
+                    b.HasOne("EntityLayer.Entities.Product", "Product")
+                        .WithMany("Images")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("EntityLayer.Entities.WhyUseReason", b =>
@@ -984,11 +1140,6 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("EntityLayer.Entities.Blog", b =>
-                {
-                    b.Navigation("Details");
-                });
-
             modelBuilder.Entity("EntityLayer.Entities.Brand", b =>
                 {
                     b.Navigation("Products");
@@ -997,6 +1148,11 @@ namespace DataAccessLayer.Migrations
             modelBuilder.Entity("EntityLayer.Entities.Feature", b =>
                 {
                     b.Navigation("FeatureImages");
+                });
+
+            modelBuilder.Entity("EntityLayer.Entities.Product", b =>
+                {
+                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("EntityLayer.Entities.WhyUse", b =>

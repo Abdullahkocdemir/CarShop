@@ -3,11 +3,8 @@ using DataAccessLayer.Context;
 using DataAccessLayer.Repositories;
 using EntityLayer.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccessLayer.EntityFrameWork
 {
@@ -22,9 +19,31 @@ namespace DataAccessLayer.EntityFrameWork
 
         public List<Product> GetProductWithBrand()
         {
-            var values = _context.Products.Include(x => x.Brand)
+            var values = _context.Products.Include(x => x.Brand).ToList();
+            return values;
+        }
+
+        public List<Product> GetProductsWithDetails()
+        {
+            var values = _context.Products
+                .Include(x => x.Brand)
+                .Include(x => x.Color)
+                .Include(x => x.Model)
+                .Include(x => x.Images)
                 .ToList();
             return values;
+        }
+
+        public Product GetProductByIdWithDetails(int id)
+        {
+            var value = _context.Products
+                .Where(x => x.ProductId == id)
+                .Include(x => x.Brand)
+                .Include(x => x.Color)
+                .Include(x => x.Model)
+                .Include(x => x.Images)
+                .FirstOrDefault();
+            return value!;
         }
     }
 }

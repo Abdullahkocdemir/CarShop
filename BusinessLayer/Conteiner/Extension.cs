@@ -92,6 +92,14 @@ namespace BusinessLayer.Conteiner
             Services.AddScoped<ITestimonialService, TestimonialManager>();
 
 
+            Services.AddScoped<IModelDal, EfModelDal>();
+            Services.AddScoped<IModelService, ModelManager>();
+
+
+            Services.AddScoped<IColorDal, EfColorDal>();
+            Services.AddScoped<IColorService, ColorManager>();
+
+
 
         }
     }

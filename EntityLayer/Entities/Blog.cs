@@ -9,11 +9,14 @@ namespace EntityLayer.Entities
     public class Blog
     {
         public int BlogId { get; set; }
-        public string ImageUrl { get; set; } = string.Empty;
+        public string BannerImageUrl { get; set; } = string.Empty;
+        public string SmallTitle { get; set; } = string.Empty;
+        public string Author { get; set; } = string.Empty;
+        public string SmallDescription { get; set; } = string.Empty;
         public DateTime Date { get; set; }
         public int CommentCount { get; set; }
-        public string Author { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
+        public string ImageUrl { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
     }
 }

@@ -1,0 +1,124 @@
+﻿@model List<ResultProductDTO>
+@{
+    ViewData["Title"] = "Ürün Yönetimi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<header class="header">
+    <div>
+        <h2>Ürün Listesi</h2>
+    </div>
+</header>
+
+<div class="product-table-card">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-white">Mevcut Ürünler</h3>
+        <a href="/Products/Create" class="btn btn-new-product">
+            <i class="fas fa-plus"></i> Yeni Ürün Ekle
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered shadow">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Ürün Adı</th>
+                    <th>Marka</th>
+                    <th>Model</th>
+                    <th>Yıl</th>
+                    <th>Fiyat</th>
+                    <th>Durum</th>
+                    <th>Ana Görsel</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int count = 1;
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@count</td>
+                        <td>@item.Name</td>
+                        <td>@item.BrandName</td>
+                        <td>@item.ModelName</td>
+                        <td>@item.Year</td>
+                        <td>@item.Price.ToString("C2")</td>
+                        <td>@(item.IsActive ? "Aktif" : "Pasif")</td>
+                        <td>
+                            @if (item.ImageUrls != null && item.ImageUrls.Any())
+                            {
+                                <img src="@item.ImageUrls.FirstOrDefault()" alt="Ürün Görseli" style="width: 100px; height: auto; object-fit: cover; border-radius: 5px;">
+                            }
+                            else
+                            {
+                                <span>Resim Yok</span>
+                            }
+                        </td>
+                        <td class="text-center">
+                            <a href="/Products/Details/@item.ProductId" class="btn btn-sm btn-info me-1">
+                                <i class="fas fa-circle-info"></i> Detay
+                            </a>
+                            <a href="/Products/Edit/@item.ProductId" class="btn btn-sm btn-warning me-1">
+                                <i class="fas fa-pen-to-square"></i> Güncelle
+                            </a>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(@item.ProductId, '@item.Name')">
+                                <i class="fas fa-trash"></i> Sil
+                            </button>
+                        </td>
+                    </tr>
+                    count++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    function confirmDelete(productId, productName) {
+        Swal.fire({
+            title: "Emin misiniz?",
+            text: `${productName} adlı ürünü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Evet, sil!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/Products/Delete/' + productId,
+                    type: 'POST', 
+                    success: function () {
+                        Swal.fire("Silindi!", "Ürün başarıyla silindi.", "success").then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire("Hata!", "Silme işlemi başarısız oldu: " + (xhr.responseText || error), "error");
+                    }
+                });
+            }
+        });
+    }
+</script>

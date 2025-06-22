@@ -22,6 +22,9 @@ using DTOsLayer.WebApiDTO.CalltoActionDTO;
 using DTOsLayer.WebApiDTO.PartnerDTO;
 using DTOsLayer.WebApiDTO.StaffDTO;
 using DTOsLayer.WebApiDTO.TestimonialDTO;
+using DTOsLayer.WebApiDTO.BlogDTO;
+using DTOsLayer.WebApiDTO.ModelDTO;
+using DTOsLayer.WebApiDTO.ColorDTO;
 
 namespace CarShop.WebAPI.Mapping
 {
@@ -29,6 +32,36 @@ namespace CarShop.WebAPI.Mapping
     {
         public GeneralMapping()
         {
+            //Color Mapping
+
+            CreateMap<Color, ResultColorDTO>().ReverseMap();
+            CreateMap<Color, GetByIdColorDTO>().ReverseMap();
+            CreateMap<Color, CreateColorDTO>().ReverseMap();
+            CreateMap<Color, UpdateColorDTO>().ReverseMap();
+
+            //Model Mapping
+
+            CreateMap<Model, ResultModelDTO>().ReverseMap();
+            CreateMap<Model, GetByIdModelDTO>().ReverseMap();
+            CreateMap<Model, CreateModelDTO>().ReverseMap();
+            CreateMap<Model, UpdateModelDTO>().ReverseMap();
+
+
+            //Blogs Mapping
+
+            CreateMap<Blog, ResultBlogDTO>().ReverseMap();
+            CreateMap<Blog, GetByIdBlogDTO>().ReverseMap();
+            CreateMap<Blog, CreateBlogDTO>().ReverseMap();
+            CreateMap<Blog, UpdateBlogDTO>().ReverseMap();
+
+            CreateMap<CreateBlogDTO, Blog>()
+                .ForMember(dest => dest.BannerImageUrl, opt => opt.Ignore())
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
+
+            CreateMap<UpdateBlogDTO, Blog>()
+                .ForMember(dest => dest.BannerImageUrl, opt => opt.Ignore())
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
+
             //Testimonial Mapping
             CreateMap<CreateTestimonialDTO, Testimonial>().ReverseMap();
             CreateMap<UpdateTestimonialDTO, Testimonial>().ReverseMap();
@@ -95,11 +128,43 @@ namespace CarShop.WebAPI.Mapping
             CreateMap<GetByIdAboutItemDTO, AboutItem>().ReverseMap();
 
             // Product Mappings
+            // Product'tan ResultProductDTO'ya eşleme
+            CreateMap<Product, ResultProductDTO>()
+                .ForMember(dest => dest.ColorName, opt => opt.MapFrom(src => src.Color != null ? src.Color.Name : string.Empty))
+                .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand != null ? src.Brand.BrandName : string.Empty))
+                .ForMember(dest => dest.ModelName, opt => opt.MapFrom(src => src.Model != null ? src.Model.Name : string.Empty))
+                .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.Images != null ? src.Images.Select(img => img.ImageUrl).ToList() : new List<string>()));
+            // Kaldırılan diğer alanlar için ForMember kurallarını çıkardık
+
+            // Product'tan GetByIdProductDTO'ya eşleme
+            CreateMap<Product, GetByIdProductDTO>()
+                .ForMember(dest => dest.ColorName, opt => opt.MapFrom(src => src.Color != null ? src.Color.Name : string.Empty))
+                .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand != null ? src.Brand.BrandName : string.Empty))
+                .ForMember(dest => dest.ModelName, opt => opt.MapFrom(src => src.Model != null ? src.Model.Name : string.Empty))
+                .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.Images != null ? src.Images.Select(img => img.ImageUrl).ToList() : new List<string>()));
+            // Kaldırılan diğer alanlar için ForMember kurallarını çıkardık
+
+            // CreateProductDTO'dan Product'a eşleme
+            // Resimler (ImageFiles) manuel olarak işleneceği için Ignore ediyoruz
             CreateMap<CreateProductDTO, Product>()
-                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow));
+                .ForMember(dest => dest.Images, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.UpdatedDate, opt => opt.Ignore()); // İlk oluşturmada boş
+                                                                           // Kaldırılan diğer alanlar için ForMember kurallarını çıkardık (örn: ViewCount, FavoriteCount vb.)
+
+
+            // UpdateProductDTO'dan Product'a eşleme
+            // Resimler (Images) manuel olarak işleneceği için Ignore ediyoruz
             CreateMap<UpdateProductDTO, Product>()
-                .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow))
-                .ForMember(dest => dest.ProductId, opt => opt.Condition(src => src.ProductId != 0));
+                .ForMember(dest => dest.Images, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedDate, opt => opt.MapFrom(src => DateTime.UtcNow)); // Güncelleme tarihi otomatik atama
+                                                                                                  // Kaldırılan diğer alanlar için ForMember kurallarını çıkardık
+
+
+            // ProductImageDTO'dan ProductImage'a eşleme (Resim yönetimi için)
+            // ImageFile manuel olarak işleneceği için Ignore ediyoruz
+            CreateMap<ProductImageDTO, ProductImage>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
 
             // Banner Mappings
             // Existing mappings (assuming they exist)

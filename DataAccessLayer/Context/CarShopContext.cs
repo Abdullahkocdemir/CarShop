@@ -49,6 +49,8 @@ namespace DataAccessLayer.Context
         public DbSet<AboutFeature> AboutFeatures { get; set; }
         public DbSet<AboutItem> AboutItems { get; set; }
         public DbSet<Blog> Blogs { get; set; }
+        public DbSet<Model> Models { get; set; }
+        public DbSet<Color> Colors { get; set; }
         public DbSet<CallBack> CallBacks { get; set; }
         public DbSet<CallBackTitle> BackTitles { get; set; }
         public DbSet<CalltoAction> CalltoActions { get; set; }

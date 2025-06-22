@@ -1,0 +1,153 @@
+﻿@model GetByIdProductDTO
+@{
+    ViewData["Title"] = "Ürün Detayı";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<header class="header">
+    <div>
+        <h2>Ürün Detayı</h2>
+        <p style="color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">Ürüne ait detaylı bilgilere buradan ulaşabilirsiniz.</p>
+    </div>
+</header>
+
+<div class="detail-card shadow">
+    <h4 class="mb-4">@Model.Name Detayları</h4>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="detail-item">
+                <i class="fas fa-id-badge"></i> <strong>Ürün ID:</strong> <span>@Model.ProductId</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-car"></i> <strong>Ürün Adı:</strong> <span>@Model.Name</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-copyright"></i> <strong>Marka:</strong> <span>@Model.BrandName</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-grip-lines"></i> <strong>Model:</strong> <span>@Model.ModelName</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-palette"></i> <strong>Renk:</strong> <span>@Model.ColorName</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-tachometer-alt"></i> <strong>Kilometre:</strong> <span>@Model.Kilometer</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-calendar-alt"></i> <strong>Yıl:</strong> <span>@Model.Year</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-dollar-sign"></i> <strong>Fiyat:</strong> <span>@Model.Price.ToString("C2")</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-cogs"></i> <strong>Motor Hacmi:</strong> <span>@Model.EngineSize</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-gas-pump"></i> <strong>Yakıt Türü:</strong> <span>@Model.FuelType</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-gears"></i> <strong>Vites:</strong> <span>@Model.Transmission</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-horse-head"></i> <strong>Beygir Gücü:</strong> <span>@Model.Horsepower</span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="detail-item">
+                <i class="fas fa-road"></i> <strong>Çekiş Tipi:</strong> <span>@Model.DriveType</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-door-open"></i> <strong>Kapı Sayısı:</strong> <span>@Model.DoorCount</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-chair"></i> <strong>Koltuk Sayısı:</strong> <span>@Model.SeatCount</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-wrench"></i> <strong>Durum:</strong> <span>@Model.Condition</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-city"></i> <strong>Şehir:</strong> <span>@Model.City</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-map-marker-alt"></i> <strong>İlçe:</strong> <span>@Model.District</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-user-tie"></i> <strong>Satıcı Tipi:</strong> <span>@Model.SellerType</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-calendar-plus"></i> <strong>Oluşturulma Tarihi:</strong> <span>@Model.CreatedDate.ToShortDateString()</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-calendar-check"></i> <strong>Güncellenme Tarihi:</strong> <span>@(Model.UpdatedDate?.ToShortDateString() ?? "Yok")</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-power-off"></i> <strong>Aktif:</strong> <span>@(Model.IsActive ? "Evet" : "Hayır")</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-star"></i> <strong>Popüler:</strong> <span>@(Model.IsPopular ? "Evet" : "Hayır")</span>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <h4 class="mb-3 mt-4">Güvenlik ve Donanım Özellikleri</h4>
+    <div class="row">
+        <div class="col-md-4">
+            <p><strong>Airbag:</strong> @(Model.HasAirbag ? "Var" : "Yok")</p>
+            <p><strong>ABS:</strong> @(Model.HasABS ? "Var" : "Yok")</p>
+            <p><strong>ESP:</strong> @(Model.HasESP ? "Var" : "Yok")</p>
+        </div>
+        <div class="col-md-4">
+            <p><strong>Klima:</strong> @(Model.HasAirConditioning ? "Var" : "Yok")</p>
+            <p><strong>Sunroof:</strong> @(Model.HasSunroof ? "Var" : "Yok")</p>
+            <p><strong>Deri Koltuk:</strong> @(Model.HasLeatherSeats ? "Var" : "Yok")</p>
+        </div>
+        <div class="col-md-4">
+            <p><strong>Navigasyon:</strong> @(Model.HasNavigationSystem ? "Var" : "Yok")</p>
+            <p><strong>Park Sensörü:</strong> @(Model.HasParkingSensors ? "Var" : "Yok")</p>
+            <p><strong>Geri Görüş Kamerası:</strong> @(Model.HasBackupCamera ? "Var" : "Yok")</p>
+            <p><strong>Hız Sabitleyici:</strong> @(Model.HasCruiseControl ? "Var" : "Yok")</p>
+        </div>
+    </div>
+
+    <hr />
+
+    <h4 class="mb-3 mt-4">Açıklamalar</h4>
+    <div class="detail-item">
+        <strong>Genel Açıklama:</strong> <p>@Model.Description</p>
+    </div>
+    <div class="detail-item">
+        <strong>Öne Çıkan Özellikler:</strong> <p>@Model.Features</p>
+    </div>
+    <div class="detail-item">
+        <strong>Hasar Geçmişi:</strong> <p>@Model.DamageHistory</p>
+    </div>
+
+    <hr />
+
+    <h4 class="mb-3 mt-4">Görseller</h4>
+    <div class="row">
+        @if (Model.ImageUrls != null && Model.ImageUrls.Any())
+        {
+            foreach (var imageUrl in Model.ImageUrls)
+            {
+                <div class="col-md-4 mb-3">
+                    <img src="@imageUrl" alt="Ürün Görseli" class="img-fluid rounded shadow-sm" style="max-height: 200px; object-fit: cover;">
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <span>Görsel Yok</span>
+            </div>
+        }
+    </div>
+
+    <div class="d-flex justify-content-end mt-4">
+        <a asp-action="Index" class="btn btn-secondary me-2">
+            <i class="fas fa-arrow-left"></i> Ürünlere Geri Dön
+        </a>
+    </div>
+</div>

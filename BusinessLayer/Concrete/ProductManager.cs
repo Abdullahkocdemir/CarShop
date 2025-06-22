@@ -1,12 +1,8 @@
 ﻿using BusinessLayer.Abstract;
 using DataAccessLayer.Abstract;
 using EntityLayer.Entities;
-using FluentValidation;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLayer.Concrete
 {
@@ -44,9 +40,19 @@ namespace BusinessLayer.Concrete
             return _productDal.GetListAll();
         }
 
-        public List<Product> BGetProductWithCategory()
+        public List<Product> BGetProductWithBrand()
         {
             return _productDal.GetProductWithBrand();
+        }
+
+        public List<Product> BGetProductsWithDetails()
+        {
+            return _productDal.GetProductsWithDetails();
+        }
+
+        public Product BGetProductByIdWithDetails(int id)
+        {
+            return _productDal.GetProductByIdWithDetails(id);
         }
     }
 }

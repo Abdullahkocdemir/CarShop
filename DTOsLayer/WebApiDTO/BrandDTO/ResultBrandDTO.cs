@@ -9,9 +9,6 @@ namespace DTOsLayer.WebApiDTO.BrandDTO
     public class ResultBrandDTO
     {
         public int BrandId { get; set; }
-        public string BrandName { get; set; } = string.Empty;
-        public string Country { get; set; } = string.Empty;
-        public string EstablishmentYear { get; set; } = string.Empty;
-        public bool IsActive { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 }

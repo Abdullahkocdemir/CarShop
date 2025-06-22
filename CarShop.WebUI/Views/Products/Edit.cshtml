@@ -1,0 +1,276 @@
+﻿@model DTOsLayer.WebUIDTO.ProductDTO.UpdateProductDTO // Tam namespace'i ekledim
+@{
+    ViewData["Title"] = "Ürün Güncelle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<header class="header">
+    <div>
+        <h2>Ürün Güncelle</h2>
+        <p style="color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">Mevcut ürün bilgilerini güncelleyin.</p>
+    </div>
+</header>
+
+<div class="form-card">
+    <form asp-controller="Products" asp-action="Edit" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="ProductId" />
+
+        <h4 class="mb-4">Temel Bilgiler</h4>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="name" class="form-label">Ürün Adı</label>
+                <input type="text" asp-for="Name" class="form-control" id="name" placeholder="Ürün adını girin" required>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="brandId" class="form-label">Marka</label>
+                @* ViewBag.Brands null ise veya içeriği boşsa bu hatayı alıyordunuz *@
+                <select asp-for="BrandId" asp-items="@(ViewBag.Brands as SelectList)" class="form-control" id="brandId" required>
+                    <option value="">Marka Seçin</option>
+                </select>
+                <span asp-validation-for="BrandId" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="modelId" class="form-label">Model</label>
+                @* ViewBag.Models null ise veya içeriği boşsa bu hatayı alıyordunuz *@
+                <select asp-for="ModelId" asp-items="@(ViewBag.Models as SelectList)" class="form-control" id="modelId" required>
+                    <option value="">Model Seçin</option>
+                </select>
+                <span asp-validation-for="ModelId" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="colorId" class="form-label">Renk</label>
+                @* ViewBag.Colors null ise veya içeriği boşsa bu hatayı alıyordunuz *@
+                <select asp-for="ColorId" asp-items="@(ViewBag.Colors as SelectList)" class="form-control" id="colorId" required>
+                    <option value="">Renk Seçin</option>
+                </select>
+                <span asp-validation-for="ColorId" class="text-danger"></span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="kilometer" class="form-label">Kilometre</label>
+                <input type="text" asp-for="Kilometer" class="form-control" id="kilometer" placeholder="Kilometre" required>
+                <span asp-validation-for="Kilometer" class="text-danger"></span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="year" class="form-label">Yıl</label>
+                <input type="number" asp-for="Year" class="form-control" id="year" placeholder="Yıl" required min="1900" max="@DateTime.Now.Year + 2">
+                <span asp-validation-for="Year" class="text-danger"></span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="price" class="form-label">Fiyat</label>
+                <input type="number" asp-for="Price" class="form-control" id="price" placeholder="Fiyat" required min="0" step="0.01">
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+        </div>
+
+        <h4 class="mb-4 mt-4">Teknik Özellikler</h4>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="engineSize" class="form-label">Motor Hacmi</label>
+                <input type="text" asp-for="EngineSize" class="form-control" id="engineSize" placeholder="örn: 1.6L">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="fuelType" class="form-label">Yakıt Türü</label>
+                <input type="text" asp-for="FuelType" class="form-control" id="fuelType" placeholder="örn: Benzin, Dizel">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="transmission" class="form-label">Vites</label>
+                <input type="text" asp-for="Transmission" class="form-control" id="transmission" placeholder="örn: Otomatik, Manuel">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="horsepower" class="form-label">Beygir Gücü</label>
+                <input type="number" asp-for="Horsepower" class="form-control" id="horsepower" placeholder="örn: 120">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="driveType" class="form-label">Çekiş</label>
+                <input type="text" asp-for="DriveType" class="form-control" id="driveType" placeholder="örn: Önden, Arkadan">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="doorCount" class="form-label">Kapı Sayısı</label>
+                <input type="number" asp-for="DoorCount" class="form-control" id="doorCount" placeholder="örn: 4">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="seatCount" class="form-label">Koltuk Sayısı</label>
+                <input type="number" asp-for="SeatCount" class="form-control" id="seatCount" placeholder="örn: 5">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="condition" class="form-label">Durum</label>
+                <input type="text" asp-for="Condition" class="form-control" id="condition" placeholder="örn: İkinci El, Sıfır">
+            </div>
+        </div>
+
+        <h4 class="mb-4 mt-4">Güvenlik ve Donanım</h4>
+        <div class="row">
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="HasAirbag" class="form-check-input" id="hasAirbag">
+                <label class="form-check-label" for="hasAirbag">Airbag</label>
+            </div>
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="HasABS" class="form-check-input" id="hasABS">
+                <label class="form-check-label" for="hasABS">ABS</label>
+            </div>
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="HasESP" class="form-check-input" id="hasESP">
+                <label class="form-check-label" for="hasESP">ESP</label>
+            </div>
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="HasAirConditioning" class="form-check-input" id="hasAirConditioning">
+                <label class="form-check-label" for="hasAirConditioning">Klima</label>
+            </div>
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="HasSunroof" class="form-check-input" id="hasSunroof">
+                <label class="form-check-label" for="hasSunroof">Sunroof</label>
+            </div>
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="HasLeatherSeats" class="form-check-input" id="hasLeatherSeats">
+                <label class="form-check-label" for="hasLeatherSeats">Deri Koltuk</label>
+            </div>
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="HasNavigationSystem" class="form-check-input" id="hasNavigationSystem">
+                <label class="form-check-label" for="hasNavigationSystem">Navigasyon</label>
+            </div>
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="HasParkingSensors" class="form-check-input" id="hasParkingSensors">
+                <label class="form-check-label" for="hasParkingSensors">Park Sensörü</label>
+            </div>
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="HasBackupCamera" class="form-check-input" id="hasBackupCamera">
+                <label class="form-check-label" for="hasBackupCamera">Geri Görüş Kamerası</label>
+            </div>
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="HasCruiseControl" class="form-check-input" id="hasCruiseControl">
+                <label class="form-check-label" for="hasCruiseControl">Hız Sabitleyici</label>
+            </div>
+        </div>
+
+        <h4 class="mb-4 mt-4">Açıklamalar ve Konum</h4>
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <label for="description" class="form-label">Açıklama</label>
+                <textarea asp-for="Description" class="form-control" id="description" rows="3" placeholder="Ürün hakkında detaylı bilgi girin"></textarea>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="features" class="form-label">Öne Çıkan Özellikler</label>
+                <input type="text" asp-for="Features" class="form-control" id="features" placeholder="Virgülle ayırarak girin">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="damageHistory" class="form-label">Hasar Geçmişi</label>
+                <input type="text" asp-for="DamageHistory" class="form-control" id="damageHistory" placeholder="Hasar bilgisi varsa girin">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="city" class="form-label">Şehir</label>
+                <input type="text" asp-for="City" class="form-control" id="city" placeholder="Şehir">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="district" class="form-label">İlçe</label>
+                <input type="text" asp-for="District" class="form-control" id="district" placeholder="İlçe">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="sellerType" class="form-label">Satıcı Tipi</label>
+                <input type="text" asp-for="SellerType" class="form-control" id="sellerType" placeholder="örn: Galeri, Sahibinden">
+            </div>
+        </div>
+
+        <h4 class="mb-4 mt-4">Durum Bilgileri</h4>
+        <div class="row">
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="IsActive" class="form-check-input" id="isActive">
+                <label class="form-check-label" for="isActive">Aktif</label>
+            </div>
+            <div class="col-md-4 mb-3 form-check">
+                <input type="checkbox" asp-for="IsPopular" class="form-check-input" id="isPopular">
+                <label class="form-check-label" for="isPopular">Popüler</label>
+            </div>
+        </div>
+
+        <h4 class="mb-4 mt-4">Görseller</h4>
+        <div id="image-list">
+            @if (Model.Images != null)
+            {
+                for (int i = 0; i < Model.Images.Count; i++)
+                {
+                    <div class="mb-3 d-flex align-items-center image-item">
+                        <input type="hidden" asp-for="Images[i].Id" />
+                        <input type="hidden" asp-for="Images[i].ImageUrl" />
+                        <input type="hidden" asp-for="Images[i].IsMainImage" />
+                        <input type="hidden" asp-for="Images[i].Order" />
+                        <input type="checkbox" asp-for="Images[i].ShouldDelete" class="form-check-input me-2 delete-image-checkbox" />
+                        <label class="form-check-label me-3">Sil</label>
+
+                        @if (!string.IsNullOrEmpty(Model.Images[i].ImageUrl))
+                        {
+                            <img src="@Model.Images[i].ImageUrl" alt="Mevcut Resim" style="width: 100px; height: auto; object-fit: cover; border-radius: 5px;" class="me-3">
+                            <span class="text-muted me-3">Mevcut Resim</span>
+                        }
+                        <input type="file" name="Images[@i].ImageFile" class="form-control" accept="image/*" />
+                    </div>
+                }
+            }
+        </div>
+        <div id="new-image-upload-area">
+            </div>
+        <button type="button" class="btn btn-secondary btn-sm mb-3" id="add-new-image-file">Yeni Resim Ekle</button>
+
+
+        <div class="d-flex justify-content-end mt-4">
+            <a href="/Products/Index" class="btn btn-secondary me-2">İptal</a>
+            <button type="submit" class="btn btn-primary">Güncelle</button>
+        </div>
+
+        @* Model doğrulama hatalarını göstermek için *@
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            // Model.Images null ise 0 olarak başlat, değilse sayısını al
+            let nextNewImageIndex = @(Model?.Images?.Count ?? 0); 
+            // Model.Images null olabilir, bu yüzden '?' (null-conditional operator) kullanıldı.
+
+            $('#add-new-image-file').click(function () {
+                var newImageInputHtml = `
+                    <div class="mb-3 d-flex align-items-center new-image-item">
+                        <input type="hidden" name="Images[${nextNewImageIndex}].Id" value="0" />
+                        <input type="hidden" name="Images[${nextNewImageIndex}].ImageUrl" value="" />
+                        <input type="hidden" name="Images[${nextNewImageIndex}].IsMainImage" value="false" />
+                        <input type="hidden" name="Images[${nextNewImageIndex}].Order" value="${nextNewImageIndex}" />
+                        <input type="checkbox" name="Images[${nextNewImageIndex}].ShouldDelete" value="true" class="form-check-input me-2 delete-image-checkbox" style="display:none;" />
+                        <label class="form-check-label me-3" style="display:none;">Sil</label>
+                        <input type="file" name="Images[${nextNewImageIndex}].ImageFile" class="form-control" accept="image/*" required/>
+                        <button type="button" class="btn btn-danger btn-sm ms-2 remove-new-image-file">Kaldır</button>
+                    </div>`;
+                $('#new-image-upload-area').append(newImageInputHtml);
+                nextNewImageIndex++;
+            });
+
+            // Yeni eklenen resim input'unu kaldır
+            $('#new-image-upload-area').on('click', '.remove-new-image-file', function () {
+                $(this).closest('.new-image-item').remove();
+            });
+
+            // Mevcut resimlerin silme checkbox'ı değiştiğinde input'u disable/enable et
+            $('#image-list').on('change', '.delete-image-checkbox', function () {
+                var imageItem = $(this).closest('.image-item');
+                var fileInput = imageItem.find('input[type="file"]');
+                // var hiddenImageUrl = imageItem.find('input[type="hidden"][name$=".ImageUrl"]'); // Bu satıra gerek yok
+
+                if ($(this).is(':checked')) {
+                    fileInput.prop('disabled', true);
+                    fileInput.val('');
+                    imageItem.find('img').css('opacity', '0.5');
+                    imageItem.find('span.text-muted').text('Silinecek');
+                } else {
+                    fileInput.prop('disabled', false);
+                    imageItem.find('img').css('opacity', '1');
+                    imageItem.find('span.text-muted').text('Mevcut Resim');
+                }
+            });
+        });
+    </script>
+}
