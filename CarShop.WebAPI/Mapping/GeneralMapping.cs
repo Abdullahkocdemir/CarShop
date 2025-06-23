@@ -24,6 +24,7 @@ using DTOsLayer.WebApiDTO.TestimonialDTO;
 using DTOsLayer.WebApiDTO.BlogDTO;
 using DTOsLayer.WebApiDTO.ModelDTO;
 using DTOsLayer.WebApiDTO.ColorDTO;
+using DTOsLayer.WebApiDTO.FeatureSubstancesDTO;
 
 namespace CarShop.WebAPI.Mapping
 {
@@ -37,6 +38,15 @@ namespace CarShop.WebAPI.Mapping
             CreateMap<Color, GetByIdColorDTO>().ReverseMap();
             CreateMap<Color, CreateColorDTO>().ReverseMap();
             CreateMap<Color, UpdateColorDTO>().ReverseMap();
+
+            //FeatureSubstances Mapping
+            CreateMap<FeatureSubstance, ResultFeatureSubstancesDTO>().ReverseMap();
+            CreateMap<FeatureSubstance, GetByIdFeatureSubstancesDTO>().ReverseMap();
+            CreateMap<CreateFeatureSubstancesDTO, FeatureSubstance>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore()); 
+            CreateMap<UpdateFeatureSubstancesDTO, FeatureSubstance>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore()); 
+
 
             //Model Mapping
 
@@ -176,11 +186,13 @@ namespace CarShop.WebAPI.Mapping
             CreateMap<ResultContactDTO, Contact>().ReverseMap();
 
 
-            CreateMap<Feature, ResultFeatureDTO>();
-            CreateMap<Feature, GetByIdFeatureDTO>();
-            CreateMap<Feature, UpdateFeatureDTO>();
+            // Feature Mappings
+            CreateMap<Feature, ResultFeatureDTO>().ReverseMap();
+            CreateMap<Feature, GetByIdFeatureDTO>().ReverseMap();
+            CreateMap<Feature, CreateFeatureDTO>().ReverseMap();
+            CreateMap<Feature, UpdateFeatureDTO>().ReverseMap();
 
-            
+
             //NewLatest
 
             CreateMap<CreateNewLatestDTO, NewLatest>().ReverseMap();

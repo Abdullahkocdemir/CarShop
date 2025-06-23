@@ -1,0 +1,51 @@
+﻿@model UpdateFeatureDTO
+@{
+    ViewData["Title"] = "Özellik Güncelle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<header class="header">
+    <div>
+        <h2>Özellik Güncelle</h2>
+        <p style="color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">Mevcut özellik bilgilerini güncelleyin.</p>
+    </div>
+    <div class="user-info">
+        <div class="user-avatar">AK</div>
+        <div>
+            <div>Admin Kullanıcı</div>
+            <div style="font-size: 0.8rem; opacity: 0.7;">admin@example.com</div>
+        </div>
+    </div>
+</header>
+
+<div class="form-card">
+    <form asp-controller="Feature" asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="FeatureId" />
+
+        <div class="mb-3">
+            <label for="Title" class="form-label">Başlık</label>
+            <input type="text" asp-for="Title" class="form-control" id="Title" placeholder="Başlığı girin" required>
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="SmallDescription" class="form-label">Kısa Açıklama</label>
+            <input type="text" asp-for="SmallDescription" class="form-control" id="SmallDescription" placeholder="Kısa açıklamayı girin">
+            <span asp-validation-for="SmallDescription" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="Description" class="form-label">Açıklama</label>
+            <textarea asp-for="Description" class="form-control" id="Description" rows="5" placeholder="Detaylı açıklamayı girin" required></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <a href="/Feature/Index" class="btn btn-secondary me-2">İptal</a>
+            <button type="submit" class="btn btn-primary">Güncelle</button>
+        </div>
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    </form>
+</div>

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,9 +10,14 @@ namespace DTOsLayer.WebApiDTO.FeatureDTO
 {
     public class CreateFeatureDTO
     {
+        [Required(ErrorMessage = "Başlık alanı boş bırakılamaz.")]
+        [StringLength(100, ErrorMessage = "Başlık en fazla 100 karakter olabilir.")]
         public string Title { get; set; } = string.Empty;
-        public string SmallTitle { get; set; } = string.Empty;
+
+        [StringLength(250, ErrorMessage = "Kısa açıklama en fazla 250 karakter olabilir.")]
+        public string SmallDescription { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Açıklama alanı boş bırakılamaz.")]
         public string Description { get; set; } = string.Empty;
-        public List<IFormFile>? ImageFiles { get; set; } 
     }
 }
