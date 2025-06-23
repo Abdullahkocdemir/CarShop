@@ -45,11 +45,6 @@ namespace BusinessLayer.Conteiner
             Services.AddScoped<IWhyUseDal, EfWhyUseDal>();
             Services.AddScoped<IWhyUseService, WhyUseManager>();
 
-
-            Services.AddScoped<IFeatureImageDal, EfFeatureImageDal>();
-            Services.AddScoped<IFeatureImageService, FeatureImageManager>();
-
-
             Services.AddScoped<IWhyUseReasonDal, EfWhyUseReasonDal>();
             Services.AddScoped<IWhyUseReasonService, WhyUseReasonManager>();
 
@@ -98,6 +93,9 @@ namespace BusinessLayer.Conteiner
 
             Services.AddScoped<IColorDal, EfColorDal>();
             Services.AddScoped<IColorService, ColorManager>();
+
+            Services.AddScoped<IFeatureSubstanceDal, EfFeatureSubstanceDal>();
+            Services.AddScoped<IFeatureSubstanceService, FeatureSubstanceManager>();
 
 
 

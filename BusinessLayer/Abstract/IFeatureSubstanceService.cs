@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLayer.Abstract
 {
-    public interface IFeatureImageService : IGenericService<FeatureImage>
+    public interface IFeatureSubstanceService:IGenericService<FeatureSubstance>
     {
-        List<FeatureImage> BGetImagesByFeatureId(int featureId);
     }
 }

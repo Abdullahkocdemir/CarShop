@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Abstract
 {
-    public interface IFeatureImageDal : IGenericDal<FeatureImage>
+    public interface IFeatureSubstanceDal:IGenericDal<FeatureSubstance>
     {
-        List<FeatureImage> GetImagesByFeatureId(int featureId);
     }
 }

@@ -17,11 +17,6 @@ namespace DataAccessLayer.Context
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<FeatureImage>()
-                .HasOne(fi => fi.Feature)
-                .WithMany(f => f.FeatureImages)
-                .HasForeignKey(fi => fi.FeatureId)
-                .OnDelete(DeleteBehavior.Cascade);
             foreach (var entityType in builder.Model.GetEntityTypes())
             {
                 foreach (var property in entityType.GetProperties())
@@ -63,7 +58,7 @@ namespace DataAccessLayer.Context
         public DbSet<WhyUse> WhyUses { get; set; }
         public DbSet<Staff> Staffs { get; set; }
         public DbSet<Testimonial> Testimonials { get; set; }
-        public DbSet<FeatureImage> FeatureImages { get; set; }
+        public DbSet<FeatureSubstance> FeatureSubstances { get; set; }
         public DbSet<WhyUseReason> WhyUseReasons { get; set; }
     }
 }

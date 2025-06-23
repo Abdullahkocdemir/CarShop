@@ -6,8 +6,5 @@ namespace DataAccessLayer.Abstract
 {
     public interface IFeatureDal : IGenericDal<Feature>
     {
-        List<Feature> GetListWithImage();
-
-        Feature GetByIdWithImage(int id);
     }
 }

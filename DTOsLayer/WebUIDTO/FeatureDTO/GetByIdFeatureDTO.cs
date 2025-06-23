@@ -1,5 +1,4 @@
-﻿using DTOsLayer.WebApiDTO.FeatureImageDTO;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +14,5 @@ namespace DTOsLayer.WebUIDTO.FeatureDTO
         public string SmallTitle { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         // API'den gelen çoklu resimler için liste.
-        public List<ResultFeatureImageDTO>? FeatureImages { get; set; }
     }
 }

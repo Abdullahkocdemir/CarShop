@@ -1,5 +1,4 @@
-﻿using DTOsLayer.WebApiDTO.FeatureImageDTO;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +13,5 @@ namespace DTOsLayer.WebApiDTO.FeatureDTO
         public string Title { get; set; } = string.Empty;
         public string SmallTitle { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public List<ResultFeatureImageDTO>? FeatureImages { get; set; }
     }
 }

@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DTOsLayer.WebApiDTO.FeatureImageDTO
+namespace EntityLayer.Entities
 {
-    public class ResultFeatureImageDTO
+    public class FeatureSubstance
     {
-        public int FeatureImageId { get; set; }
+        public int FeatureSubstanceId { get; set; }
+        public string Subject { get; set; } = string.Empty;
         public string ImageUrl { get; set; } = string.Empty;
     }
 }

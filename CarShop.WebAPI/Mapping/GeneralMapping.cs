@@ -10,7 +10,6 @@ using DTOsLayer.WebApiDTO.NewLatestDTO;
 using DTOsLayer.WebApiDTO.ServiceDTO;
 using DTOsLayer.WebApiDTO.ShowroomDTO;
 using DTOsLayer.WebApiDTO.WhyUseDTO;
-using DTOsLayer.WebApiDTO.FeatureImageDTO;
 using DTOsLayer.WebApiDTO.WhyUseReasonDTO;
 using DTOsLayer.WebApiDTO.AboutFeature;
 using DTOsLayer.WebApiDTO.AboutItem;
@@ -181,19 +180,7 @@ namespace CarShop.WebAPI.Mapping
             CreateMap<Feature, GetByIdFeatureDTO>();
             CreateMap<Feature, UpdateFeatureDTO>();
 
-            // Feature Mappings
-            CreateMap<Feature, ResultFeatureDTO>()
-                .ForMember(dest => dest.FeatureImages, opt => opt.MapFrom(src => src.FeatureImages))
-                .ReverseMap();
-
-            CreateMap<Feature, GetByIdFeatureDTO>()
-                .ForMember(dest => dest.FeatureImages, opt => opt.MapFrom(src => src.FeatureImages))
-                .ReverseMap();
-            CreateMap<CreateFeatureDTO, Feature>()
-                .ForMember(dest => dest.FeatureImages, opt => opt.Ignore());
-            CreateMap<UpdateFeatureDTO, Feature>()
-                .ForMember(dest => dest.FeatureImages, opt => opt.Ignore());
-            CreateMap<FeatureImage, ResultFeatureImageDTO>().ReverseMap();
+            
             //NewLatest
 
             CreateMap<CreateNewLatestDTO, NewLatest>().ReverseMap();
