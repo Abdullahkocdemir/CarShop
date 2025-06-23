@@ -357,3 +357,61 @@
         transform: translateY(-2px);
         box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
+/* Custom Dropdown Styles for Sidebar */
+
+/* Dropdown menünün genel görünümü */
+.sidebar .dropdown-menu {
+    background: rgba(255, 255, 255, 0.15); /* Hafif şeffaf arka plan */
+    backdrop-filter: blur(15px); /* Arka plan bulanıklığı */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Hafif çerçeve */
+    border-radius: 10px; /* Köşeleri yuvarlak */
+    padding: 0.5rem 0; /* İç boşluk */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3); /* Gölge efekti */
+    min-width: 180px; /* Minimum genişlik */
+    /* Menünün sağa doğru açılmasını sağlamak için */
+    position: absolute !important; /* Bootstrap'in varsayılan konumlandırmasını geçersiz kılar */
+    top: 0 !important; /* Üst kısımla hizala */
+    left: 100% !important; /* Ana menü öğesinin sağına konumlandır */
+    margin-left: 10px; /* Ana menü ile arasında boşluk bırak */
+    transform: translateY(0); /* Varsayılan Bootstrap transform'unu sıfırla */
+}
+
+    /* Dropdown menü öğeleri */
+    .sidebar .dropdown-menu .dropdown-item {
+        color: rgba(255, 255, 255, 0.9); /* Metin rengi */
+        padding: 0.75rem 1.5rem; /* İç boşluk */
+        transition: background-color 0.3s ease, color 0.3s ease; /* Geçiş efekti */
+        font-size: 0.95rem; /* Yazı boyutu */
+    }
+
+        /* Dropdown menü öğeleri hover ve active durumu */
+        .sidebar .dropdown-menu .dropdown-item:hover,
+        .sidebar .dropdown-menu .dropdown-item.active {
+            background-color: rgba(255, 255, 255, 0.25); /* Hover/active arka planı */
+            color: white; /* Hover/active metin rengi */
+            border-radius: 8px; /* Köşeleri yuvarlak */
+        }
+
+    /* Dropdown ayırıcı çizgisi */
+    .sidebar .dropdown-menu .dropdown-divider {
+        border-top: 1px solid rgba(255, 255, 255, 0.2); /* Ayırıcı çizgi rengi */
+        margin: 0.5rem 0; /* Ayırıcı boşluğu */
+    }
+
+/* Dropdown okun gizlenmesi (isteğe bağlı, daha temiz bir görünüm için) */
+.sidebar .dropdown-toggle::after {
+    display: none;
+}
+
+/* Dropdown menüsü açıldığında ana menü öğesinin stilini korumak için */
+.sidebar .nav-item.dropdown.show > .nav-link {
+    color: white;
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(8px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Mobil görünümde sidebar gizlendiği için dropdown menüsü de gizli kalacaktır. */
+/* Eğer mobil görünümde sidebar'ı açılır bir menüye dönüştürmek isterseniz, */
+/* buraya ek CSS ve JavaScript yazmanız gerekir. */
+

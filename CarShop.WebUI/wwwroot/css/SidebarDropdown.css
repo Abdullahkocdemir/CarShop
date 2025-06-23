@@ -1,0 +1,65 @@
+﻿/* Sidebar Dropdown (Collapse) Styles */
+
+/* Alt menü içeren nav-item */
+.sidebar .nav-item {
+    position: relative; /* Ok ikonunun konumlandırması için */
+}
+
+/* Ana menü linki için ok ikonu */
+.sidebar .nav-link .submenu-arrow {
+    margin-left: auto; /* İkonu sağa yaslar */
+    transition: transform 0.3s ease-in-out; /* Dönme animasyonu */
+    font-size: 0.9em;
+    transform: rotate(0deg); /* Varsayılan olarak aşağı bakar */
+}
+
+/* Alt menü kapalıyken ok ikonunun dönüşü */
+.sidebar .nav-link.collapsed .submenu-arrow {
+    transform: rotate(-90deg); /* Kapalıyken yana bakar */
+}
+
+/* Alt menü kutusu (collapse div) */
+.sidebar .submenu {
+    background: rgba(255, 255, 255, 0.08); /* Hafif farklı bir arka plan */
+    border-radius: 8px;
+    margin-left: 1rem; /* Soldan boşluk */
+    margin-right: 1rem;
+    padding: 0.5rem 0;
+    margin-top: 0.2rem;
+    overflow: hidden; /* Animasyon için önemli */
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); /* Hafif iç gölge */
+}
+
+/* Alt menü listesi */
+.sidebar .nav-menu-sub {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+    /* Alt menü öğeleri */
+    .sidebar .nav-menu-sub .nav-link-sub {
+        display: block; /* Tam genişliği kaplar */
+        padding: 0.75rem 1.5rem 0.75rem 2.5rem; /* İç boşluk ve girinti */
+        color: rgba(255, 255, 255, 0.7); /* Metin rengi */
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        border-radius: 8px; /* Köşeleri yuvarlak */
+        margin: 0 0.5rem; /* Sağdan soldan boşluk */
+    }
+
+        /* Alt menü öğeleri hover ve active durumu */
+        .sidebar .nav-menu-sub .nav-link-sub:hover,
+        .sidebar .nav-menu-sub .nav-link-sub.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.15); /* Hover/active arka planı */
+            transform: translateX(4px); /* Hafif kayma efekti */
+        }
+
+/* Mobil görünüm için responsive ayarlar */
+@media (max-width: 768px) {
+    /* Mobil görünümde sidebar gizlendiği için bu dropdown da görünmeyecektir. */
+    /* Eğer mobil görünümde sidebar'ı açılır bir menüye dönüştürmek isterseniz, */
+    /* daha karmaşık responsive CSS ve JS ayarları gerekebilir. */
+}
