@@ -9,8 +9,7 @@ using DTOsLayer.WebApiDTO.FeatureDTO;
 using DTOsLayer.WebApiDTO.NewLatestDTO;
 using DTOsLayer.WebApiDTO.ServiceDTO;
 using DTOsLayer.WebApiDTO.ShowroomDTO;
-using DTOsLayer.WebApiDTO.WhyUseDTO;
-using DTOsLayer.WebApiDTO.WhyUseReasonDTO;
+
 using DTOsLayer.WebApiDTO.AboutFeature;
 using DTOsLayer.WebApiDTO.AboutItem;
 using DTOsLayer.WebApiDTO.AboutItemDTO;
@@ -25,6 +24,8 @@ using DTOsLayer.WebApiDTO.BlogDTO;
 using DTOsLayer.WebApiDTO.ModelDTO;
 using DTOsLayer.WebApiDTO.ColorDTO;
 using DTOsLayer.WebApiDTO.FeatureSubstancesDTO;
+using DTOsLayer.WebApiDTO.WhyUseDTO;
+using DTOsLayer.WebApiDTO.WhyUseItemDTO;
 
 namespace CarShop.WebAPI.Mapping
 {
@@ -216,20 +217,6 @@ namespace CarShop.WebAPI.Mapping
             CreateMap<UpdateShowroomDTO, Showroom>().ReverseMap();
             CreateMap<GetByIdShowroomDTO, Showroom>().ReverseMap();
             CreateMap<ResultShowroomDTO, Showroom>().ReverseMap();
-
-            //WhyUse
-            // WhyUse Mappings
-            CreateMap<CreateWhyUseDTO, WhyUse>().ReverseMap();
-            CreateMap<UpdateWhyUseDTO, WhyUse>().ReverseMap();
-            CreateMap<ResultWhyUseDTO, WhyUse>().ReverseMap();
-            CreateMap<GetByIdWhyUseDTO, WhyUse>().ReverseMap();
-
-            // WhyUseReason Mappings
-            CreateMap<CreateWhyUseReasonDTO, WhyUseReason>().ReverseMap();
-            CreateMap<UpdateWhyUseReasonDTO, WhyUseReason>().ReverseMap();
-            CreateMap<ResultWhyUseReasonDTO, WhyUseReason>().ReverseMap();
-
-
             //AboutFeature Mapping
             CreateMap<AboutFeature, ResultAboutFeatureDTO>().ReverseMap();
             CreateMap<AboutFeature, GetByIdAboutFeatureDTO>().ReverseMap();
@@ -239,6 +226,17 @@ namespace CarShop.WebAPI.Mapping
 
             CreateMap<UpdateAboutFeatureDTO, AboutFeature>()
                 .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
+
+
+
+            CreateMap<WhyUse, ResultWhyUseDTO>().ReverseMap();
+            CreateMap<WhyUse, GetByIdWhyUseDTO>().ReverseMap();
+            CreateMap<WhyUse, CreateWhyUseDTO>().ReverseMap();
+            CreateMap<WhyUse, UpdateWhyUseDTO>().ReverseMap();
+
+            CreateMap<WhyUseItem, ResultWhyUseItemDTO>().ReverseMap();
+            CreateMap<WhyUseItem, CreateWhyUseItemDTO>().ReverseMap();
+            CreateMap<WhyUseItem, UpdateWhyUseItemDTO>().ReverseMap();
 
 
         }

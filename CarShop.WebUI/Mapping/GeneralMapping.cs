@@ -1,5 +1,9 @@
 ﻿using AutoMapper;
 using DTOsLayer.WebUIDTO.BannerDTO;
+using DTOsLayer.WebUIDTO.WhyUseDTO;
+using DTOsLayer.WebUIDTO.WhyUseItemDTO;
+using EntityLayer.Entities;
+
 
 namespace CarShop.WebUI.Mapping
 {
@@ -45,6 +49,21 @@ namespace CarShop.WebUI.Mapping
                 .ForMember(dest => dest.Images, opt => opt.Ignore());
 
 
+
+
+
+
+
+
+            CreateMap<ResultWhyUseDTO, WhyUse>().ReverseMap();
+            CreateMap<CreateWhyUseDTO, WhyUse>().ReverseMap();
+            CreateMap<UpdateWhyUseDTO, WhyUse>().ReverseMap();
+            CreateMap<GetByIdWhyUseDTO, WhyUse>().ReverseMap();
+
+
+            CreateMap<ResultWhyUseItemDTO, WhyUseItem>().ReverseMap();
+            CreateMap<CreateWhyUseItemDTO, WhyUseItem>().ReverseMap();
+            CreateMap<UpdateWhyUseItemDTO, WhyUseItem>().ReverseMap();
 
         }
     }

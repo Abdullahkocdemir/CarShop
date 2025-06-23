@@ -9,7 +9,6 @@ namespace BusinessLayer.Abstract
 {
     public interface IWhyUseService : IGenericService<WhyUse>
     {
-        List<WhyUse> BGetListAllWithReasons();
-        WhyUse? BGetByIdWithReasons(int id);
+        List<WhyUse> BGetWhyUseWithItem();
     }
 }

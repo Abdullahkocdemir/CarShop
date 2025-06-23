@@ -1,0 +1,36 @@
+﻿@model List<DTOsLayer.WebUIDTO.BlogDTO.ResultBlogDTO>
+<section class="latest spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-title">
+                    <span>Blog</span>
+                    <h2>Gündemden Haberler</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-lg-4 col-md-6">
+                    <div class="latest__blog__item">
+                        <div class="latest__blog__item__pic set-bg" data-setbg="@item.BannerImageUrl">
+                            <ul>
+                                <li>By @item.Author</li>
+                                <li>@item.Date.ToString("MMM dd, yyyy")</li> 
+                                <li>@item.CommentCount Yorum</li> 
+                            </ul>
+                        </div>
+                        <div class="latest__blog__item__text">
+                            <h5>@item.SmallTitle</h5> 
+                            <p>
+                                @(item.SmallDescription.Length > 150 ? item.SmallDescription.Substring(0, 150) + "..." : item.SmallDescription)
+                            </p>
+                            <a href="/Blog/Details/@item.BlogId">Devamını Oku <i class="fa fa-long-arrow-right"></i></a> 
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

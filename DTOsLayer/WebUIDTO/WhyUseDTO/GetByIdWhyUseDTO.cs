@@ -1,4 +1,4 @@
-﻿using DTOsLayer.WebUIDTO.WhyUseReasonDTO;
+﻿using DTOsLayer.WebUIDTO.WhyUseItemDTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +13,6 @@ namespace DTOsLayer.WebUIDTO.WhyUseDTO
         public string MainTitle { get; set; } = string.Empty;
         public string MainDescription { get; set; } = string.Empty;
         public string VideoUrl { get; set; } = string.Empty;
-        public ICollection<ResultWhyUseReasonDTO>? WhyUseReasons { get; set; } // Detay sayfasında göstermek için
+        public List<ResultWhyUseItemDTO> Items { get; set; } = new List<ResultWhyUseItemDTO>();
     }
 }

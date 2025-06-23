@@ -19,5 +19,6 @@ namespace DTOsLayer.WebApiDTO.BlogDTO
         public string Title { get; set; } = string.Empty;
         public IFormFile? MainImage { get; set; } 
         public string Description { get; set; } = string.Empty;
+        public bool PopulerBlog { get; set; }
     }
 }

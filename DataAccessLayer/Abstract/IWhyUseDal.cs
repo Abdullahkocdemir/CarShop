@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace DataAccessLayer.Abstract
 {
-    public interface IWhyUseDal : IGenericDal<WhyUse>
+    public interface IWhyUseDal:IGenericDal<WhyUse>
     {
-        List<WhyUse> GetListAllWithReasons();
-        WhyUse? GetByIdWithReasons(int id);
+        List<WhyUse> GetWhyUseWithItem();
     }
 }

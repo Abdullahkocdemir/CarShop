@@ -1,0 +1,128 @@
+﻿@model List<ResultBlogDTO>
+@{
+    ViewData["Title"] = "Blog Yönetimi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<header class="header">
+    <div>
+        <h2>Blog Listesi</h2>
+    </div>
+</header>
+
+<div class="product-table-card">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-white">Mevcut Bloglar</h3>
+        <a href="/Blog/Create" class="btn btn-new-product">
+            <i class="fas fa-plus"></i> Yeni Blog Ekle
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered shadow">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Küçük Başlık</th>
+                    <th>Yazar</th>
+                    <th>Başlık</th>
+                    <th>Küçük Açıklama</th>
+                    <th>Tarih</th>
+                    <th>Yorum Sayısı</th>
+                    <th>Popüler</th>
+                    <th>Banner Resim</th>
+                    <th>Ana Resim</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int count = 1;
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@count</td>
+                        <td>@item.SmallTitle</td>
+                        <td>@item.Author</td>
+                        <td>@item.Title</td>
+                        <td>@item.SmallDescription</td>
+                        <td>@item.Date.ToShortDateString()</td>
+                        <td>@item.CommentCount</td>
+                        <td>@(item.PopulerBlog ? "Evet" : "Hayır")</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.BannerImageUrl))
+                            {
+                                <img src="@item.BannerImageUrl" alt="Banner Resmi" style="width: 80px; height: auto; border-radius: 5px;" />
+                            }
+                            else
+                            {
+                                <span>Yok</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                            {
+                                <img src="@item.ImageUrl" alt="Ana Resim" style="width: 80px; height: auto; border-radius: 5px;" />
+                            }
+                            else
+                            {
+                                <span>Yok</span>
+                            }
+                        </td>
+                        <td class="text-center">
+                            <a href="/Blog/Details/@item.BlogId" class="btn btn-sm btn-info me-1">
+                                <i class="fas fa-circle-info"></i> Detay
+                            </a>
+                            <a href="/Blog/Edit/@item.BlogId" class="btn btn-sm btn-warning me-1">
+                                <i class="fas fa-pen-to-square"></i> Güncelle
+                            </a>
+
+                            <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(@item.BlogId)">
+                                <i class="fas fa-trash"></i> Sil
+                            </button>
+                        </td>
+                    </tr>
+                    count++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    function confirmDelete(blogId) {
+        Swal.fire({
+            title: "Emin misiniz?",
+            text: "Bu blogu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Evet, sil!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
+
+                $.ajax({
+                    url: '/Blog/Delete/' + blogId,
+                    type: 'POST',
+                    headers: {
+                        'RequestVerificationToken': antiForgeryToken 
+                    },
+                    success: function () {
+                        Swal.fire("Silindi!", "Blog başarıyla silindi.", "success").then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function () {
+                        Swal.fire("Hata!", "Silme işlemi başarısız oldu.", "error");
+                    }
+                });
+            }
+        });
+    }
+</script>

@@ -1,5 +1,4 @@
-﻿using DTOsLayer.WebApiDTO.WhyUseReasonDTO;
-using Microsoft.AspNetCore.Http;
+﻿using DTOsLayer.WebUIDTO.WhyUseItemDTO;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -11,18 +10,19 @@ namespace DTOsLayer.WebUIDTO.WhyUseDTO
 {
     public class CreateWhyUseDTO
     {
-        [Required(ErrorMessage = "Ana başlık boş bırakılamaz.")]
-        [StringLength(100, ErrorMessage = "Ana başlık en fazla 100 karakter olabilir.")]
+        [Required(ErrorMessage = "Ana Başlık alanı boş bırakılamaz.")]
+        [StringLength(100, ErrorMessage = "Ana Başlık en fazla 100 karakter olabilir.")]
         public string MainTitle { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Açıklama boş bırakılamaz.")]
-        [StringLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
+        [Required(ErrorMessage = "Ana Açıklama alanı boş bırakılamaz.")]
+        [StringLength(500, ErrorMessage = "Ana Açıklama en fazla 500 karakter olabilir.")]
         public string MainDescription { get; set; } = string.Empty;
 
-        [Url(ErrorMessage = "Geçerli bir URL giriniz.")]
-        [StringLength(200, ErrorMessage = "Video URL'i en fazla 200 karakter olabilir.")]
+        [Url(ErrorMessage = "Geçerli bir Video URL'si girin.")]
+        [StringLength(200, ErrorMessage = "Video URL'si en fazla 200 karakter olabilir.")]
         public string VideoUrl { get; set; } = string.Empty;
 
-        public List<CreateWhyUseReasonDTO>? WhyUseReasons { get; set; } // Formdan gelecek nedenler
+        // WhyUseItem'lar için koleksiyon
+        public List<CreateWhyUseItemDTO> Items { get; set; } = new List<CreateWhyUseItemDTO>();
     }
 }

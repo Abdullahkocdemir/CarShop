@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http; 
+using Microsoft.AspNetCore.Http;
 
 namespace CarShop.WebAPI.Controllers
 {
@@ -31,7 +31,7 @@ namespace CarShop.WebAPI.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
         [HttpGet]
-        public IActionResult GetListAllBlogs()
+        public IActionResult GetBlogs()
         {
             var values = _blogService.BGetListAll();
             var result = values.Select(blog => new ResultBlogDTO
@@ -45,15 +45,14 @@ namespace CarShop.WebAPI.Controllers
                 CommentCount = blog.CommentCount,
                 Title = blog.Title,
                 ImageUrl = !string.IsNullOrEmpty(blog.ImageUrl) ? $"{Request.Scheme}://{Request.Host}/blogs/{blog.ImageUrl}" : string.Empty,
-                Description = blog.Description
+                Description = blog.Description,
+                PopulerBlog = blog.PopulerBlog // Eklendi
             }).ToList();
 
             return Ok(result);
         }
-
-
         [HttpPost]
-        [Consumes("multipart/form-data")] 
+        [Consumes("multipart/form-data")]
         public async Task<IActionResult> CreateBlog([FromForm] CreateBlogDTO dto)
         {
             var blog = _mapper.Map<Blog>(dto);
@@ -69,44 +68,45 @@ namespace CarShop.WebAPI.Controllers
             }
 
             _blogService.BAdd(blog);
-            PublishEntityCreated(blog); 
-            return Ok(new { Message = "Blog başarıyla eklendi ve mesaj yayınlandı.", BlogId = blog.BlogId });
+            PublishEntityCreated(blog);
+
+            return CreatedAtAction(nameof(GetBlogById), new { id = blog.BlogId }, new { Message = "Blog başarıyla eklendi ve mesaj yayınlandı.", BlogId = blog.BlogId });
         }
         [HttpPut]
-        [Consumes("multipart/form-data")] 
+        [Consumes("multipart/form-data")]
         public async Task<IActionResult> UpdateBlog([FromForm] UpdateBlogDTO dto)
         {
             var existingBlog = _blogService.BGetById(dto.BlogId);
 
             if (existingBlog == null)
             {
-                return NotFound($"Blog with ID {dto.BlogId} bulunamadı.");
+                return NotFound($"Blog ID {dto.BlogId} ile bulunamadı.");
             }
 
-            _mapper.Map(dto, existingBlog); 
+            _mapper.Map(dto, existingBlog);
 
             if (dto.BannerImage != null)
             {
                 if (!string.IsNullOrEmpty(existingBlog.BannerImageUrl))
                 {
-                    DeleteImage(existingBlog.BannerImageUrl); 
+                    DeleteImage(existingBlog.BannerImageUrl);
                 }
-                existingBlog.BannerImageUrl = await SaveImage(dto.BannerImage); 
+                existingBlog.BannerImageUrl = await SaveImage(dto.BannerImage);
             }
 
             if (dto.MainImage != null)
             {
                 if (!string.IsNullOrEmpty(existingBlog.ImageUrl))
                 {
-                    DeleteImage(existingBlog.ImageUrl); 
+                    DeleteImage(existingBlog.ImageUrl);
                 }
-                existingBlog.ImageUrl = await SaveImage(dto.MainImage); 
+                existingBlog.ImageUrl = await SaveImage(dto.MainImage);
             }
 
             _blogService.BUpdate(existingBlog);
             PublishEntityUpdated(existingBlog);
 
-            return Ok(new { Message = "Blog güncellendi ve mesaj yayınlandı.", BlogId = existingBlog.BlogId });
+            return Ok(new { Message = "Blog başarıyla güncellendi ve mesaj yayınlandı.", BlogId = existingBlog.BlogId });
         }
         [HttpDelete("{id}")]
         public IActionResult DeleteBlog(int id)
@@ -114,7 +114,7 @@ namespace CarShop.WebAPI.Controllers
             var blog = _blogService.BGetById(id);
             if (blog == null)
             {
-                return NotFound($"Blog with ID {id} bulunamadı.");
+                return NotFound($"Blog ID {id} ile bulunamadı.");
             }
 
             if (!string.IsNullOrEmpty(blog.BannerImageUrl))
@@ -127,16 +127,17 @@ namespace CarShop.WebAPI.Controllers
             }
 
             _blogService.BDelete(blog);
-            PublishEntityDeleted(blog); 
-            return Ok(new { Message = "Blog silindi ve mesaj yayınlandı.", BlogId = id });
+            PublishEntityDeleted(blog);
+
+            return Ok(new { Message = "Blog başarıyla silindi ve mesaj yayınlandı.", BlogId = id });
         }
-        [HttpGet("{id}")]
-        public IActionResult GetByIdBlog(int id)
+        [HttpGet("{id}", Name = "GetBlogById")]
+        public IActionResult GetBlogById(int id)
         {
             var value = _blogService.BGetById(id);
             if (value == null)
             {
-                return NotFound($"Blog with ID {id} bulunamadı.");
+                return NotFound($"Blog ID {id} ile bulunamadı.");
             }
 
             var result = new GetByIdBlogDTO
@@ -150,12 +151,11 @@ namespace CarShop.WebAPI.Controllers
                 CommentCount = value.CommentCount,
                 Title = value.Title,
                 ImageUrl = !string.IsNullOrEmpty(value.ImageUrl) ? $"{Request.Scheme}://{Request.Host}/blogs/{value.ImageUrl}" : string.Empty,
-                Description = value.Description
+                Description = value.Description,
+                PopulerBlog = value.PopulerBlog
             };
             return Ok(result);
         }
-
-
         private async Task<string> SaveImage(IFormFile imageFile)
         {
             if (imageFile == null || imageFile.Length == 0)
@@ -179,7 +179,6 @@ namespace CarShop.WebAPI.Controllers
 
             return uniqueFileName;
         }
-
         private void DeleteImage(string fileName)
         {
             if (string.IsNullOrEmpty(fileName))

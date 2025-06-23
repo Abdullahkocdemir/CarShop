@@ -59,6 +59,6 @@ namespace DataAccessLayer.Context
         public DbSet<Staff> Staffs { get; set; }
         public DbSet<Testimonial> Testimonials { get; set; }
         public DbSet<FeatureSubstance> FeatureSubstances { get; set; }
-        public DbSet<WhyUseReason> WhyUseReasons { get; set; }
+        public DbSet<WhyUseItem> WhyUseItems { get; set; }
     }
 }

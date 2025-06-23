@@ -1,0 +1,77 @@
+﻿@model GetByIdBlogDTO
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<header class="header">
+    <div>
+        <h2>Blog Detayı</h2>
+        <p style="color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">Bloğa ait detaylı bilgilere buradan ulaşabilirsiniz.</p>
+    </div>
+</header>
+
+<div class="detail-card shadow">
+    <h4 class="mb-4">@Model.Title Detayları</h4>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="detail-item">
+                <i class="fas fa-id-badge"></i> <strong>Blog ID:</strong> <span>@Model.BlogId</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-heading"></i> <strong>Küçük Başlık:</strong> <span>@Model.SmallTitle</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-user"></i> <strong>Yazar:</strong> <span>@Model.Author</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-align-left"></i> <strong>Küçük Açıklama:</strong> <span>@Model.SmallDescription</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-calendar-alt"></i> <strong>Tarih:</strong> <span>@Model.Date.ToShortDateString()</span>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="detail-item">
+                <i class="fas fa-comment"></i> <strong>Yorum Sayısı:</strong> <span>@Model.CommentCount</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-lightbulb"></i> <strong>Başlık:</strong> <span>@Model.Title</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-align-justify"></i> <strong>Açıklama:</strong> <span>@Model.Description</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-star"></i> <strong>Popüler Blog:</strong> <span>@(Model.PopulerBlog ? "Evet" : "Hayır")</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-image"></i> <strong>Banner Resim:</strong>
+                @if (!string.IsNullOrEmpty(Model.BannerImageUrl))
+                {
+                    <img src="@Model.BannerImageUrl" alt="Banner Resmi" style="width: 200px; height: auto; border-radius: 5px; margin-top: 5px; border: 1px solid #ddd;" />
+                }
+                else
+                {
+                    <span>Resim Yok</span>
+                }
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-image"></i> <strong>Ana Resim:</strong>
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" alt="Ana Resim" style="width: 200px; height: auto; border-radius: 5px; margin-top: 5px; border: 1px solid #ddd;" />
+                }
+                else
+                {
+                    <span>Resim Yok</span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end mt-4">
+        <a asp-action="Index" class="btn btn-secondary me-2">
+            <i class="fas fa-arrow-left"></i> Bloglara Geri Dön
+        </a>
+    </div>
+</div>

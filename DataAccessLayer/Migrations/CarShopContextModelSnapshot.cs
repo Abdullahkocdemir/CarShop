@@ -284,6 +284,9 @@ namespace DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("PopulerBlog")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("SmallDescription")
                         .IsRequired()
                         .HasColumnType("text");
@@ -848,33 +851,26 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("WhyUses");
                 });
 
-            modelBuilder.Entity("EntityLayer.Entities.WhyUseReason", b =>
+            modelBuilder.Entity("EntityLayer.Entities.WhyUseItem", b =>
                 {
-                    b.Property<int>("WhyUseReasonId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("WhyUseReasonId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("IconCssClass")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ReasonText")
+                    b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("WhyUseId")
                         .HasColumnType("integer");
 
-                    b.HasKey("WhyUseReasonId");
+                    b.HasKey("Id");
 
                     b.HasIndex("WhyUseId");
 
-                    b.ToTable("WhyUseReasons");
+                    b.ToTable("WhyUseItems");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1031,10 +1027,10 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("EntityLayer.Entities.WhyUseReason", b =>
+            modelBuilder.Entity("EntityLayer.Entities.WhyUseItem", b =>
                 {
                     b.HasOne("EntityLayer.Entities.WhyUse", "WhyUse")
-                        .WithMany("WhyUseReasons")
+                        .WithMany("Items")
                         .HasForeignKey("WhyUseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1123,7 +1119,7 @@ namespace DataAccessLayer.Migrations
 
             modelBuilder.Entity("EntityLayer.Entities.WhyUse", b =>
                 {
-                    b.Navigation("WhyUseReasons");
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,4 @@
-﻿using DTOsLayer.WebApiDTO.WhyUseReasonDTO;
+﻿using DTOsLayer.WebApiDTO.WhyUseItemDTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +12,6 @@ namespace DTOsLayer.WebApiDTO.WhyUseDTO
         public string MainTitle { get; set; } = string.Empty;
         public string MainDescription { get; set; } = string.Empty;
         public string VideoUrl { get; set; } = string.Empty;
-        public List<CreateWhyUseReasonDTO>? WhyUseReasons { get; set; } // İlişkili nedenler için
+        public List<CreateWhyUseItemDTO> Items { get; set; } = new List<CreateWhyUseItemDTO>();
     }
 }

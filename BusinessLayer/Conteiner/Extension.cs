@@ -41,14 +41,6 @@ namespace BusinessLayer.Conteiner
             Services.AddScoped<IShowroomDal, EfShowroomDal>();
             Services.AddScoped<IShowroomService, ShowroomManager>();
 
-
-            Services.AddScoped<IWhyUseDal, EfWhyUseDal>();
-            Services.AddScoped<IWhyUseService, WhyUseManager>();
-
-            Services.AddScoped<IWhyUseReasonDal, EfWhyUseReasonDal>();
-            Services.AddScoped<IWhyUseReasonService, WhyUseReasonManager>();
-
-
             Services.AddScoped<ICalltoActionDal, EfCalltoActionDal>();
             Services.AddScoped<ICalltoActionService, CalltoActionManager>();
 
@@ -96,6 +88,10 @@ namespace BusinessLayer.Conteiner
 
             Services.AddScoped<IFeatureSubstanceDal, EfFeatureSubstanceDal>();
             Services.AddScoped<IFeatureSubstanceService, FeatureSubstanceManager>();
+
+
+            Services.AddScoped<IWhyUseDal, EfWhyUseDal>();
+            Services.AddScoped<IWhyUseService, WhyUseManager>();
 
 
 

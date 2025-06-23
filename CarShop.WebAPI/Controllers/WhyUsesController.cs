@@ -1,126 +1,132 @@
 ﻿using AutoMapper;
 using BusinessLayer.Abstract;
-using BusinessLayer.RabbitMQ;
+using BusinessLayer.RabbitMQ; // Bu servisin projenizde tanımlı olduğunu varsaydım
 using DTOsLayer.WebApiDTO.WhyUseDTO;
-using DTOsLayer.WebApiDTO.WhyUseReasonDTO; 
 using EntityLayer.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using System.Linq; 
 
 namespace CarShop.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class WhyUsesController : BaseEntityController
+    public class WhyUsesController : BaseEntityController 
     {
         private readonly IWhyUseService _whyUseService;
-        private readonly IWhyUseReasonService _whyUseReasonService;
         private readonly IMapper _mapper;
-        protected override string EntityTypeName => "WhyUse";
 
-        public WhyUsesController(
-            IWhyUseService whyUseService,
-            IWhyUseReasonService whyUseReasonService,
-            IMapper mapper,
-            EnhancedRabbitMQService rabbitMqService)
-            : base(rabbitMqService)
+        protected override string EntityTypeName => "WhyUse"; 
+
+        public WhyUsesController(IWhyUseService whyUseService, EnhancedRabbitMQService rabbitMqService, IMapper mapper)
+            : base(rabbitMqService) 
         {
             _whyUseService = whyUseService;
-            _whyUseReasonService = whyUseReasonService;
             _mapper = mapper;
         }
 
         [HttpGet]
-        public IActionResult GetListAllWhyUses()
+        public IActionResult GetListWhyUse()
         {
-            var whyUses = _whyUseService.BGetListAllWithReasons();
-            var values = _mapper.Map<List<ResultWhyUseDTO>>(whyUses);
-            return Ok(values);
+            var whyUses = _whyUseService.BGetWhyUseWithItem();
+            var whyUseDtos = _mapper.Map<List<ResultWhyUseDTO>>(whyUses);
+            return Ok(whyUseDtos);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetWhyUseById(int id)
+        public IActionResult GetByIdWhyUse(int id)
         {
-            var value = _whyUseService.BGetByIdWithReasons(id);
-            if (value == null)
+            var whyUse = _whyUseService.BGetById(id);
+            if (whyUse == null)
             {
-                return NotFound($"ID'si {id} olan 'Neden Biz?' kaydı bulunamadı.");
+                return NotFound($"WhyUse with ID {id} not found.");
             }
-            var resultDto = _mapper.Map<ResultWhyUseDTO>(value);
-            return Ok(resultDto);
+            var whyUseDto = _mapper.Map<GetByIdWhyUseDTO>(whyUse);
+            return Ok(whyUseDto);
         }
 
         [HttpPost]
         public IActionResult CreateWhyUse(CreateWhyUseDTO dto)
         {
             var whyUse = _mapper.Map<WhyUse>(dto);
-            _whyUseService.BAdd(whyUse);
-
-            if (dto.WhyUseReasons != null && dto.WhyUseReasons.Any())
+            whyUse.Items = new List<WhyUseItem>();
+            if (dto.Items != null)
             {
-                foreach (var reasonDto in dto.WhyUseReasons)
+                foreach (var itemDto in dto.Items)
                 {
-                    var reason = _mapper.Map<WhyUseReason>(reasonDto);
-                    reason.WhyUseId = whyUse.WhyUseId; 
-                    _whyUseReasonService.BAdd(reason);
+                    whyUse.Items.Add(new WhyUseItem { Content = itemDto.Content });
                 }
             }
 
-            PublishEntityCreated(whyUse);
+            _whyUseService.BAdd(whyUse);
+            PublishEntityCreated(whyUse); 
 
-            return CreatedAtAction(nameof(GetWhyUseById), new { id = whyUse.WhyUseId }, new { Message = "'Neden Biz?' kaydı başarıyla eklendi ve mesaj gönderildi.", WhyUseId = whyUse.WhyUseId });
+            return Ok(new { Message = "WhyUse başarıyla eklendi ve mesaj yayınlandı.", WhyUseId = whyUse.WhyUseId });
         }
-
 
         [HttpPut]
         public IActionResult UpdateWhyUse(UpdateWhyUseDTO dto)
         {
-            var existingWhyUse = _whyUseService.BGetByIdWithReasons(dto.WhyUseId);
+            var existingWhyUse = _whyUseService.BGetById(dto.WhyUseId);
             if (existingWhyUse == null)
             {
-                return NotFound($"ID'si {dto.WhyUseId} olan 'Neden Biz?' kaydı bulunamadı.");
+                return NotFound($"WhyUse with ID {dto.WhyUseId} not found.");
             }
 
             _mapper.Map(dto, existingWhyUse);
-            if (existingWhyUse.WhyUseReasons != null)
+            if (dto.Items != null)
             {
-                foreach (var existingReason in existingWhyUse.WhyUseReasons.ToList()) 
+                var existingItemIds = existingWhyUse.Items.Select(i => i.Id).ToList();
+                var incomingItemIds = dto.Items.Select(i => i.Id).ToList();
+
+                foreach (var existingItem in existingWhyUse.Items.ToList()) 
                 {
-                    _whyUseReasonService.BDelete(existingReason);
+                    if (!incomingItemIds.Contains(existingItem.Id))
+                    {
+                        existingWhyUse.Items.Remove(existingItem);
+                    }
+                }
+
+                foreach (var incomingItemDto in dto.Items)
+                {
+                    if (incomingItemDto.Id > 0) 
+                    {
+                        var existingItem = existingWhyUse.Items.FirstOrDefault(i => i.Id == incomingItemDto.Id);
+                        if (existingItem != null)
+                        {
+                            _mapper.Map(incomingItemDto, existingItem); 
+                        }
+                    }
+                    else 
+                    {
+                        existingWhyUse.Items.Add(_mapper.Map<WhyUseItem>(incomingItemDto));
+                    }
                 }
             }
-
-            existingWhyUse.WhyUseReasons = new List<WhyUseReason>(); 
-            if (dto.WhyUseReasons != null && dto.WhyUseReasons.Any())
+            else
             {
-                foreach (var reasonDto in dto.WhyUseReasons)
-                {
-                    var newReason = _mapper.Map<WhyUseReason>(reasonDto);
-                    newReason.WhyUseId = existingWhyUse.WhyUseId; 
-                    existingWhyUse.WhyUseReasons.Add(newReason); 
-                }
+                existingWhyUse.Items.Clear();
             }
 
             _whyUseService.BUpdate(existingWhyUse); 
-            PublishEntityUpdated(existingWhyUse);
+            PublishEntityUpdated(existingWhyUse); 
 
-            return Ok(new { Message = "'Neden Biz?' kaydı başarıyla güncellendi ve mesaj yayınlandı.", WhyUseId = existingWhyUse.WhyUseId });
+            return Ok(new { Message = "WhyUse başarıyla güncellendi ve mesaj yayınlandı.", WhyUseId = existingWhyUse.WhyUseId });
         }
 
         [HttpDelete("{id}")]
         public IActionResult DeleteWhyUse(int id)
         {
-            var whyUseToDelete = _whyUseService.BGetByIdWithReasons(id);
-            if (whyUseToDelete == null)
+            var whyUse = _whyUseService.BGetById(id);
+            if (whyUse == null)
             {
-                return NotFound($"ID'si {id} olan 'Neden Biz?' kaydı bulunamadı.");
+                return NotFound($"WhyUse with ID {id} not found.");
             }
-            _whyUseService.BDelete(whyUseToDelete); 
-            PublishEntityDeleted(whyUseToDelete);
+            _whyUseService.BDelete(whyUse); 
+            PublishEntityDeleted(whyUse); 
 
-            return Ok(new { Message = "'Neden Biz?' kaydı başarıyla silindi ve mesaj yayınlandı.", WhyUseId = id });
+            return Ok(new { Message = "WhyUse başarıyla silindi ve mesaj yayınlandı.", WhyUseId = id });
         }
     }
 }

@@ -1,0 +1,26 @@
+﻿@model List<DTOsLayer.WebUIDTO.CalltoActionDTO.ResultCalltoActionDTO>
+
+<div class="cta">
+    <div class="container">
+        <div class="row">
+            @if (Model != null && Model.Any())
+            {
+                @* İlk CTA öğesi (eğer varsa) *@
+                <div class="col-lg-6 col-md-6">
+                    <div class="cta__item set-bg" data-setbg="@(Model.Count > 0 && !string.IsNullOrEmpty(Model[0].ImageUrl) ? Model[0].ImageUrl : "/img/cta/default-cta-1.jpg")">
+                        <h4>@(Model.Count > 0 ? Model[0].Title : "Başlık Yok")</h4>
+                        <p>@(Model.Count > 0 ? Model[0].SmallTitle : "Açıklama Yok")</p> @* SmallTitle kullanılıyor *@
+                    </div>
+                </div>
+
+                @* İkinci CTA öğesi (eğer varsa) *@
+                <div class="col-lg-6 col-md-6">
+                    <div class="cta__item set-bg" data-setbg="@(Model.Count > 1 && !string.IsNullOrEmpty(Model[1].ImageUrl) ? Model[1].ImageUrl : "/img/cta/default-cta-2.jpg")">
+                        <h4>@(Model.Count > 1 ? Model[1].Title : "Başlık Yok")</h4>
+                        <p>@(Model.Count > 1 ? Model[1].SmallTitle : "Açıklama Yok")</p> @* SmallTitle kullanılıyor *@
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

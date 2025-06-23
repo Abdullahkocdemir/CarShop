@@ -1,0 +1,123 @@
+﻿@model UpdateWhyUseDTO
+@{
+    ViewData["Title"] = "WhyUse Güncelle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<header class="header">
+    <div>
+        <h2>WhyUse Güncelle</h2>
+        <p style="color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">Mevcut "Neden Biz?" içeriğini güncelleyin.</p>
+    </div>
+</header>
+
+<div class="form-card">
+    <form asp-controller="WhyUse" asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="WhyUseId" />
+
+        <div class="mb-3">
+            <label asp-for="MainTitle" class="form-label">Ana Başlık</label>
+            <input type="text" asp-for="MainTitle" class="form-control" placeholder="Ana başlığı girin" required>
+            <span asp-validation-for="MainTitle" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="MainDescription" class="form-label">Ana Açıklama</label>
+            <textarea asp-for="MainDescription" class="form-control" rows="3" placeholder="Ana açıklamayı girin" required></textarea>
+            <span asp-validation-for="MainDescription" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="VideoUrl" class="form-label">Video URL</label>
+            <input type="url" asp-for="VideoUrl" class="form-control" placeholder="Video URL'sini girin (isteğe bağlı)">
+            <span asp-validation-for="VideoUrl" class="text-danger"></span>
+        </div>
+
+        <hr class="my-4">
+
+        <h4>Alt Öğeler (WhyUse Items)</h4>
+        <div id="whyUseItemsContainer">
+            @for (int i = 0; i < Model.Items.Count; i++)
+            {
+                <div class="input-group mb-3 why-use-item @(Model.Items[i].IsDeleted ? "d-none" : "")">
+                    @* Silinmişse gizle *@
+                    <input type="hidden" asp-for="Items[i].Id" />
+                    <input type="hidden" asp-for="Items[i].IsDeleted" class="is-deleted-flag" />
+                    <input type="text"
+                           asp-for="Items[i].Content"
+                           class="form-control item-content-input"
+                           placeholder="Alt madde içeriğini girin"
+                           required
+                           disabled="@(Model.Items[i].IsDeleted ? "disabled" : null)" />
+                    <button type="button" class="btn btn-danger remove-item-btn">Kaldır</button>
+                    <span asp-validation-for="Items[i].Content" class="text-danger"></span>
+                </div>
+            }
+        </div>
+        <button type="button" id="addWhyUseItemBtn" class="btn btn-secondary mb-4"><i class="fas fa-plus"></i> Alt Madde Ekle</button>
+
+        <div class="d-flex justify-content-end">
+            <a href="/WhyUse/Index" class="btn btn-secondary me-2">İptal</a>
+            <button type="submit" class="btn btn-primary">Güncelle</button>
+        </div>
+
+        <div asp-validation-summary="ModelOnly" class="text-danger mt-3"></div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            let itemIndex = $('#whyUseItemsContainer .why-use-item').length; // Mevcut öğe sayısıyla başla
+
+            // Yeni alt madde ekle butonu
+            $('#addWhyUseItemBtn').click(function () {
+                addItemField(itemIndex++);
+            });
+
+            // Alt maddeyi kaldır butonu (dinamik olarak eklenenler veya mevcutlar için)
+            $('#whyUseItemsContainer').on('click', '.remove-item-btn', function () {
+                const $itemDiv = $(this).closest('.why-use-item');
+                const $isDeletedFlag = $itemDiv.find('.is-deleted-flag');
+                const $itemId = $itemDiv.find('input[type="hidden"][name$=".Id"]'); // Mevcut öğe ID'si
+
+                if ($itemId.val() && parseInt($itemId.val()) > 0) {
+                    // Mevcut bir öğeyi siliyoruz, IsDeleted bayrağını true yap ve gizle
+                    $isDeletedFlag.val('True');
+                    $itemDiv.addClass('d-none'); // CSS ile gizle
+                    $itemDiv.find('.item-content-input').prop('disabled', true); // Input'u devre dışı bırak
+                } else {
+                    // Yeni eklenen bir öğeyi siliyoruz, DOM'dan kaldır
+                    $itemDiv.remove();
+                }
+                updateItemIndexes(); // İndeksleri güncelle
+            });
+
+            function addItemField(index) {
+                const newItemHtml = `
+                            <div class="input-group mb-3 why-use-item">
+                                <input type="hidden" name="Items[${index}].Id" value="0" />
+                                <input type="hidden" name="Items[${index}].IsDeleted" value="False" class="is-deleted-flag" />
+                                <input type="text" name="Items[${index}].Content" class="form-control item-content-input" placeholder="Alt madde içeriğini girin" required>
+                                <button type="button" class="btn btn-danger remove-item-btn">Kaldır</button>
+                            </div>
+                        `;
+                $('#whyUseItemsContainer').append(newItemHtml);
+            }
+
+            function updateItemIndexes() {
+                // Tüm öğelerin (gizli olanlar dahil) indekslerini güncelliyoruz
+                // Bu, form submit edildiğinde Model Binding'in doğru çalışması için önemlidir.
+                $('#whyUseItemsContainer .why-use-item').each(function (index) {
+                    $(this).find('input[type="hidden"][name$=".Id"]').attr('name', `Items[${index}].Id`);
+                    $(this).find('input[type="hidden"][name$=".IsDeleted"]').attr('name', `Items[${index}].IsDeleted`);
+                    $(this).find('input[type="text"][name$=".Content"]').attr('name', `Items[${index}].Content`);
+                    // Validation span'leri varsa onların da güncellenmesi gerekir.
+                });
+                itemIndex = $('#whyUseItemsContainer .why-use-item').length; // Toplam öğe sayısını güncel tut
+            }
+        });
+    </script>
+}

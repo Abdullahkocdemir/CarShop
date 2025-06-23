@@ -1,0 +1,86 @@
+﻿@model DTOsLayer.WebUIDTO.BlogDTO.CreateBlogDTO
+@{
+    ViewData["Title"] = "Yeni Blog Ekle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<header class="header">
+    <div>
+        <h2>Yeni Blog Ekle</h2>
+        <p style="color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">Yeni bir blog girişi yapın.</p>
+    </div>
+    <div class="user-info">
+        <div class="user-avatar">AK</div>
+        <div>
+            <div>Admin Kullanıcı</div>
+            <div style="font-size: 0.8rem; opacity: 0.7;">admin@example.com</div>
+        </div>
+    </div>
+</header>
+
+<div class="form-card">
+    <form asp-controller="Blog" asp-action="Create" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label for="smallTitle" class="form-label">Küçük Başlık</label>
+            <input type="text" asp-for="SmallTitle" class="form-control" id="smallTitle" placeholder="Küçük başlığı girin" required>
+            <span asp-validation-for="SmallTitle" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="author" class="form-label">Yazar</label>
+            <input type="text" asp-for="Author" class="form-control" id="author" placeholder="Yazar adını girin" required>
+            <span asp-validation-for="Author" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="smallDescription" class="form-label">Küçük Açıklama</label>
+            <textarea asp-for="SmallDescription" class="form-control" id="smallDescription" rows="2" placeholder="Kısa bir açıklama girin" required></textarea>
+            <span asp-validation-for="SmallDescription" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="title" class="form-label">Başlık</label>
+            <input type="text" asp-for="Title" class="form-control" id="title" placeholder="Blog başlığını girin" required>
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Açıklama</label>
+            <textarea asp-for="Description" class="form-control" id="description" rows="5" placeholder="Blog açıklamasını girin" required></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="date" class="form-label">Tarih</label>
+            <input type="datetime-local" asp-for="Date" class="form-control" id="date" required>
+            <span asp-validation-for="Date" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input type="checkbox" asp-for="PopulerBlog" class="form-check-input" id="populerBlog">
+            <label class="form-check-label" for="populerBlog">Popüler Blog</label>
+            <span asp-validation-for="PopulerBlog" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="bannerImage" class="form-label">Banner Resim Yükle</label>
+            <input type="file" asp-for="BannerImage" class="form-control" id="bannerImage" accept="image/*">
+            <span asp-validation-for="BannerImage" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="mainImage" class="form-label">Ana Resim Yükle</label>
+            <input type="file" asp-for="MainImage" class="form-control" id="mainImage" accept="image/*">
+            <span asp-validation-for="MainImage" class="text-danger"></span>
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <a href="/Blog/Index" class="btn btn-secondary me-2">İptal</a>
+            <button type="submit" class="btn btn-primary">Kaydet</button>
+        </div>
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    </form>
+</div>

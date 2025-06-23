@@ -1,107 +1,205 @@
-﻿using DTOsLayer.WebUIDTO.WhyUseDTO;
-using DTOsLayer.WebUIDTO.WhyUseReasonDTO;
+﻿using DTOsLayer.WebUIDTO.WhyUseDTO; 
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Text;
-using System.Linq; 
+using FluentValidation;
+using FluentValidation.Results;
+using DTOsLayer.WebUIDTO.WhyUseItemDTO;
 
 namespace CarShop.WebUI.Controllers
 {
     public class WhyUseController : Controller
     {
         private readonly HttpClient _httpClient;
-        private const string BaseUrl = "https://localhost:7234/api/WhyUses"; 
+        private readonly IValidator<CreateWhyUseDTO> _createWhyUseValidator;
+        private readonly IValidator<UpdateWhyUseDTO> _updateWhyUseValidator;
 
-        public WhyUseController(IHttpClientFactory httpClientFactory)
+        public WhyUseController(IHttpClientFactory httpClientFactory,
+                                 IValidator<CreateWhyUseDTO> createWhyUseValidator,
+                                 IValidator<UpdateWhyUseDTO> updateWhyUseValidator)
         {
-            _httpClient = httpClientFactory.CreateClient(); 
-            _httpClient.BaseAddress = new Uri(BaseUrl);
+            _httpClient = httpClientFactory.CreateClient("CarShopApiClient");
+            _createWhyUseValidator = createWhyUseValidator;
+            _updateWhyUseValidator = updateWhyUseValidator;
         }
 
-        [HttpGet]
+        // Listeleme Sayfası
         public async Task<IActionResult> Index()
         {
-            var responseMessage = await _httpClient.GetAsync(BaseUrl);
-            if (responseMessage.IsSuccessStatusCode)
+            var response = await _httpClient.GetAsync("api/WhyUses");
+            if (response.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var values = JsonConvert.DeserializeObject<List<ResultWhyUseUIDTO>>(jsonData);
+                var jsonData = await response.Content.ReadAsStringAsync();
+                var values = JsonConvert.DeserializeObject<List<ResultWhyUseDTO>>(jsonData);
                 return View(values);
             }
-            return View(); 
+            return View(new List<ResultWhyUseDTO>());
         }
+
+        // Yeni Ekle (GET)
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            var model = new CreateWhyUseDTO();
+            model.Items.Add(new CreateWhyUseItemDTO());
+            return View(model);
         }
 
+        // Yeni Ekle (POST)
         [HttpPost]
-        public async Task<IActionResult> Create(CreateWhyUseDTO createWhyUseDto)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreateWhyUseDTO dTO)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(createWhyUseDto);
-            }
+            dTO.Items = dTO.Items?.Where(item => !string.IsNullOrWhiteSpace(item.Content)).ToList() ?? new List<CreateWhyUseItemDTO>();
 
-            var jsonContent = JsonConvert.SerializeObject(createWhyUseDto);
-            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-            var responseMessage = await _httpClient.PostAsync(BaseUrl, content);
+            ValidationResult result = await _createWhyUseValidator.ValidateAsync(dTO);
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (result.IsValid)
             {
-                return RedirectToAction("Index");
+                var apiDto = new CreateWhyUseDTO
+                {
+                    MainTitle = dTO.MainTitle,
+                    MainDescription = dTO.MainDescription,
+                    VideoUrl = dTO.VideoUrl,
+                    Items = dTO.Items.Select(item => new CreateWhyUseItemDTO { Content = item.Content }).ToList()
+                };
+
+                var jsonData = JsonConvert.SerializeObject(apiDto);
+                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync("api/WhyUses", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SuccessMessage"] = "WhyUse içeriği başarıyla oluşturuldu!";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "API üzerinde WhyUse içeriği oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.");
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                }
             }
-            var errorContent = await responseMessage.Content.ReadAsStringAsync();
-            ModelState.AddModelError("", $"Kayıt eklenirken bir hata oluştu: {errorContent}");
-            return View(createWhyUseDto);
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                }
+            }
+            if (!dTO.Items.Any())
+            {
+                dTO.Items.Add(new CreateWhyUseItemDTO());
+            }
+            return View(dTO);
         }
 
         [HttpGet]
-        public async Task<IActionResult> Update(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var responseMessage = await _httpClient.GetAsync($"{BaseUrl}/{id}");
-            if (responseMessage.IsSuccessStatusCode)
+            var response = await _httpClient.GetAsync($"api/WhyUses/{id}");
+            if (response.IsSuccessStatusCode)
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<UpdateWhyUseDTO>(jsonData);
-                return View(value);
+                var jsonData = await response.Content.ReadAsStringAsync();
+                var apiDto = JsonConvert.DeserializeObject<GetByIdWhyUseDTO>(jsonData);
+                var uiDto = new UpdateWhyUseDTO
+                {
+                    WhyUseId = apiDto!.WhyUseId,
+                    MainTitle = apiDto.MainTitle,
+                    MainDescription = apiDto.MainDescription,
+                    VideoUrl = apiDto.VideoUrl,
+                    Items = apiDto.Items.Select(item => new UpdateWhyUseItemDTO { Id = item.Id, Content = item.Content, IsDeleted = false }).ToList()
+                };
+
+                if (!uiDto.Items.Any())
+                {
+                    uiDto.Items.Add(new UpdateWhyUseItemDTO());
+                }
+
+                return View(uiDto);
             }
             return NotFound(); 
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(UpdateWhyUseDTO updateWhyUseDto)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(UpdateWhyUseDTO dTO)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(updateWhyUseDto);
-            }
+            dTO.Items = dTO.Items?.Where(item => !string.IsNullOrWhiteSpace(item.Content) || item.IsDeleted).ToList() ?? new List<UpdateWhyUseItemDTO>();
 
-            var jsonContent = JsonConvert.SerializeObject(updateWhyUseDto);
-            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-            var responseMessage = await _httpClient.PutAsync(BaseUrl, content);
+            ValidationResult result = await _updateWhyUseValidator.ValidateAsync(dTO);
 
-            if (responseMessage.IsSuccessStatusCode)
+            if (result.IsValid)
             {
-                return RedirectToAction("Index");
+                var apiDto = new UpdateWhyUseDTO
+                {
+                    WhyUseId = dTO.WhyUseId,
+                    MainTitle = dTO.MainTitle,
+                    MainDescription = dTO.MainDescription,
+                    VideoUrl = dTO.VideoUrl,
+                    Items = dTO.Items.Select(item => new UpdateWhyUseItemDTO
+                    {
+                        Id = item.Id,
+                        Content = item.Content
+                    }).Where(item => !dTO.Items.First(uiItem => uiItem.Id == item.Id || uiItem.Content == item.Content && item.Id == 0).IsDeleted).ToList()
+                };
+
+                var jsonData = JsonConvert.SerializeObject(apiDto);
+                var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PutAsync("api/WhyUses", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SuccessMessage"] = "WhyUse içeriği başarıyla güncellendi!";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "API üzerinde WhyUse içeriği güncellenirken bir hata oluştu. Lütfen tekrar deneyin.");
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                }
             }
-            var errorContent = await responseMessage.Content.ReadAsStringAsync();
-            ModelState.AddModelError("", $"Kayıt güncellenirken bir hata oluştu: {errorContent}");
-            return View(updateWhyUseDto);
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+                }
+            }
+            if (!dTO.Items.Any())
+            {
+                dTO.Items.Add(new UpdateWhyUseItemDTO());
+            }
+            return View(dTO);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            var responseMessage = await _httpClient.DeleteAsync($"{BaseUrl}/{id}");
+            var responseMessage = await _httpClient.DeleteAsync($"api/WhyUses/{id}");
             if (responseMessage.IsSuccessStatusCode)
             {
-                return RedirectToAction("Index");
+                TempData["SuccessMessage"] = "WhyUse içeriği başarıyla silindi!";
             }
-            // Hata durumunda ne yapılacağına karar verilebilir, örneğin bir hata mesajı gösterebiliriz.
-            var errorContent = await responseMessage.Content.ReadAsStringAsync();
-            TempData["ErrorMessage"] = $"Kayıt silinirken bir hata oluştu: {errorContent}";
+            else
+            {
+                TempData["ErrorMessage"] = "WhyUse içeriği silinirken bir hata oluştu. Lütfen tekrar deneyin.";
+            }
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            var response = await _httpClient.GetAsync($"api/WhyUses/{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonData = await response.Content.ReadAsStringAsync();
+                var value = JsonConvert.DeserializeObject<GetByIdWhyUseDTO>(jsonData);
+                return View(value);
+            }
+            return NotFound();
         }
     }
 }
