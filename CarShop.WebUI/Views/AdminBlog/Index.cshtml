@@ -71,10 +71,10 @@
                             }
                         </td>
                         <td class="text-center">
-                            <a href="/Blog/Details/@item.BlogId" class="btn btn-sm btn-info me-1">
+                            <a href="/AdminBlog/Details/@item.BlogId" class="btn btn-sm btn-info me-1">
                                 <i class="fas fa-circle-info"></i> Detay
                             </a>
-                            <a href="/Blog/Edit/@item.BlogId" class="btn btn-sm btn-warning me-1">
+                            <a href="/AdminBlog/Edit/@item.BlogId" class="btn btn-sm btn-warning me-1">
                                 <i class="fas fa-pen-to-square"></i> Güncelle
                             </a>
 
@@ -108,7 +108,7 @@
                 var antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
 
                 $.ajax({
-                    url: '/Blog/Delete/' + blogId,
+                    url: '/AdminBlog/Delete/' + blogId,
                     type: 'POST',
                     headers: {
                         'RequestVerificationToken': antiForgeryToken 

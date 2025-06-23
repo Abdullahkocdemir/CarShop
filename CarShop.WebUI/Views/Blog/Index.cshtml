@@ -1,0 +1,60 @@
+﻿@model List<ResultBlogDTO>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    @await Component.InvokeAsync("_DefaultLayoutHeadPartials")
+</head>
+
+<body>
+    @await Component.InvokeAsync("DefaultLayoutHeaderPartials")
+
+    @await Component.InvokeAsync("DefaultBlogHeadImagePartials")
+
+    <section class="blog spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-9">
+                    <div class="row">
+                        @foreach (var item in Model)
+                        {
+                            <div class="col-lg-4 col-md-6">
+                                <div class="latest__blog__item">
+                                    <div class="latest__blog__item__pic set-bg" data-setbg="@item.BannerImageUrl">
+                                        <ul>
+                                            <li>By @item.Author</li>
+                                            <li>@item.Date.ToString("MMM dd, yyyy")</li>
+                                            <li>@item.CommentCount Yorum</li>
+                                        </ul>
+                                    </div>
+                                    <div class="latest__blog__item__text">
+                                        <h5>@item.SmallTitle</h5>
+                                        <p>
+                                            @(item.SmallDescription.Length > 150 ? item.SmallDescription.Substring(0, 150) + "..." : item.SmallDescription)
+                                        </p>
+                                        <a href="/Blog/Details/@item.BlogId">Devamını Oku <i class="fa fa-long-arrow-right"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="pagination__option">
+                        <a href="#" class="active">1</a>
+                        <a href="#">2</a>
+                        <a href="#">3</a>
+                        <a href="#"><span class="arrow_carrot-2right"></span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @await Component.InvokeAsync("DefaultLayoutFooterPartials")
+
+    @await Component.InvokeAsync("DefaultLayoutScriptPartials")
+</body>
+
+</html>

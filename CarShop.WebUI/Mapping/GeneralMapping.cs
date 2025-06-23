@@ -27,7 +27,7 @@ namespace CarShop.WebUI.Mapping
                 .ForMember(dest => dest.ExistingLogoImageUrl, opt => opt.Ignore());
 
             //Product Mapping
-
+            CreateMap<DTOsLayer.WebApiDTO.ProductDTOs.ResultProductDTO, DTOsLayer.WebUIDTO.ProductDTO.ResultProductDTO>().ReverseMap();
             CreateMap<DTOsLayer.WebApiDTO.ProductDTOs.ProductImageDTO, DTOsLayer.WebUIDTO.ProductDTO.ProductImageDTO>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ReverseMap();
@@ -64,6 +64,36 @@ namespace CarShop.WebUI.Mapping
             CreateMap<ResultWhyUseItemDTO, WhyUseItem>().ReverseMap();
             CreateMap<CreateWhyUseItemDTO, WhyUseItem>().ReverseMap();
             CreateMap<UpdateWhyUseItemDTO, WhyUseItem>().ReverseMap();
+
+
+
+
+
+
+
+            // Product mappings
+            CreateMap<DTOsLayer.WebApiDTO.ProductDTOs.ResultProductDTO, DTOsLayer.WebUIDTO.ProductDTO.ResultProductDTO>()
+                .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src => src.ImageUrls));
+            CreateMap<DTOsLayer.WebUIDTO.ProductDTO.ResultProductDTO, DTOsLayer.WebApiDTO.ProductDTOs.ResultProductDTO>();
+
+            // Brand mappings
+            CreateMap<EntityLayer.Entities.Brand, DTOsLayer.WebApiDTO.BrandDTO.ResultBrandDTO>();
+            CreateMap<DTOsLayer.WebApiDTO.BrandDTO.CreateBrandDTO, EntityLayer.Entities.Brand>();
+            CreateMap<DTOsLayer.WebApiDTO.BrandDTO.UpdateBrandDTO, EntityLayer.Entities.Brand>();
+            CreateMap<EntityLayer.Entities.Brand, DTOsLayer.WebApiDTO.BrandDTO.GetByIdBrandDTO>();
+            CreateMap<DTOsLayer.WebApiDTO.BrandDTO.ResultBrandDTO, DTOsLayer.WebUIDTO.BrandDTO.ResultBrandDTO>(); 
+
+            CreateMap<EntityLayer.Entities.Model, DTOsLayer.WebApiDTO.ModelDTO.ResultModelDTO>();
+            CreateMap<DTOsLayer.WebApiDTO.ModelDTO.CreateModelDTO, EntityLayer.Entities.Model>();
+            CreateMap<DTOsLayer.WebApiDTO.ModelDTO.UpdateModelDTO, EntityLayer.Entities.Model>();
+            CreateMap<EntityLayer.Entities.Model, DTOsLayer.WebApiDTO.ModelDTO.GetByIdModelDTO>();
+            CreateMap<DTOsLayer.WebApiDTO.ModelDTO.ResultModelDTO, DTOsLayer.WebUIDTO.ModelsDTO.ResultModelDTO>(); 
+
+            CreateMap<EntityLayer.Entities.Color, DTOsLayer.WebApiDTO.ColorDTO.ResultColorDTO>();
+            CreateMap<DTOsLayer.WebApiDTO.ColorDTO.CreateColorDTO, EntityLayer.Entities.Color>();
+            CreateMap<DTOsLayer.WebApiDTO.ColorDTO.UpdateColorDTO, EntityLayer.Entities.Color>();
+            CreateMap<EntityLayer.Entities.Color, DTOsLayer.WebApiDTO.ColorDTO.GetByIdColorDTO>();
+            CreateMap<DTOsLayer.WebApiDTO.ColorDTO.ResultColorDTO, DTOsLayer.WebUIDTO.ColorDTO.ResultColorDTO>(); 
 
         }
     }

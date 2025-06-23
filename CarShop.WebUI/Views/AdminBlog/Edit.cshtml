@@ -19,7 +19,7 @@
 </header>
 
 <div class="form-card">
-    <form asp-controller="Blog" asp-action="Edit" method="post" enctype="multipart/form-data">
+    <form asp-controller="AdminBlog" asp-action="Edit" method="post" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="BlogId" />
         <input type="hidden" asp-for="ExistingBannerImageUrl" />

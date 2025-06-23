@@ -10,103 +10,26 @@
 </head>
 
 <body>
-    <div id="preloder">
-        <div class="loader"></div>
-    </div>
-    <header class="header">
-        <div class="header__top">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-7">
-                        <ul class="header__top__widget">
-                            <li><i class="fa fa-clock-o"></i> Hafta içi: Sabah 8.00'den akşam 6.00'ya kadar</li>
-                            <li><i class="fa fa-envelope-o"></i> arabamarketim@outlook.com</li>
-                        </ul>
-                    </div>
-                    <div class="col-lg-5">
-                        <div class="header__top__right">
-                            <div class="header__top__phone">
-                                <i class="fa fa-phone"></i>
-                                <span>(+90) 546 748 19 63</span>
-                            </div>
-                            <div class="header__top__social">
-                                <a href="#"><i class="fa fa-facebook"></i></a>
-                                <a href="#"><i class="fa fa-twitter"></i></a>
-                                <a href="#"><i class="fa fa-google"></i></a>
-                                <a href="#"><i class="fa fa-instagram"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-2">
-                    <div class="header__logo">
-                        <a href="./index.html"><img src="~/hvac-master/img/logo.png" alt=""></a>
-                    </div>
-                </div>
-                <div class="col-lg-10">
-                    <div class="header__nav">
-                        <nav class="header__menu">
-                            <ul>
-                                <li class="active"><a href="./index.html">AnaSayfa</a></li>
-                                <li><a href="./car.html">Arabalar</a></li>
-                                <li><a href="./about.html">Hakkımızda</a></li>
-                                <li><a href="./blog.html">Bloglar</a></li>
-                                <li><a href="./contact.html">İletişim</a></li>
-                            </ul>
-                        </nav>
-                        <div class="header__nav__widget">
-                            <div class="header__nav__widget__btn">
-                                <a href="#"><i class="fa fa-cart-plus"></i></a>
-                                <a href="#" class="search-switch"><i class="fa fa-search"></i></a>
-                            </div>
-                            <a href="#" class="primary-btn">Add Car</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="canvas__open">
-                <span class="fa fa-bars"></span>
-            </div>
-        </div>
-    </header>
+    @await Component.InvokeAsync("DefaultLayoutHeaderPartials")
+
     @await Component.InvokeAsync("_DefaultLayoutBannerPartials")
+
     @await Component.InvokeAsync("DefaultLayoutServicePartials")
+
     @await Component.InvokeAsync("DefaultLayoutFeaturePartials")
+
     @await Component.InvokeAsync("DefaultLayoutPopulerCarPartials")
+
     @await Component.InvokeAsync("DefaultLayoutWhyUsePartials")
+
     @await Component.InvokeAsync("DefaultLayoutBlogPartials")
+
     @await Component.InvokeAsync("DefaultLayoutCtaPartials")
+
     @await Component.InvokeAsync("DefaultLayoutFooterPartials")
-    <!-- Cta Begin -->
-    
-    <!-- Cta End -->
-    <!-- Footer Section Begin -->
-    
-    <!-- Footer Section End -->
-    <!-- Search Begin -->
-    <div class="search-model">
-        <div class="h-100 d-flex align-items-center justify-content-center">
-            <div class="search-close-switch">+</div>
-            <form class="search-model-form">
-                <input type="text" id="search-input" placeholder="Search here.....">
-            </form>
-        </div>
-    </div>
-    <!-- Search End -->
-    <!-- Js Plugins -->
-    <script src="~/hvac-master/js/jquery-3.3.1.min.js"></script>
-    <script src="~/hvac-master/js/bootstrap.min.js"></script>
-    <script src="~/hvac-master/js/jquery.nice-select.min.js"></script>
-    <script src="~/hvac-master/js/jquery-ui.min.js"></script>
-    <script src="~/hvac-master/js/jquery.magnific-popup.min.js"></script>
-    <script src="~/hvac-master/js/mixitup.min.js"></script>
-    <script src="~/hvac-master/js/jquery.slicknav.js"></script>
-    <script src="~/hvac-master/js/owl.carousel.min.js"></script>
-    <script src="~/hvac-master/js/main.js"></script>
+
+    @await Component.InvokeAsync("DefaultLayoutScriptPartials")
+
 </body>
 
 </html>

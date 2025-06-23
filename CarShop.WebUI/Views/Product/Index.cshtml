@@ -1,0 +1,267 @@
+﻿<!DOCTYPE html>
+<html lang="zxx">
+<head>
+    @{
+        Layout = null;
+    }
+    @model CarShop.WebUI.Models.ProductListViewModel
+
+    @await Component.InvokeAsync("_DefaultLayoutHeadPartials")
+    <style>
+        .price-range-wrap {
+            margin-top: 20px;
+        }
+
+        .filter-price-range {
+            height: 5px;
+            background: #eee;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .ui-slider-range {
+            background: #ff2a2a;
+        }
+
+        .ui-slider-handle {
+            background: #ff2a2a;
+            border: none;
+            border-radius: 50%;
+            width: 15px;
+            height: 15px;
+            cursor: pointer;
+            position: absolute;
+            top: -5px;
+            margin-left: -7.5px;
+        }
+    </style>
+</head>
+
+<body>
+    @await Component.InvokeAsync("DefaultLayoutHeaderPartials")
+    @await Component.InvokeAsync("DefaultBlogHeadImagePartials")
+
+    <section class="car spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="car__sidebar">
+                        <div class="car__search">
+                            <h5>Araba Ara</h5>
+                            <form action="@Url.Action("Index", "Product")" method="get">
+                                <input type="text" name="search" placeholder="Ara..." value="@ViewBag.CurrentSearch">
+                                <button type="submit"><i class="fa fa-search"></i></button>
+                            </form>
+                        </div>
+
+                        <div class="car__filter">
+                            <h5>Araba Filtrele</h5>
+                            <form action="@Url.Action("Index", "Product")" method="get" id="filterForm">
+                                <select name="brandId">
+                                    <option value="">Marka Seçin</option>
+                                    @foreach (var item in Model.Brands)
+                                    {
+                                        var selected = ((int?)ViewBag.CurrentBrandId == item.BrandId) ? "selected=\"selected\"" : "";
+                                        @:<option value="@item.BrandId" @Html.Raw(selected)>@item.BrandName</option>
+                                    }
+                                </select>
+
+                                <select name="modelId">
+                                    <option value="">Model Seçin</option>
+                                    @foreach (var item in Model.Models)
+                                    {
+                                        var selected = ((int?)ViewBag.CurrentModelId == item.ModelId) ? "selected=\"selected\"" : "";
+                                        @:<option value="@item.ModelId" @Html.Raw(selected)>@item.Name</option>
+                                    }
+                                </select>
+
+                                <select name="condition">
+                                    <option value="">Durum</option>
+                                    @foreach (var item in Model.Conditions)
+                                    {
+                                        var selected = ((string)ViewBag.CurrentCondition == item) ? "selected=\"selected\"" : "";
+                                        @:<option value="@item" @Html.Raw(selected)>@item</option>
+                                    }
+                                </select>
+
+                                <select name="transmission">
+                                    <option value="">Şanzıman</option>
+                                    @foreach (var item in Model.TransmissionTypes)
+                                    {
+                                        var selected = ((string)ViewBag.CurrentTransmission == item) ? "selected=\"selected\"" : "";
+                                        @:<option value="@item" @Html.Raw(selected)>@item</option>
+                                    }
+                                </select>
+
+                                <select name="engine">
+                                    <option value="">Motor</option>
+                                    @foreach (var item in Model.EngineSizes)
+                                    {
+                                        var selected = ((string)ViewBag.CurrentEngine == item) ? "selected=\"selected\"" : "";
+                                        @:<option value="@item" @Html.Raw(selected)>@item</option>
+                                    }
+                                </select>
+
+                                <select name="colorId">
+                                    <option value="">Renkler</option>
+                                    @foreach (var item in Model.Colors)
+                                    {
+                                        var selected = ((int?)ViewBag.CurrentColorId == item.ColorId) ? "selected=\"selected\"" : "";
+                                        @:<option value="@item.ColorId" @Html.Raw(selected)>@item.Name</option>
+                                    }
+                                </select>
+                                <div class="car__filter__btn">
+                                    <button type="submit" class="site-btn">Filtrele</button>
+                                    <a href="@Url.Action("Index", "Product")" class="site-btn" style="background-color: #6c757d;">Filtreyi Sıfırla</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-9">
+                    <div class="car__filter__option">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="car__filter__option__item">
+                                    <h6>Sayfada Göster</h6>
+                                    <form action="@Url.Action("Index", "Product")" method="get" id="showPerPageForm">
+                                        <input type="hidden" name="search" value="@ViewBag.CurrentSearch" />
+                                        <input type="hidden" name="brandId" value="@ViewBag.CurrentBrandId" />
+                                        <input type="hidden" name="modelId" value="@ViewBag.CurrentModelId" />
+                                        <input type="hidden" name="condition" value="@ViewBag.CurrentCondition" />
+                                        <input type="hidden" name="transmission" value="@ViewBag.CurrentTransmission" />
+                                        <input type="hidden" name="engine" value="@ViewBag.CurrentEngine" />
+                                        <input type="hidden" name="colorId" value="@ViewBag.CurrentColorId" />
+                                        <input type="hidden" name="minPrice" value="@ViewBag.CurrentMinPrice" />
+                                        <input type="hidden" name="maxPrice" value="@ViewBag.CurrentMaxPrice" />
+                                        <input type="hidden" name="sortBy" value="@ViewBag.CurrentSortBy" />
+
+                                        @{
+                                            var perPage = (int?)ViewBag.CurrentShowPerPage ?? 9;
+                                            string selected9 = perPage == 9 ? "selected=\"selected\"" : "";
+                                            string selected15 = perPage == 15 ? "selected=\"selected\"" : "";
+                                            string selected20 = perPage == 20 ? "selected=\"selected\"" : "";
+                                        }
+
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="car__filter__option__item car__filter__option__item--right">
+                                    <h6>Sırala</h6>
+                                    <form action="@Url.Action("Index", "Product")" method="get" id="sortByForm">
+                                        <input type="hidden" name="search" value="@ViewBag.CurrentSearch" />
+                                        <input type="hidden" name="brandId" value="@ViewBag.CurrentBrandId" />
+                                        <input type="hidden" name="modelId" value="@ViewBag.CurrentModelId" />
+                                        <input type="hidden" name="condition" value="@ViewBag.CurrentCondition" />
+                                        <input type="hidden" name="transmission" value="@ViewBag.CurrentTransmission" />
+                                        <input type="hidden" name="engine" value="@ViewBag.CurrentEngine" />
+                                        <input type="hidden" name="colorId" value="@ViewBag.CurrentColorId" />
+                                        <input type="hidden" name="minPrice" value="@ViewBag.CurrentMinPrice" />
+                                        <input type="hidden" name="maxPrice" value="@ViewBag.CurrentMaxPrice" />
+                                        <input type="hidden" name="showPerPage" value="@ViewBag.CurrentShowPerPage" />
+
+                                        @{
+                                            var sort = (string)ViewBag.CurrentSortBy ?? "";
+                                            string s1 = sort == "" ? "selected=\"selected\"" : "";
+                                            string s2 = sort == "Price: Highest Fist" ? "selected=\"selected\"" : "";
+                                            string s3 = sort == "Price: Lowest Fist" ? "selected=\"selected\"" : "";
+                                        }
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        @if (Model.Products != null && Model.Products.Any())
+                        {
+                            @foreach (var product in Model.Products)
+                            {
+                                <div class="col-lg-4 col-md-4">
+                                    <div class="car__item">
+                                        <div class="car__item__pic__slider owl-carousel">
+                                            @foreach (var imageUrl in product.ImageUrls ?? new List<string> { "/img/no-image.jpg" })
+                                            {
+                                                <img src="@imageUrl" alt="@product.Name" />
+                                            }
+                                        </div>
+                                        <div class="car__item__text">
+                                            <div class="car__item__text__inner">
+                                                <div class="label-date">@product.Year</div>
+                                                <h5><a href="#">@product.BrandName @product.ModelName </a></h5>
+                                                <ul>
+                                                    <li><span>@product.Kilometer</span> km</li>
+                                                    <li>@product.Transmission</li>
+                                                    <li><span>@product.Horsepower</span> hp</li>
+                                                </ul>
+                                            </div>
+                                            <div class="car__item__price">
+                                                <span class="car-option @(product.Condition == "Sıfır" ? "new" : product.Condition == "İkinci El" ? "used" : "sale")">@product.Condition</span>
+                                                <h6>₺@product.Price.ToString("N0")<span>@(product.SellerType == "For Rent" ? "/Ay" : "")</span></h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="col-lg-12"><p>Gösterilecek araç bulunamadı.</p></div>
+                        }
+                    </div>
+
+                    <div class="pagination__option">
+                        <a href="#" class="active">1</a>
+                        <a href="#">2</a>
+                        <a href="#">3</a>
+                        <a href="#"><span class="arrow_carrot-2right"></span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @await Component.InvokeAsync("DefaultLayoutFooterPartials")
+    @await Component.InvokeAsync("DefaultLayoutScriptPartials")
+
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $(document).ready(function () {
+            var minPriceVal = parseFloat('@(ViewBag.CurrentMinPrice?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "0")');
+            var maxPriceVal = parseFloat('@(ViewBag.CurrentMaxPrice?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "1000000")');
+
+            $(".filter-price-range").slider({
+                range: true,
+                min: 0,
+                max: 1000000,
+                values: [minPriceVal, maxPriceVal],
+                slide: function (event, ui) {
+                    $("#filterAmount").val("$" + ui.values[0].toLocaleString() + " - $" + ui.values[1].toLocaleString());
+                    $("#minPrice").val(ui.values[0]);
+                    $("#maxPrice").val(ui.values[1]);
+                }
+            });
+
+            $("#filterAmount").val("$" + $(".filter-price-range").slider("values", 0).toLocaleString()
+                + " - $" + $(".filter-price-range").slider("values", 1).toLocaleString());
+
+            if ($('.car__item__pic__slider').length > 0) {
+                $('.car__item__pic__slider').owlCarousel({
+                    loop: true,
+                    margin: 0,
+                    items: 1,
+                    dots: false,
+                    nav: true,
+                    navText: ["<span class='arrow_carrot-left'></span>", "<span class='arrow_carrot-right'></span>"],
+                    smartSpeed: 1200,
+                    autoHeight: false,
+                    autoplay: true
+                });
+            }
+        });
+    </script>
+</body>
+</html>
