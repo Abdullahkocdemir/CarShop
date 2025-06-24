@@ -1,0 +1,51 @@
+﻿@model UpdateAboutDTO
+@{
+    ViewData["Title"] = "Hakkımızda Bilgisi Güncelle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<header class="header">
+    <div>
+        <h2>Hakkımızda Bilgisi Güncelle</h2>
+        <p style="color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">Mevcut hakkımızda bilgilerini güncelleyin.</p>
+    </div>
+    <div class="user-info">
+        <div class="user-avatar">AK</div>
+        <div>
+            <div>Admin Kullanıcı</div>
+            <div style="font-size: 0.8rem; opacity: 0.7;">admin@example.com</div>
+        </div>
+    </div>
+</header>
+
+<div class="form-card">
+    <form asp-controller="AdminAbout" asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="AboutId" />
+
+        <div class="mb-3">
+            <label for="title" class="form-label">Ana Başlık</label>
+            <input type="text" asp-for="Title" class="form-control" id="title" placeholder="Ana başlığı girin" required>
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="smallTitle" class="form-label">Küçük Başlık</label>
+            <input type="text" asp-for="SmallTitle" class="form-control" id="smallTitle" placeholder="Küçük başlığı girin" required>
+            <span asp-validation-for="SmallTitle" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Açıklama</label>
+            <textarea asp-for="Description" class="form-control" id="description" rows="5" placeholder="Açıklamayı girin" required></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <a href="/AdminAbout/Index" class="btn btn-secondary me-2">İptal</a>
+            <button type="submit" class="btn btn-primary">Güncelle</button>
+        </div>
+
+        <div asp-validation-summary="ModelOnly" class="text-danger mt-3"></div>
+    </form>
+</div>

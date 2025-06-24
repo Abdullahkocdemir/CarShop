@@ -1,0 +1,96 @@
+﻿@model List<ResultAboutDTO>
+@{
+    ViewData["Title"] = "Hakkımızda Yönetimi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<header class="header">
+    <div>
+        <h2>Hakkımızda Listesi</h2>
+    </div>
+</header>
+
+<div class="product-table-card">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-white">Mevcut Hakkımızda Bilgileri</h3>
+        <a href="/AdminAbout/Create" class="btn btn-new-product">
+            <i class="fas fa-plus"></i> Yeni Hakkımızda Ekle
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered shadow">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Ana Başlık</th>
+                    <th>Küçük Başlık</th>
+                    <th>Açıklama</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int count = 1;
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@count</td>
+                        <td>@item.Title</td>
+                        <td>@item.SmallTitle</td>
+                        <td>@item.Description.Substring(0, Math.Min(item.Description.Length, 100))...</td> 
+                        <td class="text-center">
+                            <a href="/AdminAbout/Details/@item.AboutId" class="btn btn-sm btn-info me-1">
+                                <i class="fas fa-circle-info"></i> Detay
+                            </a>
+                            <a href="/AdminAbout/Edit/@item.AboutId" class="btn btn-sm btn-warning me-1">
+                                <i class="fas fa-pen-to-square"></i> Güncelle
+                            </a>
+
+                            <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(@item.AboutId)">
+                                <i class="fas fa-trash"></i> Sil
+                            </button>
+                        </td>
+                    </tr>
+                    count++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    function confirmDelete(aboutId) {
+        Swal.fire({
+            title: "Emin misiniz?",
+            text: "Bu Hakkımızda girişini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Evet, sil!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/AdminAbout/Delete/' + aboutId,
+                    type: 'POST',
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function () {
+                        Swal.fire("Silindi!", "Hakkımızda girişi başarıyla silindi.", "success").then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function () {
+                        Swal.fire("Hata!", "Silme işlemi başarısız oldu.", "error");
+                    }
+                });
+            }
+        });
+    }
+</script>

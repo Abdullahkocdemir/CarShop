@@ -1,0 +1,35 @@
+﻿@model GetByIdAboutItemDTO
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<header class="header">
+    <div>
+        <h2>Hakkımızda Öğe Detayı</h2>
+        <p style="color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">Öğeye ait detaylı bilgilere buradan ulaşabilirsiniz.</p>
+    </div>
+</header>
+
+<div class="detail-card shadow">
+    <h4 class="mb-4">@Model.Title Detayları</h4>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="detail-item">
+                <i class="fas fa-id-badge"></i> <strong>Öğe ID:</strong> <span>@Model.AboutItemId</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-heading"></i> <strong>Başlık:</strong> <span>@Model.Title</span>
+            </div>
+            <div class="detail-item">
+                <i class="fas fa-align-left"></i> <strong>Açıklama:</strong> <span>@Model.Description</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end mt-4">
+        <a asp-action="Index" class="btn btn-secondary me-2">
+            <i class="fas fa-arrow-left"></i> Öğelere Geri Dön
+        </a>
+    </div>
+</div>
