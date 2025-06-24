@@ -19,7 +19,7 @@
 </header>
 
 <div class="form-card">
-    <form asp-controller="AboutFeature" asp-action="Edit" method="post" enctype="multipart/form-data">
+    <form asp-controller="AdminAboutFeature" asp-action="Edit" method="post" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="AboutFeatureId" />
         <input type="hidden" asp-for="ExistingImageUrl" /> 
@@ -37,28 +37,27 @@
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Mevcut Resim</label>
+            <label for="imageFile" class="form-label">Mevcut Resim</label>
             @if (!string.IsNullOrEmpty(Model.ExistingImageUrl))
             {
-                <div>
-                    <img src="@Model.ExistingImageUrl" alt="Mevcut Resim" style="max-width: 200px; height: auto; border-radius: 5px; margin-bottom: 10px;">
+                <div class="mb-2">
+                    <img src="@Model.ExistingImageUrl" alt="Mevcut Resim" style="max-width: 200px; max-height: 200px; border-radius: 4px;" />
                 </div>
             }
             else
             {
-                <p>Mevcut bir resim yok.</p>
+                <p>Mevcut resim bulunmamaktadır.</p>
             }
-
             <label for="imageFile" class="form-label">Yeni Resim Yükle (Değiştirmek isterseniz)</label>
             <input type="file" asp-for="ImageFile" class="form-control" id="imageFile" accept="image/*">
             <span asp-validation-for="ImageFile" class="text-danger"></span>
         </div>
 
         <div class="d-flex justify-content-end">
-            <a href="/AboutFeature/Index" class="btn btn-secondary me-2">İptal</a>
+            <a href="/AdminAboutFeature/Index" class="btn btn-secondary me-2">İptal</a>
             <button type="submit" class="btn btn-primary">Güncelle</button>
         </div>
 
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="text-danger mt-3"></div>
     </form>
 </div>

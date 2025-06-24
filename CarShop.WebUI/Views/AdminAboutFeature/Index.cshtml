@@ -13,7 +13,7 @@
 <div class="product-table-card">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="text-white">Mevcut Hakkımızda Özellikleri</h3>
-        <a href="/AboutFeature/Create" class="btn btn-new-product">
+        <a href="/AdminAboutFeature/Create" class="btn btn-new-product">
             <i class="fas fa-plus"></i> Yeni Özellik Ekle
         </a>
     </div>
@@ -40,20 +40,20 @@
                         <td>
                             @if (!string.IsNullOrEmpty(item.ImageUrl))
                             {
-                                <img src="@item.ImageUrl" alt="Özellik Resmi" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                                <img src="@item.ImageUrl" alt="@item.Title" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px;" />
                             }
                             else
                             {
-                                <span>Resim Yok</span>
+                                <img src="/images/default.png" alt="Varsayılan Resim" style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px;" />
                             }
                         </td>
                         <td>@item.Title</td>
-                        <td>@item.Description</td>
+                        <td>@item.Description.Substring(0, Math.Min(item.Description.Length, 100))...</td> 
                         <td class="text-center">
-                            <a href="/AboutFeature/Details/@item.AboutFeatureId" class="btn btn-sm btn-info me-1">
+                            <a href="/AdminAboutFeature/Details/@item.AboutFeatureId" class="btn btn-sm btn-info me-1">
                                 <i class="fas fa-circle-info"></i> Detay
                             </a>
-                            <a href="/AboutFeature/Edit/@item.AboutFeatureId" class="btn btn-sm btn-warning me-1">
+                            <a href="/AdminAboutFeature/Edit/@item.AboutFeatureId" class="btn btn-sm btn-warning me-1">
                                 <i class="fas fa-pen-to-square"></i> Güncelle
                             </a>
 
@@ -85,8 +85,11 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: '/AboutFeature/Delete/' + aboutFeatureId,
-                    type: 'POST', 
+                    url: '/AdminAboutFeature/Delete/' + aboutFeatureId,
+                    type: 'POST',
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
                     success: function () {
                         Swal.fire("Silindi!", "Özellik başarıyla silindi.", "success").then(() => {
                             location.reload();
