@@ -39,7 +39,7 @@
 
 <body>
     @await Component.InvokeAsync("DefaultLayoutHeaderPartials")
-    @await Component.InvokeAsync("DefaultBlogHeadImagePartials")
+    @await Component.InvokeAsync("DefaultLayoutCarPartials")
 
     <section class="car spad">
         <div class="container">
@@ -191,7 +191,7 @@
                                         <div class="car__item__text">
                                             <div class="car__item__text__inner">
                                                 <div class="label-date">@product.Year</div>
-                                                <h5><a href="#">@product.BrandName @product.ModelName </a></h5>
+                                                <h5><a href="/Product/Details/@product.ProductId">@product.BrandName @product.ModelName </a></h5>
                                                 <ul>
                                                     <li><span>@product.Kilometer</span> km</li>
                                                     <li>@product.Transmission</li>

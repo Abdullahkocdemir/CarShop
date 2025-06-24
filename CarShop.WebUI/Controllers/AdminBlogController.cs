@@ -55,7 +55,6 @@ namespace CarShop.WebUI.Controllers
                 formData.Add(new StringContent(dto.SmallTitle), "SmallTitle");
                 formData.Add(new StringContent(dto.Author), "Author");
                 formData.Add(new StringContent(dto.SmallDescription), "SmallDescription");
-                // Tarih formatını burada düzgünce stringe çeviriyoruz
                 formData.Add(new StringContent(dto.Date.ToString("yyyy-MM-ddTHH:mm:ss")), "Date");
                 formData.Add(new StringContent(dto.CommentCount.ToString()), "CommentCount");
                 formData.Add(new StringContent(dto.Title), "Title");

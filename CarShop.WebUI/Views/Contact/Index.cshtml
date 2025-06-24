@@ -1,0 +1,54 @@
+﻿@model DTOsLayer.WebUIDTO.ContactDTO.CreateContactDTO
+@{
+    Layout = null; // Bu sayfanın layout kullanmadığını belirtir
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Başlık ve meta etiketleri gibi head içeriği -->
+    @await Component.InvokeAsync("_DefaultLayoutHeadPartials")
+</head>
+<body>
+    <!-- Header ve diğer genel bileşenler -->
+    @await Component.InvokeAsync("DefaultLayoutHeaderPartials")
+    @await Component.InvokeAsync("DefaultLayoutContactPartials")
+
+    <section class="contact spad">
+        <div class="container">
+            <div class="row">
+                @await Component.InvokeAsync("DefaultLayoutContactTitlePartials")
+                <div class="col-lg-6 col-md-6">
+                    <div class="contact__form">
+                        <form asp-action="SubmitContactForm" asp-controller="Contact" method="post" asp-antiforgery="true">
+                            @if (TempData["SuccessMessage"] != null)
+                            {
+                                <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+                            }
+
+                            <div asp-validation-summary="All" class="text-danger"></div>
+                            <input type="text" asp-for="NameSurName" placeholder="Adınız Soyadaınız" class="form-control">
+                            <span asp-validation-for="NameSurName" class="text-danger"></span>
+
+                            <input type="email" asp-for="Email" placeholder="Email Adresiniz" class="form-control">
+                            <span asp-validation-for="Email" class="text-danger"></span>
+
+                            <input type="text" asp-for="Subject" placeholder="Konu" class="form-control">
+                            <span asp-validation-for="Subject" class="text-danger"></span>
+
+                            <textarea asp-for="Message" placeholder="Mesajınız" class="form-control"></textarea>
+                            <span asp-validation-for="Message" class="text-danger"></span>
+
+                            <button type="submit" class="site-btn">Submit Now</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer ve diğer genel bileşenler -->
+    @await Component.InvokeAsync("DefaultLayoutShowroomPartials")
+    @await Component.InvokeAsync("DefaultLayoutFooterPartials")
+    @await Component.InvokeAsync("DefaultLayoutScriptPartials")
+</body>
+</html>

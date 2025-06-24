@@ -1,13 +1,71 @@
-﻿@model DTOsLayer.WebUIDTO.ProductDTO.UpdateProductDTO // Tam namespace'i ekledim
+﻿@model DTOsLayer.WebUIDTO.ProductDTO.UpdateProductDTO
 @{
     ViewData["Title"] = "Ürün Güncelle";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
+<style>
+    .header-description {
+        color: rgba(255, 255, 255, 0.7); /* Keep initial color from original inline style */
+        transition: color 0.3s ease;
+    }
+
+        .header-description:hover {
+            color: red; /* Apply hover color from original inline style */
+        }
+
+    .form-control-highlight {
+        border-color: #ced4da;
+        box-shadow: none;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        color: #343a40;
+        background-color: #f8f9fa;
+    }
+
+        .form-control-highlight:hover {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+        }
+
+        .form-control-highlight:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+            outline: none;
+        }
+
+        .form-control-highlight option {
+            color: #343a40;
+            background-color: #ffffff;
+        }
+
+            .form-control-highlight option:checked {
+                background-color: #007bff;
+                color: #ffffff;
+            }
+
+    /* Additional styles for image section for better clarity */
+    .image-preview {
+        width: 100px;
+        height: auto;
+        object-fit: cover;
+        border-radius: 5px;
+        margin-right: 0.75rem; /* Equivalent to me-3 in Bootstrap */
+    }
+
+    .image-deleted-overlay {
+        opacity: 0.5;
+    }
+
+    .image-status-text {
+        color: #6c757d; /* text-muted Bootstrap color */
+        margin-right: 0.75rem; /* Equivalent to me-3 in Bootstrap */
+    }
+</style>
+
 <header class="header">
     <div>
         <h2>Ürün Güncelle</h2>
-        <p style="color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">Mevcut ürün bilgilerini güncelleyin.</p>
+        <p class="header-description">Mevcut ürün bilgilerini güncelleyin.</p>
     </div>
 </header>
 
@@ -25,21 +83,21 @@
             </div>
             <div class="col-md-6 mb-3">
                 <label for="brandId" class="form-label">Marka</label>
-                <select asp-for="BrandId" asp-items="@(ViewBag.Brands as SelectList)" class="form-control" id="brandId" required>
+                <select asp-for="BrandId" asp-items="@(ViewBag.Brands as SelectList)" class="form-control form-control-highlight" id="brandId" required>
                     <option value="">Marka Seçin</option>
                 </select>
                 <span asp-validation-for="BrandId" class="text-danger"></span>
             </div>
             <div class="col-md-6 mb-3">
                 <label for="modelId" class="form-label">Model</label>
-                <select asp-for="ModelId" asp-items="@(ViewBag.Models as SelectList)" class="form-control" id="modelId" required>
+                <select asp-for="ModelId" asp-items="@(ViewBag.Models as SelectList)" class="form-control form-control-highlight" id="modelId" required>
                     <option value="">Model Seçin</option>
                 </select>
                 <span asp-validation-for="ModelId" class="text-danger"></span>
             </div>
             <div class="col-md-6 mb-3">
                 <label for="colorId" class="form-label">Renk</label>
-                <select asp-for="ColorId" asp-items="@(ViewBag.Colors as SelectList)" class="form-control" id="colorId" required>
+                <select asp-for="ColorId" asp-items="@(ViewBag.Colors as SelectList)" class="form-control form-control-highlight" id="colorId" required>
                     <option value="">Renk Seçin</option>
                 </select>
                 <span asp-validation-for="ColorId" class="text-danger"></span>
@@ -51,7 +109,7 @@
             </div>
             <div class="col-md-4 mb-3">
                 <label for="year" class="form-label">Yıl</label>
-                <input type="number" asp-for="Year" class="form-control" id="year" placeholder="Yıl" required min="1900" max="@DateTime.Now.Year + 2">
+                <input type="number" asp-for="Year" class="form-control" id="year" placeholder="Yıl" required min="1900" max="@(DateTime.Now.Year + 2)">
                 <span asp-validation-for="Year" class="text-danger"></span>
             </div>
             <div class="col-md-4 mb-3">
@@ -144,8 +202,8 @@
         <h4 class="mb-4 mt-4">Açıklamalar ve Konum</h4>
         <div class="row">
             <div class="col-md-12 mb-3">
-                <label for="description" class="form-label">Açıklama</label>
-                <textarea asp-for="Description" class="form-control" id="description" rows="3" placeholder="Ürün hakkında detaylı bilgi girin"></textarea>
+                <label for="descriptionEditor" class="form-label">Açıklama</label>
+                <textarea asp-for="Description" class="form-control" id="descriptionEditor" rows="10" placeholder="Ürün hakkında detaylı bilgi girin"></textarea>
             </div>
             <div class="col-md-6 mb-3">
                 <label for="features" class="form-label">Öne Çıkan Özellikler</label>
@@ -197,8 +255,8 @@
 
                         @if (!string.IsNullOrEmpty(Model.Images[i].ImageUrl))
                         {
-                            <img src="@Model.Images[i].ImageUrl" alt="Mevcut Resim" style="width: 100px; height: auto; object-fit: cover; border-radius: 5px;" class="me-3">
-                            <span class="text-muted me-3">Mevcut Resim</span>
+                            <img src="@Model.Images[i].ImageUrl" alt="Mevcut Resim" class="image-preview">
+                            <span class="image-status-text">Mevcut Resim</span>
                         }
                         <input type="file" name="Images[@i].ImageFile" class="form-control" accept="image/*" />
                     </div>
@@ -206,9 +264,8 @@
             }
         </div>
         <div id="new-image-upload-area">
-            </div>
+        </div>
         <button type="button" class="btn btn-secondary btn-sm mb-3" id="add-new-image-file">Yeni Resim Ekle</button>
-
 
         <div class="d-flex justify-content-end mt-4">
             <a href="/Products/Index" class="btn btn-secondary me-2">İptal</a>
@@ -223,22 +280,33 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script src="https://cdn.tiny.cloud/1/kxdltrxw6nyvs3n8gp9fi4f0f7nx0avgvpxdqs0vm95961as/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
     <script>
         $(document).ready(function () {
-            let nextNewImageIndex = @(Model?.Images?.Count ?? 0) 
+            // TinyMCE initialization for the Description textarea
+            tinymce.init({
+                selector: '#descriptionEditor', // Selector for the textarea
+                plugins: [
+                    'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'searchreplace', 'table', 'visualblocks', 'wordcount'
+                ],
+                toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                height: 300 // You can adjust the height as needed
+            });
+
+            let nextNewImageIndex = @(Model?.Images?.Count ?? 0);
 
             $('#add-new-image-file').click(function () {
                 var newImageInputHtml = `
-                    <div class="mb-3 d-flex align-items-center new-image-item">
-                        <input type="hidden" name="Images[${nextNewImageIndex}].Id" value="0" />
-                        <input type="hidden" name="Images[${nextNewImageIndex}].ImageUrl" value="" />
-                        <input type="hidden" name="Images[${nextNewImageIndex}].IsMainImage" value="false" />
-                        <input type="hidden" name="Images[${nextNewImageIndex}].Order" value="${nextNewImageIndex}" />
-                        <input type="checkbox" name="Images[${nextNewImageIndex}].ShouldDelete" value="true" class="form-check-input me-2 delete-image-checkbox" style="display:none;" />
-                        <label class="form-check-label me-3" style="display:none;">Sil</label>
-                        <input type="file" name="Images[${nextNewImageIndex}].ImageFile" class="form-control" accept="image/*" required/>
-                        <button type="button" class="btn btn-danger btn-sm ms-2 remove-new-image-file">Kaldır</button>
-                    </div>`;
+                                        <div class="mb-3 d-flex align-items-center new-image-item">
+                                            <input type="hidden" name="Images[${nextNewImageIndex}].Id" value="0" />
+                                            <input type="hidden" name="Images[${nextNewImageIndex}].ImageUrl" value="" />
+                                            <input type="hidden" name="Images[${nextNewImageIndex}].IsMainImage" value="false" />
+                                            <input type="hidden" name="Images[${nextNewImageIndex}].Order" value="${nextNewImageIndex}" />
+                                            <input type="checkbox" name="Images[${nextNewImageIndex}].ShouldDelete" value="true" class="form-check-input me-2 delete-image-checkbox" style="display:none;" />
+                                            <label class="form-check-label me-3" style="display:none;">Sil</label>
+                                            <input type="file" name="Images[${nextNewImageIndex}].ImageFile" class="form-control" accept="image/*" required/>
+                                            <button type="button" class="btn btn-danger btn-sm ms-2 remove-new-image-file">Kaldır</button>
+                                        </div>`;
                 $('#new-image-upload-area').append(newImageInputHtml);
                 nextNewImageIndex++;
             });
@@ -250,16 +318,18 @@
             $('#image-list').on('change', '.delete-image-checkbox', function () {
                 var imageItem = $(this).closest('.image-item');
                 var fileInput = imageItem.find('input[type="file"]');
+                var imageElement = imageItem.find('.image-preview'); // Select the image using its new class
+                var statusTextElement = imageItem.find('.image-status-text'); // Select the status text using its new class
 
                 if ($(this).is(':checked')) {
                     fileInput.prop('disabled', true);
                     fileInput.val('');
-                    imageItem.find('img').css('opacity', '0.5');
-                    imageItem.find('span.text-muted').text('Silinecek');
+                    imageElement.addClass('image-deleted-overlay'); // Add class for opacity
+                    statusTextElement.text('Silinecek');
                 } else {
                     fileInput.prop('disabled', false);
-                    imageItem.find('img').css('opacity', '1');
-                    imageItem.find('span.text-muted').text('Mevcut Resim');
+                    imageElement.removeClass('image-deleted-overlay'); // Remove class for opacity
+                    statusTextElement.text('Mevcut Resim');
                 }
             });
         });

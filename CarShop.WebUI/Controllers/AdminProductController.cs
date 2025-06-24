@@ -51,8 +51,8 @@ namespace CarShop.WebUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Consumes("multipart/form-data")] 
-        public async Task<IActionResult> Create(CreateProductViewModel viewModel) 
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> Create(CreateProductViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
@@ -64,6 +64,7 @@ namespace CarShop.WebUI.Controllers
 
             using (var formData = new MultipartFormDataContent())
             {
+                // Tüm form alanlarını ekle
                 formData.Add(new StringContent(apiDto.Name ?? string.Empty), "Name");
                 formData.Add(new StringContent(apiDto.ColorId.ToString()), "ColorId");
                 formData.Add(new StringContent(apiDto.BrandId.ToString()), "BrandId");
@@ -96,18 +97,36 @@ namespace CarShop.WebUI.Controllers
                 formData.Add(new StringContent(apiDto.District ?? string.Empty), "District");
                 formData.Add(new StringContent(apiDto.SellerType ?? string.Empty), "SellerType");
 
-                if (viewModel.Product.ImageFiles != null && viewModel.Product.ImageFiles.Any())
+                // DÜZELTME: ImageFiles kontrolü ve ekleme işlemi
+                if (viewModel.Product.ImageFiles != null && viewModel.Product.ImageFiles.Count > 0)
                 {
-                    for (int i = 0; i < viewModel.Product.ImageFiles.Count; i++)
+                    System.Diagnostics.Debug.WriteLine($"Toplam {viewModel.Product.ImageFiles.Count} resim dosyası bulundu");
+
+                    // Null olmayan dosyaları filtrele
+                    var validFiles = viewModel.Product.ImageFiles.Where(f => f != null && f.Length > 0).ToList();
+                    System.Diagnostics.Debug.WriteLine($"Geçerli dosya sayısı: {validFiles.Count}");
+
+                    for (int i = 0; i < validFiles.Count; i++)
                     {
-                        var file = viewModel.Product.ImageFiles[i];
-                        if (file != null && file.Length > 0)
-                        {
-                            var fileContent = new StreamContent(file.OpenReadStream());
-                            fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
-                            formData.Add(fileContent, $"ImageFiles[{i}]", file.FileName);
-                        }
+                        var file = validFiles[i];
+                        System.Diagnostics.Debug.WriteLine($"Dosya {i}: {file.FileName} - Boyut: {file.Length} bytes - ContentType: {file.ContentType}");
+
+                        var fileContent = new StreamContent(file.OpenReadStream());
+                        fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+
+                        // ÖNEMLI: API'nin beklediği parametere uygun isim kullan
+                        formData.Add(fileContent, "ImageFiles", file.FileName);
                     }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Hiç resim dosyası bulunamadı");
+                }
+
+                // Debug için form data içeriğini logla
+                foreach (var item in formData)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Form Data: {item.Headers.ContentDisposition?.Name}");
                 }
 
                 var response = await _httpClient.PostAsync("api/Products", formData);
@@ -120,8 +139,9 @@ namespace CarShop.WebUI.Controllers
                 else
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
+                    System.Diagnostics.Debug.WriteLine($"API Hatası: {response.StatusCode} - {errorContent}");
                     ModelState.AddModelError("", $"API Hatası: {response.StatusCode} - {errorContent}");
-                    TempData["ErrorMessage"] = $"Ürün eklenirken hata oluştu: {errorContent}"; 
+                    TempData["ErrorMessage"] = $"Ürün eklenirken hata oluştu: {errorContent}";
                 }
             }
 

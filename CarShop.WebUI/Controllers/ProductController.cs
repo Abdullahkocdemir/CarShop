@@ -154,5 +154,19 @@ namespace CarShop.WebUI.Controllers
 
             return View(viewModel);
         }
+        public async Task<IActionResult> Details(int id)
+        {
+            var response = await _httpClient.GetAsync($"api/Products/{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonData = await response.Content.ReadAsStringAsync();
+                var apiProduct = JsonConvert.DeserializeObject<GetByIdProductDTO>(jsonData);
+
+                var uiProduct = _mapper.Map<GetByIdProductDTO>(apiProduct);
+                return View(uiProduct);
+            }
+            return View();
+        }
     }
 }

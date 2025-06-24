@@ -1,0 +1,19 @@
+﻿@model List<ResultShowroomDTO>
+<div class="contact-address">
+    <div class="container">
+        <div class="contact__address__text">
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    <div class="col-lg-4 col-md-6 col-sm-6">
+                        <div class="contact__address__item">
+                            <h4>@item.Title</h4>
+                            <p>@item.Address</p>
+                            <span>@item.PhoneNumber</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

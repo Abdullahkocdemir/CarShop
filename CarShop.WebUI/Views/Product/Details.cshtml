@@ -1,0 +1,245 @@
+﻿@model GetByIdProductDTO
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    @await Component.InvokeAsync("_DefaultLayoutHeadPartials")
+</head>
+
+<body>
+    @await Component.InvokeAsync("DefaultLayoutHeaderPartials")
+    @await Component.InvokeAsync("DefaultLayoutCarDetailPartials")
+
+    <section class="car-details spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-9">
+                    <div class="car__details__pic">
+                        <div class="car__details__pic__large">
+                            @if (Model.ImageUrls != null && Model.ImageUrls.Any())
+                            {
+                                <img class="car-big-img" src="@Model.ImageUrls.FirstOrDefault()" alt="@Model.Name">
+                            }
+                            else
+                            {
+                                <img class="car-big-img" src="/img/no-image.jpg" alt="No Image Available"> @* Varsayılan resim *@
+                            }
+                        </div>
+                        <div class="car-thumbs">
+                            <div class="car-thumbs-track car__thumb__slider owl-carousel">
+                                @if (Model.ImageUrls != null)
+                                {
+                                    @foreach (var imageUrl in Model.ImageUrls)
+                                    {
+                                        <div class="ct" data-imgbigurl="@imageUrl">
+                                            <img src="@imageUrl" alt="@Model.Name">
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="car__details__tab">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#tabs-1" role="tab">
+                                    Genel Bakış
+                                    
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tabs-2" role="tab">Teknik Özellikler</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tabs-3" role="tab">Özellikler & Seçenekler</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#tabs-4" role="tab">Araç Lokasyonu</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tabs-1" role="tabpanel">
+                                <div class="car__details__tab__info">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="car__details__tab__info__item">
+                                                <h5>Açıklama</h5>
+                                                <p>@Html.Raw(Model.Description)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="car__details__tab__feature">
+                                    <div class="row">
+
+                                        @if (!string.IsNullOrEmpty(Model.Features))
+                                        {
+                                            <div class="col-lg-6 col-md-6">
+                                                <div class="car__details__tab__feature__item">
+                                                    <h5>Özellikler</h5>
+                                                    <ul>
+                                                        @foreach (var feature in Model.Features.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries))
+                                                        {
+                                                            <li><i class="fa fa-check-circle"></i> @feature.Trim()</li>
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        @if (!string.IsNullOrEmpty(Model.DamageHistory))
+                                        {
+                                            <div class="col-lg-6 col-md-6">
+                                                <div class="car__details__tab__feature__item">
+                                                    <h5>Hasar Geçmişi</h5>
+                                                    <p>@Model.DamageHistory</p>
+                                                </div>
+                                            </div>
+                                        }
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tabs-2" role="tabpanel">
+                                <div class="car__details__tab__info">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6">
+                                            <div class="car__details__tab__info__item">
+                                                <h5>Genel Teknik Bilgiler</h5>
+                                                <ul>
+                                                    <li><i class="fa fa-check"></i> Kilometre: <span>@Model.Kilometer</span></li>
+                                                    <li><i class="fa fa-check"></i> Yıl: <span>@Model.Year</span></li>
+                                                    <li><i class="fa fa-check"></i> Motor Hacmi: <span>@Model.EngineSize</span></li>
+                                                    <li><i class="fa fa-check"></i> Yakıt Tipi: <span>@Model.FuelType</span></li>
+                                                    <li><i class="fa fa-check"></i> Vites Tipi: <span>@Model.Transmission</span></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6">
+                                            <div class="car__details__tab__info__item">
+                                                <h5>Ek Teknik Bilgiler</h5>
+                                                <ul>
+                                                    <li><i class="fa fa-check"></i> Beygir Gücü: <span>@(Model.Horsepower.HasValue ? Model.Horsepower.Value.ToString() : "Belirtilmemiş") HP</span></li>
+                                                    <li><i class="fa fa-check"></i> Çekiş Tipi: <span>@Model.DriveType</span></li>
+                                                    <li><i class="fa fa-check"></i> Kapı Sayısı: <span>@(Model.DoorCount.HasValue ? Model.DoorCount.Value.ToString() : "Belirtilmemiş")</span></li>
+                                                    <li><i class="fa fa-check"></i> Koltuk Sayısı: <span>@(Model.SeatCount.HasValue ? Model.SeatCount.Value.ToString() : "Belirtilmemiş")</span></li>
+                                                    <li><i class="fa fa-check"></i> Durum: <span>@Model.Condition</span></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tabs-3" role="tabpanel">
+                                <div class="car__details__tab__feature">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6">
+                                            <div class="car__details__tab__feature__item">
+                                                <h5>Güvenlik ve Konfor Özellikleri</h5>
+                                                <ul>
+                                                    @if (Model.HasAirbag)
+                                                    {
+                                                        <li><i class="fa fa-check-circle"></i> Hava Yastığı</li>
+                                                    }
+                                                    @if (Model.HasABS)
+                                                    {
+                                                        <li><i class="fa fa-check-circle"></i> ABS</li>
+                                                    }
+                                                    @if (Model.HasESP)
+                                                    {
+                                                        <li><i class="fa fa-check-circle"></i> ESP</li>
+                                                    }
+                                                    @if (Model.HasAirConditioning)
+                                                    {
+                                                        <li><i class="fa fa-check-circle"></i> Klima</li>
+                                                    }
+                                                    @if (Model.HasSunroof)
+                                                    {
+                                                        <li><i class="fa fa-check-circle"></i> Sunroof</li>
+                                                    }
+                                                    @if (Model.HasLeatherSeats)
+                                                    {
+                                                        <li><i class="fa fa-check-circle"></i> Deri Koltuklar</li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6">
+                                            <div class="car__details__tab__feature__item">
+                                                <h5>Teknolojik ve Yardımcı Özellikler</h5>
+                                                <ul>
+                                                    @if (Model.HasNavigationSystem)
+                                                    {
+                                                        <li><i class="fa fa-check-circle"></i> Navigasyon Sistemi</li>
+                                                    }
+                                                    @if (Model.HasParkingSensors)
+                                                    {
+                                                        <li><i class="fa fa-check-circle"></i> Park Sensörleri</li>
+                                                    }
+                                                    @if (Model.HasBackupCamera)
+                                                    {
+                                                        <li><i class="fa fa-check-circle"></i> Geri Görüş Kamerası</li>
+                                                    }
+                                                    @if (Model.HasCruiseControl)
+                                                    {
+                                                        <li><i class="fa fa-check-circle"></i> Hız Sabitleyici</li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tabs-4" role="tabpanel">
+                                <div class="car__details__tab__info">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="car__details__tab__info__item">
+                                                <h5>Araç Konumu ve Satıcı Bilgileri</h5>
+                                                <ul>
+                                                    <li><i class="fa fa-map-marker"></i> Şehir: <span>@Model.City</span></li>
+                                                    <li><i class="fa fa-map-marker"></i> İlçe: <span>@Model.District</span></li>
+                                                    <li><i class="fa fa-user"></i> Satıcı Tipi: <span>@Model.SellerType</span></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="car__details__sidebar">
+                        <div class="car__details__sidebar__model">
+                            <ul>
+                                <li>Marka <span>@Model.BrandName</span></li>
+                                <li>Model <span>@Model.ModelName</span></li>
+                            </ul>
+                            <a href="#" class="primary-btn">Bugünkü Fiyatı Al</a>
+                            <p>Güncelleme Tarihi: @(Model.UpdatedDate.HasValue ? Model.UpdatedDate.Value.ToShortDateString() : Model.CreatedDate.ToShortDateString())</p>
+                        </div>
+                        <div class="car__details__sidebar__payment">
+                            <ul>
+                                <li>Fiyat <span>$@Model.Price.ToString("N0")</span></li>
+                            </ul>
+                            <a href="#" class="primary-btn"><i class="fa fa-credit-card"></i> Hızlı Satın Al</a>
+                            <a href="#" class="primary-btn sidebar-btn"><i class="fa fa-sliders"></i> Ödeme Planı Oluştur</a>
+                            <a href="#" class="primary-btn sidebar-btn"><i class="fa fa-money"></i> Takas Değeri Hesapla</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @await Component.InvokeAsync("DefaultLayoutFooterPartials")
+    @await Component.InvokeAsync("DefaultLayoutScriptPartials")
+
+</body>
+
+</html>

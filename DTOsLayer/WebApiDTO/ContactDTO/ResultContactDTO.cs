@@ -9,11 +9,9 @@ namespace DTOsLayer.WebApiDTO.ContactDTO
     public class ResultContactDTO
     {
         public int ContactId { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string SurName { get; set; } = string.Empty;
+        public string NameSurName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
         public string Subject { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
-        public string Title { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
     }
 }
