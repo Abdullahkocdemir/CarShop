@@ -1,0 +1,45 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    @await Component.InvokeAsync("_DefaultLayoutHeadPartials")
+</head>
+
+<body>
+    @await Component.InvokeAsync("DefaultLayoutHeaderPartials")
+    @await Component.InvokeAsync("DefaultLayoutAboutBannerPartials")
+
+    <section class="about spad">
+        <div class="container">
+            <div class="row">
+                @await Component.InvokeAsync("DefaultLayoutAboutTitlePartials")
+            </div>
+            @await Component.InvokeAsync("DefaultLayoutAboutFeaturePartials")
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="about__pic">
+                        <img src="~/hvac-master/img/about/about-pic.jpg" alt="">
+                    </div>
+                </div>
+                @await Component.InvokeAsync("DefaultLayoutAboutItemPartials")
+            </div>
+        </div>
+    </section>
+
+    @await Component.InvokeAsync("DefaultLayoutStaffPartials")
+
+    @await Component.InvokeAsync("DefaultLayoutTestimonialPartials")
+    @await Component.InvokeAsync("DefaultLayoutCounterPartials")
+
+    @await Component.InvokeAsync("DefaultLayoutClientsPartials")
+
+
+    @await Component.InvokeAsync("DefaultLayoutFooterPartials")
+
+    @await Component.InvokeAsync("DefaultLayoutScriptPartials")
+</body>
+
+</html>

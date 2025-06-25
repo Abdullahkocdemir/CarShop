@@ -1,5 +1,6 @@
 ﻿using DTOsLayer.WebUIDTO.TestimonialDTO;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,22 +14,37 @@ namespace BusinessLayer.ValidationRules.TestimonialValidation
         public UpdateTestimonialDTOValidator()
         {
             RuleFor(x => x.TestimonialId)
-                .GreaterThan(0).WithMessage("Referans ID'si 0'dan büyük olmalıdır.");
+                .NotEmpty().WithMessage("Testimonial ID boş bırakılamaz.");
 
-            RuleFor(x => x.Name)
-                .NotEmpty().WithMessage("İsim boş olamaz.")
-                .MaximumLength(100).WithMessage("İsim en fazla 100 karakter olabilir.")
-                .MinimumLength(3).WithMessage("İsim en az 3 karakter olmalıdır.");
+            RuleFor(x => x.NameSurname)
+                .NotEmpty().WithMessage("Ad Soyad alanı boş bırakılamaz.")
+                .MaximumLength(100).WithMessage("Ad Soyad alanı en fazla 100 karakter olabilir.");
 
             RuleFor(x => x.Duty)
-                .NotEmpty().WithMessage("Görev boş olamaz.")
-                .MaximumLength(150).WithMessage("Görev en fazla 150 karakter olabilir.")
-                .MinimumLength(5).WithMessage("Görev en az 5 karakter olmalıdır.");
+                .NotEmpty().WithMessage("Görev alanı boş bırakılamaz.")
+                .MaximumLength(100).WithMessage("Görev alanı en fazla 100 karakter olabilir.");
 
             RuleFor(x => x.Description)
-                .NotEmpty().WithMessage("Açıklama boş olamaz.")
-                .MaximumLength(1000).WithMessage("Açıklama en fazla 1000 karakter olabilir.")
-                .MinimumLength(20).WithMessage("Açıklama en az 20 karakter olmalıdır.");
+                .NotEmpty().WithMessage("Açıklama alanı boş bırakılamaz.")
+                .MaximumLength(500).WithMessage("Açıklama alanı en fazla 500 karakter olabilir.");
+
+            When(x => x.ImageFile != null, () =>
+            {
+                RuleFor(x => x.ImageFile)
+                    .Must(BeAValidImage).WithMessage("Lütfen geçerli bir resim dosyası seçin (JPG, JPEG, PNG, GIF).");
+            });
+
+            RuleFor(x => x.ImageFile)
+                .Must((dto, file) => file != null || !string.IsNullOrEmpty(dto.ExistingImageUrl))
+                .WithMessage("Resim dosyası yüklenmeli veya mevcut bir resim yolu olmalıdır.");
+        }
+
+        private bool BeAValidImage(IFormFile? file)
+        {
+            if (file == null) return false;
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+            var fileExtension = Path.GetExtension(file.FileName).ToLower();
+            return allowedExtensions.Contains(fileExtension);
         }
     }
 }

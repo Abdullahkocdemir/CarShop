@@ -1,0 +1,56 @@
+﻿@model CreateTestimonialDTO
+@{
+    ViewData["Title"] = "Yeni Referans Ekle";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<header class="header">
+    <div>
+        <h2>Yeni Referans Ekle</h2>
+        <p style="color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">Yeni bir referans girişi yapın.</p>
+    </div>
+    <div class="user-info">
+        <div class="user-avatar">AK</div>
+        <div>
+            <div>Admin Kullanıcı</div>
+            <div style="font-size: 0.8rem; opacity: 0.7;">admin@example.com</div>
+        </div>
+    </div>
+</header>
+
+<div class="form-card">
+    <form asp-controller="AdminTestimonial" asp-action="Create" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label asp-for="NameSurname" class="form-label"></label>
+            <input type="text" asp-for="NameSurname" class="form-control" placeholder="Ad Soyadı girin">
+            <span asp-validation-for="NameSurname" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Duty" class="form-label"></label>
+            <input type="text" asp-for="Duty" class="form-control" placeholder="Görevi girin">
+            <span asp-validation-for="Duty" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" class="form-control" rows="5" placeholder="Açıklamayı girin"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ImageFile" class="form-label"></label>
+            <input type="file" asp-for="ImageFile" class="form-control" accept="image/*">
+            <span asp-validation-for="ImageFile" class="text-danger"></span>
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <a href="/AdminTestimonial/Index" class="btn btn-secondary me-2">İptal</a>
+            <button type="submit" class="btn btn-primary">Kaydet</button>
+        </div>
+
+        <div asp-validation-summary="ModelOnly" class="text-danger mt-3"></div>
+    </form>
+</div>

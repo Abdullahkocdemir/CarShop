@@ -1,0 +1,14 @@
+﻿@model List<ResultAboutItemDTO>
+@foreach (var item in Model)
+{
+
+    <div class="col-lg-6 col-md-6 col-sm-6">
+        <div class="about__item">
+            <h5>@item.Title</h5>
+            <p>
+                @item.Description
+            </p>
+        </div>
+    </div>
+
+}

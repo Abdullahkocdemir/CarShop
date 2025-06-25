@@ -1,0 +1,17 @@
+﻿@model List<ResultAboutFeatureDTO>
+<div class="about__feature">
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="about__feature__item">
+                    <img src="@item.ImageUrl" alt="">
+                    <h5>@item.Title</h5>
+                    <p>
+                        @item.Description
+                    </p>
+                </div>
+            </div>
+        }
+    </div>
+</div>

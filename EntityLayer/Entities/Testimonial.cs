@@ -9,8 +9,9 @@ namespace EntityLayer.Entities
     public class Testimonial
     {
         public int TestimonialId { get; set; }
-        public string Name { get; set; } = string.Empty;
+        public string NameSurname { get; set; } = string.Empty;
         public string Duty { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public string ImageUrl { get; set; } = string.Empty;
     }
 }
