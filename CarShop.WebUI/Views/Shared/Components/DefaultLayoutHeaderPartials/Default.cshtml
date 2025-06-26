@@ -1,63 +1,123 @@
-﻿<div id="preloder">
-    <div class="loader"></div>
-</div>
-<header class="header">
-    <div class="header__top">
+﻿<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Araba Marketim</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        /* Bu kısım projenizdeki CSS'i temsil eder, görsel düzen için gereklidir */
+        /* Örnek bir active class stili */
+        .header__menu ul li.active a {
+            color: #007bff; /* Aktif olduğunda rengi mavi yap */
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <header class="header">
+        <div class="header__top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-7">
+                        <ul class="header__top__widget">
+                            <li><i class="fa fa-clock-o"></i> Hafta içi: Sabah 8.00'den akşam 6.00'ya kadar</li>
+                            <li><i class="fa fa-envelope-o"></i> arabamarketim@outlook.com</li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="header__top__right">
+                            <div class="header__top__phone">
+                                <i class="fa fa-phone"></i>
+                                <span>(+90) 546 748 19 63</span>
+                            </div>
+                            <div class="header__top__social">
+                                <a href="#"><i class="fa fa-facebook"></i></a>
+                                <a href="#"><i class="fa fa-twitter"></i></a>
+                                <a href="#"><i class="fa fa-google"></i></a>
+                                <a href="#"><i class="fa fa-instagram"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="container">
             <div class="row">
-                <div class="col-lg-7">
-                    <ul class="header__top__widget">
-                        <li><i class="fa fa-clock-o"></i> Hafta içi: Sabah 8.00'den akşam 6.00'ya kadar</li>
-                        <li><i class="fa fa-envelope-o"></i> arabamarketim@outlook.com</li>
-                    </ul>
+                <div class="col-lg-2">
+                    <div class="header__logo">
+                        <a href="/Default/Index/"><img src="~/hvac-master/img/logo.png" alt="Logo"></a>
+                    </div>
                 </div>
-                <div class="col-lg-5">
-                    <div class="header__top__right">
-                        <div class="header__top__phone">
-                            <i class="fa fa-phone"></i>
-                            <span>(+90) 546 748 19 63</span>
-                        </div>
-                        <div class="header__top__social">
-                            <a href="#"><i class="fa fa-facebook"></i></a>
-                            <a href="#"><i class="fa fa-twitter"></i></a>
-                            <a href="#"><i class="fa fa-google"></i></a>
-                            <a href="#"><i class="fa fa-instagram"></i></a>
+                <div class="col-lg-10">
+                    <div class="header__nav">
+                        <nav class="header__menu">
+                            <ul>
+                                <li><a href="/Default/Index/">AnaSayfa</a></li>
+                                <li><a href="/Product/Index/">Arabalar</a></li>
+                                <li><a href="/About/Index/">Hakkımızda</a></li>
+                                <li><a href="/Blog/Index/">Bloglar</a></li>
+                                <li><a href="/Contact/Index/">İletişim</a></li>
+                            </ul>
+                        </nav>
+                        <div class="header__nav__widget">
+                            <div class="header__nav__widget__btn">
+                                <a href="#"><i class="fa fa-cart-plus"></i></a>
+                                <a href="#" class="search-switch"><i class="fa fa-search"></i></a>
+                            </div>
+                            <a href="#" class="primary-btn">Araba Ekle</a>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-2">
-                <div class="header__logo">
-                    <a href="/Default/Index/"><img src="~/hvac-master/img/logo.png" alt=""></a>
-                </div>
-            </div>
-            <div class="col-lg-10">
-                <div class="header__nav">
-                    <nav class="header__menu">
-                        <ul>
-                            <li class="active"><a href="/Default/Index/">AnaSayfa</a></li>
-                            <li><a href="/Product/Index/">Arabalar</a></li>
-                            <li><a href="/About/Index/">Hakkımızda</a></li>
-                            <li><a href="/Blog/Index/">Bloglar</a></li>
-                            <li><a href="/Contact/Index">İletişim</a></li>
-                        </ul>
-                    </nav>
-                    <div class="header__nav__widget">
-                        <div class="header__nav__widget__btn">
-                            <a href="#"><i class="fa fa-cart-plus"></i></a>
-                            <a href="#" class="search-switch"><i class="fa fa-search"></i></a>
-                        </div>
-                        <a href="#" class="primary-btn">Araba Ekle</a>
-                    </div>
-                </div>
+            <div class="canvas__open">
+                <span class="fa fa-bars"></span>
             </div>
         </div>
-        <div class="canvas__open">
-            <span class="fa fa-bars"></span>
-        </div>
-    </div>
-</header>
+    </header>
+
+
+    <script>
+        // Sayfanın tüm HTML içeriği yüklendiğinde bu fonksiyonun çalışmasını sağlar.
+        document.addEventListener("DOMContentLoaded", function() {
+
+            // Tarayıcının adres çubuğundaki yolu alır (örn: "/Product/Index/")
+            const currentPath = window.location.pathname;
+
+            // Menüdeki bütün link (<a>) elementlerini seçer.
+            const menuLinks = document.querySelectorAll('.header__menu a');
+
+            // Bütün menü linklerini tek tek kontrol etmek için bir döngü başlatır.
+            menuLinks.forEach(link => {
+                // Linkin 'href' özelliğindeki URL'yi alır.
+                const linkPath = link.getAttribute('href');
+
+                // Eğer linkin URL'si, tarayıcıdaki mevcut URL ile aynı ise...
+                if (linkPath === currentPath) {
+                    // ...o linkin ait olduğu <li> elementine 'active' class'ını ekler.
+                    link.parentElement.classList.add('active');
+                }
+            });
+
+            // Ekstra Kontrol: Eğer hiçbir link aktif değilse (örneğin ana sayfada / adresindeyken)
+            // AnaSayfa linkini aktif yap.
+            const activeItem = document.querySelector('.header__menu .active');
+            if (!activeItem && currentPath === "/") {
+                const homeLink = document.querySelector('.header__menu a[href="/Default/Index/"]');
+                if (homeLink) {
+                    homeLink.parentElement.classList.add('active');
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>

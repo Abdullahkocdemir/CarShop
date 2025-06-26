@@ -11,7 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="~/css/Table.css" rel="stylesheet" />
     <link href="~/css/admin-dashboard.css" rel="stylesheet" />
-    <link href="~/css/SidebarDropdown.css" rel="stylesheet" /> 
+    <link href="~/css/SidebarDropdown.css" rel="stylesheet" />
 </head>
 <body>
     <div class="dashboard">
@@ -35,7 +35,7 @@
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#productSubmenu" data-bs-toggle="collapse" aria-expanded="false" aria-controls="productSubmenu">
                         <i class="fas fa-box-open"></i>
-                        <span>Ürünler <i class="fas fa-chevron-down submenu-arrow"></i></span> 
+                        <span>Ürünler <i class="fas fa-chevron-down submenu-arrow"></i></span>
                     </a>
                     <div class="collapse submenu" id="productSubmenu">
                         <ul class="nav-menu-sub">
@@ -47,33 +47,26 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link collapsed" href="#productSubmenu" data-bs-toggle="collapse" aria-expanded="false" aria-controls="productSubmenu">
-                        <i class="fas fa-box-open"></i>
-                        <span>Hakkımızda<i class="fas fa-chevron-down submenu-arrow"></i></span>
+                    <a class="nav-link collapsed" href="#aboutSubmenu" data-bs-toggle="collapse" aria-expanded="false" aria-controls="aboutSubmenu"> <i class="fas fa-info-circle"></i> <span>Hakkımızda<i class="fas fa-chevron-down submenu-arrow"></i></span>
                     </a>
-                    <div class="collapse submenu" id="productSubmenu">
-                        <ul class="nav-menu-sub">
-                            <li><a class="nav-link-sub" href="/About/Index/">Yazılar</a></li>
-                            <li><a class="nav-link-sub" href="/AboutFeature/Index/">Afiş</a></li>
-                            <li><a class="nav-link-sub" href="/AboutItem/Index/">Footer</a></li>
+                    <div class="collapse submenu" id="aboutSubmenu"> <ul class="nav-menu-sub">
+                            <li><a class="nav-link-sub" href="/AdminAbout/Index/">Yazılar</a></li>
+                            <li><a class="nav-link-sub" href="/AdminAboutFeature/Index/">Afiş</a></li>
+                            <li><a class="nav-link-sub" href="/AdminAboutItem/Index/">Footer</a></li>
                         </ul>
                     </div>
                 </li>
                 <li class="nav-item">
                     <a href="/AdminService/Index/" class="nav-link">
-                        <i class="fas fa-users"></i>
-                        <span>Hizmetler</span>
-
+                        <i class="fas fa-concierge-bell"></i> <span>Hizmetler</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="/Partner/Index/" class="nav-link">
                         <i class="fas fa-users"></i>
                         <span>Müşteriler</span>
-
                     </a>
                 </li>
-
                 <li class="nav-item">
                     <a href="/Staff/Index/" class="nav-link">
                         <i class="fas fa-user-tie"></i>
@@ -81,7 +74,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/Testimonial/Index/" class="nav-link">
+                    <a href="/AdminTestimonial/Index/" class="nav-link">
                         <i class="fas fa-handshake"></i>
                         <span>Referanslar</span>
                     </a>
@@ -99,10 +92,20 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/Settings/Index/" class="nav-link">
-                        <i class="fas fa-cogs"></i>
-                        <span>Ayarlar</span>
+                    <a href="/AdminContact/Index/" class="nav-link">
+                        <i class="fa fa-address-book"></i>
+                        <span>İletişim</span>
                     </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#settingsSubmenu" data-bs-toggle="collapse" aria-expanded="false" aria-controls="settingsSubmenu"> <i class="fas fa-cog"></i> <span>Ayarlar<i class="fas fa-chevron-down submenu-arrow"></i></span>
+                    </a>
+                    <div class="collapse submenu" id="settingsSubmenu"> <ul class="nav-menu-sub">
+                            <li><a class="nav-link-sub" href="/Admin/Index/">Genel Bakış</a></li>
+                            <li><a class="nav-link-sub" href="/Admin/UserList/">Kullanıcılar</a></li>
+                            <li><a class="nav-link-sub" href="/Admin/RoleList/">Roller</a></li>
+                        </ul>
+                    </div>
                 </li>
                 <li class="nav-item">
                     <a href="/Settings/Logout/" class="nav-link">
@@ -115,51 +118,22 @@
         <main class="main-content">
             @RenderBody()
         </main>
-
     </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     @RenderSection("Scripts", required: false)
     <script>
-        document.querySelectorAll('.nav-menu > .nav-item > .nav-link:not(.collapsed)').forEach(link => {
-            link.addEventListener('click', function (e) {
-                document.querySelectorAll('.nav-menu > .nav-item > .nav-link').forEach(l => l.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-
-        document.querySelectorAll('.nav-menu-sub .nav-link-sub').forEach(subLink => {
-            subLink.addEventListener('click', function (e) {
-                document.querySelectorAll('.nav-menu-sub .nav-link-sub').forEach(l => l.classList.remove('active'));
-                this.classList.add('active');
-                const parentCollapseLink = this.closest('.submenu').previousElementSibling;
-                if (parentCollapseLink && parentCollapseLink.classList.contains('nav-link')) {
-                    document.querySelectorAll('.nav-menu > .nav-item > .nav-link').forEach(l => l.classList.remove('active'));
-                    parentCollapseLink.classList.add('active');
-                }
-            });
-
-            if (window.location.pathname === subLink.getAttribute('href')) {
-                subLink.classList.add('active');
-                const parentCollapse = subLink.closest('.collapse.submenu');
-                if (parentCollapse) {
-                    parentCollapse.classList.add('show'); 
-                    parentCollapse.previousElementSibling.classList.remove('collapsed'); 
-                    parentCollapse.previousElementSibling.classList.add('active'); 
-                }
-            }
-        });
-
-        // Submenu okunun dönme animasyonu
         document.querySelectorAll('.nav-link.collapsed').forEach(link => {
             link.addEventListener('click', function () {
                 const arrow = this.querySelector('.submenu-arrow');
                 if (arrow) {
-                    if (this.classList.contains('collapsed')) {
-                        arrow.style.transform = 'rotate(0deg)'; 
+                    const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                    if (isExpanded) {
+                        arrow.style.transform = 'rotate(-90deg)';
                     } else {
-                        arrow.style.transform = 'rotate(-90deg)'; 
+                        arrow.style.transform = 'rotate(0deg)';
                     }
                 }
             });
