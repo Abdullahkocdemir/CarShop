@@ -49,10 +49,10 @@
                             }
                         </td>
                         <td class="text-center">
-                            <a href="/Brand/Details/@item.BrandId" class="btn btn-sm btn-info me-1">
+                            <a href="/AdminBrand/Details/@item.BrandId" class="btn btn-sm btn-info me-1">
                                 <i class="fas fa-circle-info"></i> Detay
                             </a>
-                            <a href="/Brand/Edit/@item.BrandId" class="btn btn-sm btn-warning me-1">
+                            <a href="/AdminBrand/Edit/@item.BrandId" class="btn btn-sm btn-warning me-1">
                                 <i class="fas fa-pen-to-square"></i> Güncelle
                             </a>
 
@@ -84,7 +84,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: '/Brand/Delete/' + brandId,
+                    url: '/AdminBrand/Delete/' + brandId,
                     type: 'POST',
                     success: function () {
                         Swal.fire("Silindi!", "Marka başarıyla silindi.", "success").then(() => {

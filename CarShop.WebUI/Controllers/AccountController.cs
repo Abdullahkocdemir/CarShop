@@ -39,20 +39,16 @@ namespace CarShop.WebUI.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                // Başarılı kayıt sonrası Login sayfasına yönlendirilebilir.
                 return RedirectToAction("Login", "Account");
             }
             else
             {
-                // API'den gelen hatayı model state'e ekle
                 var errorContent = await response.Content.ReadAsStringAsync();
-                // Bu kısmı daha detaylı ayrıştırarak kullanıcıya daha net hatalar gösterebilirsiniz.
                 ModelState.AddModelError(string.Empty, "Kayıt işlemi sırasında bir hata oluştu. Lütfen tekrar deneyin." + errorContent);
                 return View(model);
             }
         }
 
-        // Login View'ını ve Action'ını da benzer şekilde oluşturabilirsiniz.
         [HttpGet]
         public IActionResult Login()
         {
@@ -74,13 +70,12 @@ namespace CarShop.WebUI.Controllers
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
                 var jsonObject = JsonNode.Parse(jsonString);
-                var token = jsonObject["token"].ToString();
+                var token = jsonObject!["token"]!.ToString();
 
-                // Token'ı Cookie'ye kaydet
                 HttpContext.Response.Cookies.Append("jwtToken", token, new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = true, // Sadece HTTPS üzerinden
+                    Secure = true, 
                     SameSite = SameSiteMode.Strict,
                     Expires = DateTime.UtcNow.AddHours(3)
                 });

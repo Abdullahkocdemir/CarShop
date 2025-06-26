@@ -1,15 +1,15 @@
 ﻿using BusinessLayer.RabbitMQ;
 using Microsoft.AspNetCore.Mvc;
-using System; // DateTime için eklendi
-using System.Linq; // OrderByDescending, Select, Take için eklendi
+using System; 
+using System.Linq; 
 using System.Collections.Generic;
 using CarShop.WebUI.Models;
-using Newtonsoft.Json; // Bu kütüphane kullanılıyor
+using Newtonsoft.Json; 
 using System.Text;
-using System.Net.Http; // IHttpClientFactory ve StringContent için gerekli
-using System.Net.Http.Json; // ReadFromJsonAsync için gerekli
+using System.Net.Http;
+using System.Net.Http.Json; 
 using System.Threading.Tasks;
-using System.Text.Json.Serialization; // async/await için gerekli
+using System.Text.Json.Serialization; 
 
 namespace CarShop.WebUI.Controllers
 {
@@ -88,39 +88,28 @@ namespace CarShop.WebUI.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                // 1. Adım: Yanıtı direkt nesneye çevirmek yerine önce string olarak oku.
                 var jsonString = await response.Content.ReadAsStringAsync();
 
-                // 2. Adım: API'nin kullandığı JSON ayarlarının aynısını burada da tanımla.
                 var serializerOptions = new System.Text.Json.JsonSerializerOptions
                 {
-                    // Bu ayar, API'den gelen "$id" ve "$values" alanlarını anlamasını sağlar.
                     ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve,
-
-                    // Bu ayar, API'den gelen "userName" gibi alanları C#'daki "UserName" ile eşleştirebilmesini sağlar.
                     PropertyNameCaseInsensitive = true
                 };
 
                 try
                 {
-                    // 3. Adım: String'i, doğru ayarlarla C# listesine çevir.
                     var users = System.Text.Json.JsonSerializer.Deserialize<List<UserListViewModel>>(jsonString, serializerOptions);
                     return View(users);
                 }
                 catch (System.Text.Json.JsonException ex)
                 {
-                    // Eğer çevirme işleminde hala bir hata olursa, bu bize sorunun ne olduğunu söyler.
-                    // Hatayı ve gelen JSON metnini konsola yazdırarak sorunu daha iyi anlayabiliriz.
                     Console.WriteLine($"JSON Çevirme Hatası: {ex.Message}");
                     Console.WriteLine($"API'den Gelen Ham JSON: {jsonString}");
-
-                    // Kullanıcıya bir hata sayfası göster.
                     ViewData["ErrorMessage"] = "API'den gelen veri işlenemedi. Lütfen sistem yöneticisi ile iletişime geçin.";
                     return View(new List<UserListViewModel>());
                 }
             }
 
-            // Eğer API 401, 403, 404 gibi bir hata kodu dönerse bu kısım çalışır.
             ViewData["ErrorMessage"] = $"API'ye erişim sırasında bir hata oluştu. Statü Kodu: {response.StatusCode}";
             return View(new List<UserListViewModel>());
         }
@@ -129,34 +118,28 @@ namespace CarShop.WebUI.Controllers
         {
             var client = _httpClientFactory.CreateClient("CarShopApiClient");
 
-            // --- 1. Adım: Kullanıcıyı Al ---
             var userResponse = await client.GetAsync($"api/Account/users/{id}");
             if (!userResponse.IsSuccessStatusCode)
             {
-                // Kullanıcı bulunamazsa veya başka bir API hatası olursa
                 if (userResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
                     return NotFound($"Kullanıcı bulunamadı: {id}");
                 }
                 ViewData["ErrorMessage"] = $"Kullanıcı bilgileri alınırken bir hata oluştu. Statü Kodu: {userResponse.StatusCode}";
-                return View("Error"); // Hata göstermek için bir Error view'ınız olduğunu varsayarak
+                return View("Error");
             }
-
-            // --- 2. Adım: API yanıtını özel seçeneklerle işle ---
             var jsonString = await userResponse.Content.ReadAsStringAsync();
             var serializerOptions = new System.Text.Json.JsonSerializerOptions
             {
-                // Bu ayar, API'den gelen "$id" ve "$values" alanlarını anlamasını sağlar.
                 ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve,
-                // Bu ayar, API'den gelen "userName" gibi alanları C#'daki "UserName" ile eşleştirebilmesini sağlar.
                 PropertyNameCaseInsensitive = true
             };
 
             UserDetailDto userDetail;
             try
             {
-                // JSON string'ini doğru ayarlarla C# nesnesine çevir.
-                userDetail = System.Text.Json.JsonSerializer.Deserialize<UserDetailDto>(jsonString, serializerOptions);
+
+                userDetail = System.Text.Json.JsonSerializer.Deserialize<UserDetailDto>(jsonString, serializerOptions)!;
                 if (userDetail == null)
                 {
                     return NotFound("Kullanıcı verisi deserialize edilemedi.");
@@ -164,7 +147,6 @@ namespace CarShop.WebUI.Controllers
             }
             catch (System.Text.Json.JsonException ex)
             {
-                // Hata durumunu loglayıp kullanıcıya bilgi ver
                 Console.WriteLine($"JSON Çevirme Hatası: {ex.Message}");
                 Console.WriteLine($"API'den Gelen Ham JSON: {jsonString}");
                 ViewData["ErrorMessage"] = "API'den gelen kullanıcı verisi işlenemedi.";
@@ -172,32 +154,28 @@ namespace CarShop.WebUI.Controllers
             }
 
 
-            // --- 3. Adım: Sistemdeki tüm rolleri al ---
             var rolesResponse = await client.GetAsync("api/roles");
             if (!rolesResponse.IsSuccessStatusCode)
             {
                 ViewData["ErrorMessage"] = $"Roller alınırken bir hata oluştu. Statü Kodu: {rolesResponse.StatusCode}";
                 return View("Error");
             }
-            // Rollerde muhtemelen referans döngüsü olmaz, bu yüzden direkt okunabilir.
-            // Eğer rollerde de benzer bir hata alırsanız, yukarıdaki deserialization mantığını buraya da uygulayın.
             var allRoles = await rolesResponse.Content.ReadFromJsonAsync<List<RoleListDto>>(serializerOptions);
 
 
-            // --- 4. Adım: ViewModel'i oluştur ---
             var model = new ManageUserRolesViewModel
             {
-                UserId = userDetail.Id,
-                UserName = userDetail.UserName
+                UserId = userDetail.Id!,
+                UserName = userDetail.UserName!
             };
 
-            foreach (var role in allRoles)
+            foreach (var role in allRoles!)
             {
                 model.Roles.Add(new RoleCheckBox
                 {
-                    RoleId = role.Id,
-                    RoleName = role.Name,
-                    IsSelected = userDetail.Roles.Contains(role.Name)
+                    RoleId = role.Id!,
+                    RoleName = role.Name!,
+                    IsSelected = userDetail.Roles!.Contains(role.Name!)
                 });
             }
 
@@ -213,18 +191,14 @@ namespace CarShop.WebUI.Controllers
             {
                 var assignRoleDto = new { UserId = model.UserId, RoleName = role.RoleName };
 
-                // --- DÜZELTİLEN SATIR ---
-                // 'JsonSerializer.Serialize' yerine 'JsonConvert.SerializeObject' kullanıldı.
                 var content = new StringContent(JsonConvert.SerializeObject(assignRoleDto), Encoding.UTF8, "application/json");
 
                 if (role.IsSelected)
                 {
-                    // Rol atanacaksa
                     await client.PostAsync("api/roles/assign", content);
                 }
                 else
                 {
-                    // Rol kaldırılacaksa
                     await client.PostAsync("api/roles/remove", content);
                 }
             }

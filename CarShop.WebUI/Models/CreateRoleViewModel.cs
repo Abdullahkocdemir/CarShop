@@ -6,9 +6,9 @@ namespace CarShop.WebUI.Models
     {
         [Required(ErrorMessage = "Rol adı zorunludur.")]
         [Display(Name = "Rol Adı")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Display(Name = "Açıklama")]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
     }
 }

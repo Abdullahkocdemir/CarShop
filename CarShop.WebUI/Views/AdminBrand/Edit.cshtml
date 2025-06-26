@@ -1,13 +1,13 @@
-﻿@model DTOsLayer.WebUIDTO.BrandDTO.CreateBrandDTO
+﻿@model UpdateBrandDTO
 @{
-    ViewData["Title"] = "Yeni Marka Ekle";
+    ViewData["Title"] = "Marka Güncelle";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <header class="header">
     <div>
-        <h2>Yeni Marka Ekle</h2>
-        <p style="color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">Yeni bir marka girişi yapın.</p>
+        <h2>Marka Güncelle</h2>
+        <p style="color: rgba(255, 255, 255, 0.7); margin-top: 0.5rem;">Mevcut marka bilgilerini güncelleyin.</p>
     </div>
     <div class="user-info">
         <div class="user-avatar">AK</div>
@@ -19,15 +19,15 @@
 </header>
 
 <div class="form-card">
-    <form asp-controller="Brand" asp-action="Create" method="post">
+    <form asp-controller="AdminBrand" asp-action="Edit" method="post">
         @Html.AntiForgeryToken() 
+        <input type="hidden" asp-for="BrandId" />
 
         <div class="mb-3">
             <label for="brandName" class="form-label">Marka Adı</label>
             <input type="text" asp-for="BrandName" class="form-control" id="brandName" placeholder="Marka adını girin" required>
             <span asp-validation-for="BrandName" class="text-danger"></span>
         </div>
-
 
         <div class="mb-4 form-check">
             <input type="checkbox" asp-for="IsActive" class="form-check-input" id="isActive">
@@ -36,7 +36,7 @@
 
         <div class="d-flex justify-content-end">
             <a href="/Brand/Index" class="btn btn-secondary me-2">İptal</a>
-            <button type="submit" class="btn btn-primary">Kaydet</button>
+            <button type="submit" class="btn btn-primary">Güncelle</button>
         </div>
 
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>

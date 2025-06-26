@@ -45,7 +45,6 @@ namespace CarShop.WebAPI.Controllers
 
             if (result.Succeeded)
             {
-                // İsteğe bağlı: Yeni kullanıcıya varsayılan bir rol ata
                 if (await _roleManager.RoleExistsAsync("User"))
                 {
                     await _userManager.AddToRoleAsync(user, "User");
@@ -66,7 +65,7 @@ namespace CarShop.WebAPI.Controllers
 
                 var authClaims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Name, user.UserName!),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
@@ -76,7 +75,7 @@ namespace CarShop.WebAPI.Controllers
                     authClaims.Add(new Claim(ClaimTypes.Role, userRole));
                 }
 
-                var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+                var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
 
                 var token = new JwtSecurityToken(
                     issuer: _configuration["Jwt:Issuer"],

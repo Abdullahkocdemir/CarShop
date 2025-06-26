@@ -21,5 +21,9 @@ public class UserDetailDto
     public string? UserName { get; set; }
     public IList<string>? Roles { get; set; }
 }
-public class RoleListDto { public string Id { get; set; } public string? Name { get; set; } }
+public class RoleListDto
+{
+    public string? Id { get; set; }
+    public string? Name { get; set; }
+}
 

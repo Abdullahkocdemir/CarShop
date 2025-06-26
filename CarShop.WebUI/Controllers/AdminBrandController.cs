@@ -8,13 +8,13 @@ using FluentValidation.Results;
 
 namespace CarShop.WebUI.Controllers
 {
-    public class BrandController : Controller
+    public class AdminBrandController : Controller
     {
         private readonly HttpClient _httpClient;
         private readonly IValidator<CreateBrandDTO> _createBrandValidator;
         private readonly IValidator<UpdateBrandDTO> _updateBrandValidator;
 
-        public BrandController(IHttpClientFactory httpClientFactory,
+        public AdminBrandController(IHttpClientFactory httpClientFactory,
                                IValidator<CreateBrandDTO> createBrandValidator,
                                IValidator<UpdateBrandDTO> updateBrandValidator)
         {
