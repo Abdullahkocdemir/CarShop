@@ -26,6 +26,7 @@ using DTOsLayer.WebApiDTO.ColorDTO;
 using DTOsLayer.WebApiDTO.FeatureSubstancesDTO;
 using DTOsLayer.WebApiDTO.WhyUseDTO;
 using DTOsLayer.WebApiDTO.WhyUseItemDTO;
+using DTOsLayer.WebApiDTO.Account;
 
 namespace CarShop.WebAPI.Mapping
 {
@@ -33,6 +34,17 @@ namespace CarShop.WebAPI.Mapping
     {
         public GeneralMapping()
         {
+
+            CreateMap<RegisterDto, AppUser>();
+            CreateMap<AppUser, UserListDto>();
+            CreateMap<AppUser, UserDetailDto>();
+            CreateMap<AppRole, RoleListDto>();
+            CreateMap<AppRole, RoleListDto>().ReverseMap();
+            CreateMap<AppRole, CreateRoleDto>().ReverseMap();
+
+            CreateMap<AppUser, UserListDto>()
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName));
+            // Alternatif olarak: .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"));
             //Color Mapping
 
             CreateMap<Color, ResultColorDTO>().ReverseMap();

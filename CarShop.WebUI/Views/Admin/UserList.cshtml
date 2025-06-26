@@ -1,0 +1,130 @@
+﻿@model List<CarShop.WebUI.Models.UserListViewModel>
+@{
+    ViewData["Title"] = "Kullanıcı Listesi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+<style>
+
+    .btn-new-product {
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    .table {
+        background-color: #3d3d3d;
+        color: #f1f1f1;
+    }
+
+    .table-hover tbody tr:hover {
+        color: #f1f1f1;
+        background-color: #4a4a4a;
+    }
+</style>
+
+<div class="container-fluid mt-4">
+
+    <div class="product-table-card">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="text-white">Kullanıcı Listesi</h3>
+            <a href="#" class="btn btn-new-product">
+                <i class="fas fa-plus"></i> Yeni Kullanıcı Ekle
+            </a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered shadow">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Ad Soyad</th>
+                        <th>Kullanıcı Adı</th>
+                        <th>Email</th>
+                        <th class="text-center">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int count = 1;
+                    }
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>@count</td>
+                            <td>@user.FullName</td>
+                            <td>@user.UserName</td>
+                            <td>@user.Email</td>
+                            <td class="text-center">
+                                <a asp-action="ManageUserRoles" asp-controller="Admin" asp-route-id="@user.Id" class="btn btn-sm btn-primary me-1" title="Rolleri Yönet">
+                                    <i class="fas fa-user-shield"></i> Rolleri Yönet
+                                </a>
+
+                                <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('@user.Id')">
+                                    <i class="fas fa-trash"></i> Sil
+                                </button>
+                            </td>
+                        </tr>
+                        count++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
+<!-- Gerekli Script Dosyaları -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    function confirmDelete(userId) {
+        Swal.fire({
+            title: "Emin misiniz?",
+            text: "Bu kullanıcıyı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Evet, sil!",
+            cancelButtonText: "İptal",
+            background: '#2a2a2a',
+            color: '#ffffff'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var token = $('input[name="__RequestVerificationToken"]').val();
+
+                $.ajax({
+                    url: '/Admin/DeleteUser/' + userId,
+                    type: 'POST',
+                    headers: {
+                        'RequestVerificationToken': token
+                    },
+                    success: function () {
+                        Swal.fire({
+                            title: "Silindi!",
+                            text: "Kullanıcı başarıyla silindi.",
+                            icon: "success",
+                            background: '#2a2a2a',
+                            color: '#ffffff'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function () {
+                        Swal.fire({
+                            title: "Hata!",
+                            text: "Silme işlemi başarısız oldu.",
+                            icon: "error",
+                            background: '#2a2a2a',
+                            color: '#ffffff'
+                        });
+                    }
+                });
+            }
+        });
+    }
+</script>

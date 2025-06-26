@@ -7,12 +7,12 @@ using DTOsLayer.WebUIDTO.BannerDTO;
 
 namespace CarShop.WebUI.Controllers
 {
-    public class BannerController : Controller
+    public class AdminBannerController : Controller
     {
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper; 
 
-        public BannerController(IHttpClientFactory httpClientFactory, IMapper mapper)
+        public AdminBannerController(IHttpClientFactory httpClientFactory, IMapper mapper)
         {
             _httpClient = httpClientFactory.CreateClient("CarShopApiClient");
             _mapper = mapper; 

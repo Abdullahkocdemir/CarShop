@@ -10,13 +10,13 @@ using FluentValidation.Results;
 
 namespace CarShop.WebUI.Controllers
 {
-    public class ServiceController : Controller
+    public class AdminServiceController : Controller
     {
         private readonly HttpClient _httpClient;
         private readonly IValidator<CreateServiceDTO> _createServiceValidator;
         private readonly IValidator<UpdateServiceDTO> _updateServiceValidator;
 
-        public ServiceController(IHttpClientFactory httpClientFactory,
+        public AdminServiceController(IHttpClientFactory httpClientFactory,
                                  IValidator<CreateServiceDTO> createServiceValidator,
                                  IValidator<UpdateServiceDTO> updateServiceValidator)
         {

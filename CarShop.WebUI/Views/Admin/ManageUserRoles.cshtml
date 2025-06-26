@@ -1,0 +1,220 @@
+﻿@model CarShop.WebUI.Models.ManageUserRolesViewModel
+@{
+    ViewData["Title"] = "Kullanıcı Rollerini Yönet";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f4f7f6;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    .sade-kart {
+        max-width: 800px;
+        margin: 4rem auto;
+        padding: 2.5rem;
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.08);
+    }
+
+    .card-header-title {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+        .card-header-title h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .card-header-title .username {
+            color: #007bff;
+            font-weight: 700;
+        }
+
+        .card-header-title i {
+            margin-right: 12px;
+            color: #34495e;
+        }
+
+    .roles-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .role-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.2rem;
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+        .role-item:hover {
+            border-color: #ced4da;
+            transform: translateY(-2px);
+        }
+
+    .role-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+        .role-info i {
+            font-size: 1.5rem;
+            width: 30px;
+            text-align: center;
+            color: #007bff;
+        }
+
+        .role-info .role-name {
+            font-weight: 500;
+            color: #495057;
+        }
+
+    .role-checkbox-hidden {
+        display: none;
+    }
+
+    .role-toggle-switch {
+        cursor: pointer;
+        width: 50px;
+        height: 28px;
+        background: #ccc;
+        display: block;
+        border-radius: 100px;
+        position: relative;
+        transition: background-color 0.3s;
+    }
+
+        .role-toggle-switch:after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 22px;
+            height: 22px;
+            background: #fff;
+            border-radius: 90px;
+            transition: 0.3s;
+        }
+
+    .role-checkbox-hidden:checked + .role-toggle-switch {
+        background: #28a745;
+    }
+
+        .role-checkbox-hidden:checked + .role-toggle-switch:after {
+            left: calc(100% - 3px);
+            transform: translateX(-100%);
+        }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 2.5rem;
+        border-top: 1px solid #e9ecef;
+        padding-top: 2rem;
+    }
+
+    .btn-fancy-primary {
+        background-color: #007bff;
+        border: 1px solid #007bff;
+        border-radius: 8px;
+        color: white;
+        padding: 12px 25px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+    }
+
+        .btn-fancy-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+        }
+
+    .btn-fancy-secondary {
+        background: transparent;
+        border: 2px solid #6c757d;
+        border-radius: 8px;
+        color: #6c757d;
+        padding: 12px 25px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+        .btn-fancy-secondary:hover {
+            background: #6c757d;
+            color: white;
+        }
+</style>
+
+<div class="sade-kart">
+    <div class="card-header-title">
+        <h1>
+            <i class="fas fa-user-shield"></i>
+            <span class="username">@Model.UserName</span> Rolleri
+        </h1>
+    </div>
+
+    <form method="post">
+        <input type="hidden" asp-for="UserId" />
+        <input type="hidden" asp-for="UserName" />
+
+        <div class="roles-grid">
+            @for (int i = 0; i < Model.Roles.Count; i++)
+            {
+                <div class="role-item">
+                    <div class="role-info">
+                        @{
+                            string iconClass = "fa-user";
+                            switch (Model.Roles[i].RoleName.ToLower())
+                            {
+                                case "admin": iconClass = "fa-crown"; break;
+                                case "moderator": iconClass = "fa-gavel"; break;
+                                case "editor": iconClass = "fa-pencil-alt"; break;
+                            }
+                        }
+                        <i class="fas @iconClass"></i>
+                        <span class="role-name">@Model.Roles[i].RoleName</span>
+                    </div>
+
+                    <div>
+                        <input type="hidden" asp-for="@Model.Roles[i].RoleId" />
+                        <input type="hidden" asp-for="@Model.Roles[i].RoleName" />
+                        <input asp-for="@Model.Roles[i].IsSelected" type="checkbox" id="role-@i" class="role-checkbox-hidden">
+
+                        <label for="role-@i" class="role-toggle-switch"></label>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="form-actions">
+            <a asp-action="UserList" class="btn btn-fancy-secondary">Geri Dön</a>
+            <input type="submit" value="Rolleri Güncelle" class="btn btn-fancy-primary" />
+        </div>
+    </form>
+</div>

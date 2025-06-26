@@ -1,11 +1,27 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DTOsLayer.WebUIDTO.TestimonialDTO;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace CarShop.WebUI.ViewComponents.DefaultLayout
 {
     public class DefaultLayoutTestimonialPartials : ViewComponent
     {
-        public IViewComponentResult Invoke()
+        private readonly HttpClient _httpClient;
+
+        public DefaultLayoutTestimonialPartials(IHttpClientFactory httpClientFactory)
         {
+            _httpClient = httpClientFactory.CreateClient("CarShopApiClient");
+        }
+
+        public async Task<IViewComponentResult> InvokeAsync()
+        {
+            var response = await _httpClient.GetAsync("api/Testimonials");
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonData = await response.Content.ReadAsStringAsync();
+                var values = JsonConvert.DeserializeObject<List<ResultTestimonialDTO>>(jsonData);
+                return View(values);
+            }
             return View();
         }
     }

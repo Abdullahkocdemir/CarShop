@@ -1,0 +1,54 @@
+﻿@model List<CarShop.WebUI.Models.RoleListViewModel>
+@{
+    ViewData["Title"] = "Rol Listesi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml"; 
+}
+
+<div class="container-fluid mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Rol Yönetimi</h3>
+        </div>
+        <div class="card-body">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+            }
+
+            <p>
+                <a asp-action="CreateRole" class="btn btn-primary">Yeni Rol Oluştur</a>
+            </p>
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Rol Adı</th>
+                        <th>Açıklama</th>
+                        <th style="width: 150px;">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var role in Model)
+                    {
+                        <tr>
+                            <td>@role.Id</td>
+                            <td>@role.Name</td>
+                            <td>@role.Description</td>
+                            <td>
+                                <form asp-action="DeleteRole" asp-route-id="@role.Id" method="post" onsubmit="return confirm('Bu rolü silmek istediğinizden emin misiniz?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-danger btn-sm">Sil</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
